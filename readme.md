@@ -1,5 +1,5 @@
 student_forum/
-│── app/
+│── app/ 
 │   ├── controllers/          # Handles requests
 │   │   ├── AuthController.php  # Handles login, register, logout
 │   │   ├── PostController.php  # Handles post creation, update, delete
