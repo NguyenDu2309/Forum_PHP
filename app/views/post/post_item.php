@@ -24,7 +24,7 @@
             
             <!-- Post Metadata -->
             <div class="d-flex justify-content-between align-items-center mt-2">
-                <div class="post-meta text-muted small">
+                <div class="post-meta text-muted small">              
                     <span data-toggle="tooltip" title="Author">
                         <i class="fas fa-user-circle mr-1"></i> <?= htmlspecialchars($post["username"]); ?>
                     </span>
@@ -51,6 +51,21 @@
             </div>
             
             <!-- Action Buttons -->
+             <!-- Like/Dislike Buttons -->
+                <div class="mt-2 d-flex align-items-center">
+                    <form action="/student_forum/app/controllers/CommentController.php?action=like" method="post" class="mr-2">
+                        <input type="hidden" name="comment_id" value="<?= $comment['comment_id']; ?>">
+                        <input type="hidden" name="post_id" value="<?= $post_id; ?>">
+                        <button type="submit" class="btn btn-sm btn-outline-success">👍 Like (<?= $comment['likes'] ?? 0 ?>)</button>
+                    </form>
+
+                    <form action="/student_forum/app/controllers/CommentController.php?action=dislike" method="post">
+                        <input type="hidden" name="comment_id" value="<?= $comment['comment_id']; ?>">
+                        <input type="hidden" name="post_id" value="<?= $post_id; ?>">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">👎 Dislike (<?= $comment['dislikes'] ?? 0 ?>)</button>
+                    </form>
+                </div>
+
             <div class="d-flex justify-content-end mt-3">
                 <a href="/student_forum/app/views/post/post_detail.php?id=<?= $post['post_id']; ?>" class="btn btn-sm btn-primary">
                     <i class="fas fa-book-reader mr-1"></i> Read more
