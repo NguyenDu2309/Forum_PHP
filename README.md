@@ -42,7 +42,7 @@ HTML, CSS, JavaScript
 ⚙️ Cài đặt
 Clone dự án:
 
-git clone https://github.com/NguyenDu2309/Forum_PHP.git
+git clone https://github.com/NguyenDu2309/Forum_website.git
 Import cơ sở dữ liệu:
 
 Mở file it_forum.sql bằng phpMyAdmin hoặc MySQL Workbench.
@@ -67,7 +67,7 @@ Dùng XAMPP hoặc một local server khác.
 
 Đặt project trong thư mục htdocs/ nếu dùng XAMPP.
 
-Truy cập: http://localhost/Forum_PHP
+Truy cập: http://localhost/Forum_website
 
 👤 Tài khoản mẫu
 Vai trò	Tên đăng nhập	Mật khẩu
