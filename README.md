@@ -1,4 +1,5 @@
 Công nghệ sử dụng
+
 PHP (thuần)
 
 MySQL
@@ -21,30 +22,33 @@ HTML, CSS, JavaScript
 ✅ Responsive UI với Bootstrap
 
 📂 Cấu trúc thư mục
-plaintext
-Copy
-Edit
+
 /
+
 ├── admin/               # Trang quản trị
+
 ├── components/          # Các phần header, navbar, footer tái sử dụng
+
 ├── includes/            # Kết nối CSDL, xử lý logic
+
 ├── partials/            # Các phần nhỏ của trang như form, alerts
+
 ├── uploads/             # Nơi lưu file được upload
+
 ├── threads/             # Trang chi tiết từng chủ đề
+
 ├── index.php            # Trang chủ diễn đàn
+
 └── ...
 ⚙️ Cài đặt
 Clone dự án:
 
-bash
-Copy
-Edit
-git clone https://github.com/NguyenDu2309/Forum_PHP.git
+git clone https://github.com/NguyenDu2309/Forum_website.git
 Import cơ sở dữ liệu:
 
-Mở file forum.sql (nếu có trong repo) bằng phpMyAdmin hoặc MySQL Workbench.
+Mở file it_forum.sql bằng phpMyAdmin hoặc MySQL Workbench.
 
-Tạo một database mới (ví dụ: forum_php) và import file đó.
+Tạo một database mới và import file đó.
 
 Cấu hình kết nối cơ sở dữ liệu:
 
@@ -53,19 +57,18 @@ Mở file includes/db.php
 Sửa thông tin kết nối:
 
 php
-Copy
-Edit
+
 $servername = "localhost";
 $username = "root";
 $password = "";
-$database = "forum_php";
+$database = "tên database trên phpadmin";
 Chạy ứng dụng:
 
 Dùng XAMPP hoặc một local server khác.
 
 Đặt project trong thư mục htdocs/ nếu dùng XAMPP.
 
-Truy cập: http://localhost/Forum_PHP
+Truy cập: http://localhost/Forum_website
 
 👤 Tài khoản mẫu
 Vai trò	Tên đăng nhập	Mật khẩu
