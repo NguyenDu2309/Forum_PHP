@@ -21,17 +21,23 @@ HTML, CSS, JavaScript
 ✅ Responsive UI với Bootstrap
 
 📂 Cấu trúc thư mục
-plaintext
-Copy
-Edit
+
 /
+
 ├── admin/               # Trang quản trị
+
 ├── components/          # Các phần header, navbar, footer tái sử dụng
+
 ├── includes/            # Kết nối CSDL, xử lý logic
+
 ├── partials/            # Các phần nhỏ của trang như form, alerts
+
 ├── uploads/             # Nơi lưu file được upload
+
 ├── threads/             # Trang chi tiết từng chủ đề
+
 ├── index.php            # Trang chủ diễn đàn
+
 └── ...
 ⚙️ Cài đặt
 Clone dự án:
