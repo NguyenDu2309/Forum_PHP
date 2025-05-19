@@ -1,0 +1,20 @@
+ 
+ /* Default height for the carousel */
+ .carousel-item {
+                    height: 300px;
+                }
+
+  /* Adjust carousel height for smaller devices */
+  @media (max-width: 768px) {
+                                .carousel-item {
+                                height: 200px;
+                                }
+                            }
+
+    footer {
+        margin-top: auto; /* Push footer to the bottom */
+    }
+
+
+  
+ 
