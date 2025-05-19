@@ -42,15 +42,12 @@ HTML, CSS, JavaScript
 ⚙️ Cài đặt
 Clone dự án:
 
-bash
-Copy
-Edit
 git clone https://github.com/NguyenDu2309/Forum_PHP.git
 Import cơ sở dữ liệu:
 
-Mở file forum.sql (nếu có trong repo) bằng phpMyAdmin hoặc MySQL Workbench.
+Mở file it_forum.sql bằng phpMyAdmin hoặc MySQL Workbench.
 
-Tạo một database mới (ví dụ: forum_php) và import file đó.
+Tạo một database mới và import file đó.
 
 Cấu hình kết nối cơ sở dữ liệu:
 
@@ -59,12 +56,11 @@ Mở file includes/db.php
 Sửa thông tin kết nối:
 
 php
-Copy
-Edit
+
 $servername = "localhost";
 $username = "root";
 $password = "";
-$database = "forum_php";
+$database = "tên database trên phpadmin";
 Chạy ứng dụng:
 
 Dùng XAMPP hoặc một local server khác.
