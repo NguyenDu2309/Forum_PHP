@@ -107,23 +107,6 @@
   }
   ?>
 
-
-  <!-- Carousel Section -->
-  <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
-    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
-      data-bs-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
-      data-bs-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Next</span>
-    </button>
-  </div>
-
-
-
   <!-- Categories Section -->
   <div class="container mt-4">
     <h3 class="text-center bg-danger p-2 rounded">Categories</h3>
