@@ -21,7 +21,7 @@ CREATE TABLE `admin_users` (
 INSERT INTO admin_users (username, password) 
 VALUES (
   'admin',
-  '$2y$10$wQwQwQwQwQwQwQwQwQwQwOQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQwQw'
+  '123'
 );
 --
 -- Dumping data for table `admin_users`
