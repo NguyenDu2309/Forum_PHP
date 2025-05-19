@@ -212,35 +212,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
      ?>
   </div>
 
-<!-- here is the form for post comments -->
-<div class="container">
-  <hr>
-  <?php
-        //check if the user is logged in if logged in then show the form
-        if(isset($_SESSION['username'])) {
-           echo '
-            <h2> Post comment for your response</h2>
-            <form class="my-3" action="'.$_SERVER['PHP_SELF'].'?id='.$_GET['id'].'" method="POST">
-                <div class="mb-3">
-                  <label for="description" class="form-label">Write a solution </label>
-                  <div class="form-floating">
-                  <textarea class="form-control"  id="floatingTextarea2" style="height: 100px" name="comment"  ></textarea>
-                  <label for="floatingTextarea2"  id="description">write the solution if you have</label>
-                </div>
-                </div>
-                <button type="submit" class="btn btn-primary">Post</button>
-              </form>
-            ';
-        }
-        // if the user is not logged in then show this message
-        else {
-            echo '<h3 class="bg-success p-2 text-center rounded-pill"> Please login to reply ! </h3>';
-        }
-    ?>
-  </div>
-  <hr>
-  
-
 <!-- Display comments in media object format -->
 <div class="container my-3">
     <h2 class="bg-danger p-2 my-3 rounded"> Discussion </h2>
@@ -297,8 +268,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php endwhile; ?>
 </div>
 
-
-
+<!-- here is the form for post comments -->
+<div class="container">
+  <hr>
+  <?php
+        //check if the user is logged in if logged in then show the form
+        if(isset($_SESSION['username'])) {
+           echo '
+            <h2> Post comment for your response</h2>
+            <form class="my-3" action="'.$_SERVER['PHP_SELF'].'?id='.$_GET['id'].'" method="POST">
+                <div class="mb-3">
+                  <label for="description" class="form-label">Write a solution </label>
+                  <div class="form-floating">
+                  <textarea class="form-control"  id="floatingTextarea2" style="height: 100px" name="comment"  ></textarea>
+                  <label for="floatingTextarea2"  id="description">write the solution if you have</label>
+                </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Post</button>
+              </form>
+            ';
+        }
+        // if the user is not logged in then show this message
+        else {
+            echo '<h3 class="bg-success p-2 text-center rounded-pill"> Please login to reply ! </h3>';
+        }
+    ?>
+</div>
+  <hr>
+  
 
     
 <script>

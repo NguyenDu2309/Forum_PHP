@@ -138,47 +138,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ?>
 
 
-        <!-- here is the form form bs in which user will ask its question -->
-        <div class="container">
-                <hr>
-                <?php
-                if (isset($_SESSION['username'])) {
-                        echo '
-            <h3 class="p-2 bg-danger rounded"> Ask questions here </h3>
-<!-- we use here php self in action this mean it will post this request in the same page where the form located -- -->
-             <form class="my-3" action="' . ($_SERVER["PHP_SELF"]) . '?id=' . $_GET["id"] . '" method="POST" enctype="multipart/form-data">
-
-             <div class="mb-3">
-                        <label for="titles" class="form-label">Question title</label>
-                        <input type="text" class="form-control" placeholder="Enter your question title" id="titles" aria-describedby="emailHelp" name="title">
-                        <div id="emailHelp" class="form-text" name="title">Question title should be understable and simple-short way</div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Full explaination</label>
-                        <div class="form-floating">
-                        <textarea class="form-control"  id="floatingTextarea2" style="height: 100px" name="desc"  ></textarea>
-                        <label for="floatingTextarea2"  id="description">Explain your question in detail</label>
-                    </div>
-                    </div>
-                    <div class="mb-3">
-        <label for="thread_image" class="form-label">Upload Image (optional)</label>
-        <input type="file" class="form-control" id="thread_image" name="thread_image" accept="image/*">
-    </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
-                </div>
-            ';
-                } else {
-                        echo ' <h3 class = "bg-success p-2 text-center rounded-pill"> Please login to post question!  </h3>';
-                }
-
-                ?>
-        </div>
-        <hr>
-
         <!-- using media object using bs 4.5 by which we will show users queries -->
         <div class="container my-3">
-                <h3 class="p-2 my-3 bg-danger rounded"> User queries </h3>
+                <h3 class="p-2 my-3 bg-danger rounded"> Posts </h3>
 
                 <!-- now we will show thread queries using the thread table and here we are fetching it -->
                 <?php
@@ -250,6 +212,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 ?>
         </div>
+
+        <!-- Di chuyển form hỏi đáp xuống đây -->
+        <div class="container">
+            <hr>
+            <?php
+            if (isset($_SESSION['username'])) {
+                echo '
+                <h3 class="p-2 bg-danger rounded"> Ask questions here </h3>
+                <form class="my-3" action="' . ($_SERVER["PHP_SELF"]) . '?id=' . $_GET["id"] . '" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="titles" class="form-label">Question title</label>
+                        <input type="text" class="form-control" placeholder="Enter your question title" id="titles" aria-describedby="emailHelp" name="title">
+                        <div id="emailHelp" class="form-text" name="title">Question title should be understable and simple-short way</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Full explaination</label>
+                        <div class="form-floating">
+                            <textarea class="form-control"  id="floatingTextarea2" style="height: 100px" name="desc"  ></textarea>
+                            <label for="floatingTextarea2"  id="description">Explain your question in detail</label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="thread_image" class="form-label">Upload Image (optional)</label>
+                        <input type="file" class="form-control" id="thread_image" name="thread_image" accept="image/*">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+                ';
+            } else {
+                echo ' <h3 class = "bg-success p-2 text-center rounded-pill"> Please login to post question!  </h3>';
+            }
+            ?>
+        </div>
+        <hr>
 
         <!-- Optional JavaScript; choose one of the two! -->
 
