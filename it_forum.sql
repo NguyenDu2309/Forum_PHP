@@ -114,7 +114,7 @@ CREATE TABLE `thread` (
   `thread_user_name` varchar(50) NOT NULL,
   `email_id` varchar(255) NOT NULL,
   `time` datetime NOT NULL,
-  `thread_image` VARCHAR(255) DEFAULT NULL;
+  `thread_image` VARCHAR(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -239,7 +239,3 @@ ALTER TABLE `comment_likes`
   ADD CONSTRAINT `comment_likes_ibfk_1` FOREIGN KEY (`comment_id`) REFERENCES `comments` (`comment_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `comment_likes_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET @
