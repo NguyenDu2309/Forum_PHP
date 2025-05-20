@@ -7,12 +7,17 @@ session_start();
 // Get the thread ID from the URL
 $thread_id = $_GET['id'];
 
+// Pagination logic
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$comments_per_page = 10;
+$offset = ($page - 1) * $comments_per_page;
+
 // SQL query to fetch comments related to the thread, ordered by likes (most likes first)
-$sql = "SELECT * FROM comments WHERE thread_comment_id = ? ORDER BY likes DESC";
+$sql = "SELECT * FROM comments WHERE thread_comment_id = ? ORDER BY likes DESC LIMIT ? OFFSET ?";
 // Prepare the SQL query
 $stmt = $conn->prepare($sql);
 // Bind the thread ID to the prepared statement
-$stmt->bind_param("i", $thread_id);
+$stmt->bind_param("iii", $thread_id, $comments_per_page, $offset);
 // Execute the prepared statement
 $stmt->execute();
 // Get the result from the executed statement
@@ -54,7 +59,7 @@ function checkIfLiked($comment_id)
 $post = null; // or false depending on if you want to use it for a default alert
 // Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_GET['id'])) {
+    if (isset($_POST['comment']) && isset($_GET['id'])) {
         $threadID = $_GET['id'];
         $comment = $_POST['comment'];
         $username = $_SESSION['username'];
@@ -82,6 +87,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
              exit();  // Don't forget to call exit() after header to stop further code execution
 
          }
+    }
+    // Xử lý reply nếu có
+    if (isset($_POST['post_reply']) && isset($_POST['reply_text']) && isset($_POST['reply_comment_id'])) {
+        $reply_text = trim($_POST['reply_text']);
+        $reply_comment_id = intval($_POST['reply_comment_id']);
+        $reply_user = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest';
+        if ($reply_text !== '') {
+            $reply_sql = "INSERT INTO replies (comment_id, user_name, reply_text) VALUES (?, ?, ?)";
+            $reply_stmt = $conn->prepare($reply_sql);
+            $reply_stmt->bind_param("iss", $reply_comment_id, $reply_user, $reply_text);
+            $reply_stmt->execute();
+            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page);
+            exit();
+        }
     }
 }
 ?>
@@ -187,7 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     if (!empty($fetch['thread_image'])) {
                                         echo '<img src="uploads/thread_images/' . htmlspecialchars($fetch['thread_image']) . '" alt="Thread Image" class="img-fluid mb-3" style="max-width:300px;max-height:300px;border-radius:8px;">';
                                     }
-                      echo '          <h4 style="word-wrap: break-word;"> <span>🔹Q :- </span>'. $fetch['thread_title'] .'</h4>
+                      echo '          <h4 style="word-wrap: break-word;"> <span>🔹Q :- </span'. $fetch['thread_title'] .'</h4>
                                         <p class="py-1" style="word-wrap: break-word; white-space: normal;" <span>🔻 </span> '. $fetch['thread_desc'] .' </p>
                                         <hr>';
                                         if(isset($_SESSION["username"])) {
@@ -263,6 +282,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <?php echo date('d-m-Y h:i A', strtotime($comment['comment_time'])); ?>
                     </small>
                 </div>
+                <!-- Reply button and form -->
+                <button class="btn btn-sm btn-link text-primary p-0 mt-2" type="button" onclick="toggleReplyForm(<?php echo $comment['comment_id']; ?>)">Reply</button>
+                <form method="POST" class="mt-2" style="display:none;" id="reply-form-<?php echo $comment['comment_id']; ?>">
+                    <div class="input-group">
+                        <input type="text" name="reply_text" class="form-control form-control-sm" placeholder="Write a reply..." required>
+                        <input type="hidden" name="reply_comment_id" value="<?php echo $comment['comment_id']; ?>">
+                        <button type="submit" name="post_reply" class="btn btn-sm btn-success">Send</button>
+                    </div>
+                </form>
+                <!-- Hiển thị replies -->
+                <?php
+                $reply_sql = "SELECT * FROM replies WHERE comment_id = ? ORDER BY reply_time ASC";
+                $reply_stmt = $conn->prepare($reply_sql);
+                $reply_stmt->bind_param("i", $comment['comment_id']);
+                $reply_stmt->execute();
+                $reply_result = $reply_stmt->get_result();
+                while ($reply = $reply_result->fetch_assoc()):
+                ?>
+                    <div class="ms-4 mt-2 p-2 bg-light rounded">
+                        <strong class="text-secondary" style="font-size:0.95em;"><?php echo htmlspecialchars($reply['user_name']); ?>:</strong>
+                        <span style="font-size:0.95em;"><?php echo htmlspecialchars($reply['reply_text']); ?></span>
+                        <br>
+                        <small class="text-muted" style="font-size:0.8em;"><?php echo date('d-m-Y h:i A', strtotime($reply['reply_time'])); ?></small>
+                    </div>
+                <?php endwhile; ?>
             </div>
         </div>
     <?php endwhile; ?>
@@ -296,7 +340,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </div>
   <hr>
   
+<?php
+$count_sql = "SELECT COUNT(*) as total FROM comments WHERE thread_comment_id = ?";
+$count_stmt = $conn->prepare($count_sql);
+$count_stmt->bind_param("i", $thread_id);
+$count_stmt->execute();
+$count_result = $count_stmt->get_result();
+$total_comments = $count_result->fetch_assoc()['total'];
+$total_pages = ceil($total_comments / $comments_per_page);
+?>
 
+<!-- Pagination for comments -->
+<nav aria-label="Comment pagination">
+  <ul class="pagination justify-content-center">
+    <?php if ($page > 1): ?>
+      <li class="page-item">
+        <a class="page-link" href="?id=<?php echo $thread_id; ?>&page=<?php echo $page-1; ?>">Previous</a>
+      </li>
+    <?php endif; ?>
+    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+      <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
+        <a class="page-link" href="?id=<?php echo $thread_id; ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
+      </li>
+    <?php endfor; ?>
+    <?php if ($page < $total_pages): ?>
+      <li class="page-item">
+        <a class="page-link" href="?id=<?php echo $thread_id; ?>&page=<?php echo $page+1; ?>">Next</a>
+      </li>
+    <?php endif; ?>
+  </ul>
+</nav>
     
 <script>
 
@@ -336,20 +409,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     })
                     // Convert response to JSON
                     .then(response => response.json())
-                   //  Update the page after recieving a response from the php file
-                    .then(data => {
-                        if (data.success) {
-                             // Update the button state using liked value from the response
-                             button.setAttribute('data-liked', data.liked);
+                    .then(function(data) {
+    if (data.success) {
+        button.setAttribute('data-liked', data.liked);
 
-                            // Toggle 'liked' class and update the heart icon color using liked value from the response
-                            heartIcon.classList.toggle('liked', data.liked === 1);
-                            heartIcon.style.color = data.liked === 1 ? 'red' : 'gray';
+        // Toggle 'liked' class và cập nhật màu tim
+        if (data.liked == 1) {
+            heartIcon.classList.add('liked');
+            heartIcon.style.color = 'red';
+        } else {
+            heartIcon.classList.remove('liked');
+            heartIcon.style.color = 'gray';
+        }
 
-                             likesCountElement.textContent = data.newLikes;
-                        }
-                    })
-                     // Handle errors during AJAX request
+        likesCountElement.textContent = data.newLikes;
+    }
+})
+                    // Handle errors during AJAX request
                     .catch(error => console.error('Error:', error));
                 });
             });
@@ -370,5 +446,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     -->
 
     <?php include "Partials/_footer.php"  ?>
+    <script>
+function toggleReplyForm(commentId) {
+    var form = document.getElementById('reply-form-' + commentId);
+    if (form.style.display === "none" || form.style.display === "") {
+        form.style.display = "block";
+    } else {
+        form.style.display = "none";
+    }
+}
+</script>
     </body>
 </html>
