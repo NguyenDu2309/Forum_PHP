@@ -74,8 +74,40 @@ if (isset($_POST['edit_comment'])) {
     exit();
 }
 
+// Handle reply deletion
+if (isset($_GET['delete_reply_id'])) {
+    $delete_reply_id = intval($_GET['delete_reply_id']);
+    $delete_reply_query = "DELETE FROM replies WHERE reply_id = ?";
+    $stmt = $conn->prepare($delete_reply_query);
+    $stmt->bind_param("i", $delete_reply_id);
+    $stmt->execute();
+    $stmt->close();
+    header('Location: manage_comments.php' . (isset($_GET['search']) ? '?search=' . urlencode($_GET['search']) : ''));
+    exit();
+}
 
+// Handle reply editing
+if (isset($_POST['edit_reply'])) {
+    $reply_id = intval($_POST['reply_id']);
+    $reply_text = trim($_POST['reply_text']);
+    $reply_text = mysqli_real_escape_string($conn, $reply_text);
+    $update_reply_query = "UPDATE replies SET reply_text = ? WHERE reply_id = ?";
+    $stmt = $conn->prepare($update_reply_query);
+    $stmt->bind_param("si", $reply_text, $reply_id);
+    $stmt->execute();
+    $stmt->close();
+    header('Location: manage_comments.php' . (isset($_GET['search']) ? '?search=' . urlencode($_GET['search']) : ''));
+    exit();
+}
 
+// Lấy các reply mà user này đã trả lời
+$reply_query = "SELECT r.*, c.comment, t.thread_title, t.thread_user_name
+                FROM replies r
+                INNER JOIN comments c ON r.comment_id = c.comment_id
+                INNER JOIN thread t ON c.thread_comment_id = t.thread_id
+                WHERE r.user_name = '$user_name'
+                ORDER BY r.reply_time DESC";
+$reply_result = mysqli_query($conn, $reply_query);
 ?>
 
 <!DOCTYPE html>
@@ -293,6 +325,72 @@ if (isset($_POST['edit_comment'])) {
                 </li>
             </ul>
         </nav>
+
+        <?php if ($reply_result && mysqli_num_rows($reply_result) > 0): ?>
+            <h3 class="mt-4">Your Replies</h3>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover text-center">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Question</th>
+                            <th>Comment</th>
+                            <th>Your Reply</th>
+                            <th>Reply Time</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php $rserial = 1; while ($reply = $reply_result->fetch_assoc()): ?>
+                        <tr>
+                            <td><?= $rserial++; ?></td>
+                            <td><?= htmlspecialchars($reply['thread_title']); ?></td>
+                            <td><?= htmlspecialchars($reply['comment']); ?></td>
+                            <td><?= htmlspecialchars($reply['reply_text']); ?></td>
+                            <td><?= htmlspecialchars($reply['reply_time']); ?></td>
+                            <td>
+                                <!-- Edit Reply Button -->
+                                <button class="btn btn-warning btn-sm px-3" data-bs-toggle="modal"
+                                    data-bs-target="#editReplyModal<?= $reply['reply_id']; ?>">
+                                    ✏️ Edit
+                                </button>
+                                <!-- Delete Reply Button -->
+                                <a href="manage_comments.php?delete_reply_id=<?= $reply['reply_id']; ?><?= (isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''); ?>"
+                                    class="btn btn-danger btn-sm px-3"
+                                    onclick="return confirm('Are you sure you want to delete this reply?');">
+                                    ❌ Delete
+                                </a>
+                            </td>
+                        </tr>
+
+                        <!-- Edit Reply Modal -->
+                        <div class="modal fade" id="editReplyModal<?= $reply['reply_id']; ?>" tabindex="-1"
+                            aria-labelledby="editReplyModalLabel<?= $reply['reply_id']; ?>" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form action="manage_comments.php<?= (isset($_GET['search']) ? '?search=' . urlencode($_GET['search']) : '') ?>" method="POST">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editReplyModalLabel<?= $reply['reply_id']; ?>">Edit Reply</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label for="reply_text_<?= $reply['reply_id']; ?>" class="form-label">Reply</label>
+                                                <textarea class="form-control" name="reply_text" id="reply_text_<?= $reply['reply_id']; ?>" rows="3"><?= htmlspecialchars($reply['reply_text']); ?></textarea>
+                                            </div>
+                                            <input type="hidden" name="reply_id" value="<?= $reply['reply_id']; ?>">
+                                            <button type="submit" name="edit_reply" class="btn btn-primary">Save Changes</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endwhile; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
     </div>
 
     <!-- Bootstrap JS -->
