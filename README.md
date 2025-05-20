@@ -71,11 +71,10 @@ Dùng XAMPP hoặc một local server khác.
 Truy cập: http://localhost/Forum_website
 
 👤 Tài khoản mẫu
+
 Vai trò	Tên đăng nhập	Mật khẩu
+
 Admin	admin	123
-User	user	user123
 
 Lưu ý: Có thể phải tạo thủ công tài khoản nếu chưa có sẵn.
 
-📝 Ghi chú
-Dự án mang tính học tập, không nên dùng trực tiếp cho môi trường production.
