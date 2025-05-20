@@ -44,6 +44,7 @@ HTML, CSS, JavaScript
 Clone dự án:
 
 git clone https://github.com/NguyenDu2309/Forum_website.git
+
 Import cơ sở dữ liệu:
 
 Mở file it_forum.sql bằng phpMyAdmin hoặc MySQL Workbench.
