@@ -136,6 +136,18 @@ CREATE TABLE `users` (
   `user_image` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
+--
+-- Table structure for table `replies`
+--
+CREATE TABLE replies (
+    reply_id INT AUTO_INCREMENT PRIMARY KEY,
+    comment_id INT NOT NULL,
+    user_name VARCHAR(100) NOT NULL,
+    reply_text TEXT NOT NULL,
+    reply_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (comment_id) REFERENCES comments(comment_id)
+);
 --
 -- Dumping data for table `users`
 --
