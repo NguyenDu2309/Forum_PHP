@@ -105,6 +105,15 @@ if (isset($_POST['edit_thread'])) {
     header('Location: manage_posted_question.php' . (isset($_GET['search']) ? '?search=' . urlencode($_GET['search']) : ''));
     exit();
 }
+
+// Total comments and replies by the user
+$total_comments_query = "SELECT COUNT(*) FROM comments WHERE thread_comment_id IN (SELECT thread_id FROM thread WHERE thread_user_name = '$user_name')";
+$total_comments_result = mysqli_query($conn, $total_comments_query);
+$total_comments = $total_comments_result ? mysqli_fetch_row($total_comments_result)[0] : 0;
+
+$total_replies_query = "SELECT COUNT(*) FROM replies WHERE comment_id IN (SELECT comment_id FROM comments WHERE thread_comment_id IN (SELECT thread_id FROM thread WHERE thread_user_name = '$user_name'))";
+$total_replies_result = mysqli_query($conn, $total_replies_query);
+$total_replies = $total_replies_result ? mysqli_fetch_row($total_replies_result)[0] : 0;
 ?>
 
 <!DOCTYPE html>
@@ -247,76 +256,91 @@ if (isset($_POST['edit_thread'])) {
                 <tbody>
                     <?php
                     $serial = $offset + 1;
-                    while ($thread = $result->fetch_assoc()): ?>
+                    while ($thread = $result->fetch_assoc()):
+                        // Đếm số comment cho thread này
+                        $thread_id = $thread['thread_id'];
+                        $comment_count_query = "SELECT COUNT(*) FROM comments WHERE thread_comment_id = $thread_id";
+                        $comment_count_result = mysqli_query($conn, $comment_count_query);
+                        $comment_count = $comment_count_result ? mysqli_fetch_row($comment_count_result)[0] : 0;
+
+                        // Đếm số reply cho thread này (tính tất cả reply của các comment thuộc thread)
+                        $reply_count_query = "SELECT COUNT(*) 
+                                              FROM replies 
+                                              WHERE comment_id IN (SELECT comment_id FROM comments WHERE thread_comment_id = $thread_id)";
+                        $reply_count_result = mysqli_query($conn, $reply_count_query);
+                        $reply_count = $reply_count_result ? mysqli_fetch_row($reply_count_result)[0] : 0;
+                    ?>
                         <tr class="">
                         <td class="bg-secondary fw-bold d-flex align-items-center justify-content-between px-3 mt-4" style="min-width: 100px;">
-                            <span ><?= $serial++; ?></span>
+                            <span><?= $serial++; ?></span>
                             <span class="text-wrap text-center">
                                 Category - <?= htmlspecialchars($thread['category_name']); ?>
                             </span>
                         </td>
+                        <td class="bg-warning-subtle px-3 text-start text-wrap" style="min-width: 200px;">
+                            <span class="fw-bold text-danger"> Question: </span>
+                            <?= htmlspecialchars($thread['thread_title']); ?>
+                            <br>
+                            <span class="badge bg-info text-dark mt-2">Comments: <?= $comment_count ?></span>
+                            <span class="badge bg-success text-white mt-2">Replies: <?= $reply_count ?></span>
+                        </td>
+                        <td class="bg-light text-muted text-center" style="min-width: 120px;">
+                            <?= htmlspecialchars($thread['time']); ?>
+                        </td>
+                        <td class="w-auto text-center" style="min-width: 150px;">
+                            <!-- Edit Button -->
+                            <button class="btn btn-warning btn-sm mt-1 px-3" data-bs-toggle="modal"
+                                data-bs-target="#editThreadModal<?= $thread['thread_id']; ?>">
+                                ✏️ Edit
+                            </button>
+                            <!-- Delete Button -->
+                            <a href="manage_posted_question.php?delete_id=<?= $thread['thread_id']; ?><?= (isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''); ?>"
+                                class="btn btn-danger btn-sm mt-1 px-3"
+                                onclick="return confirm('Are you sure you want to delete this question and its comments?');">
+                                ❌ Delete
+                            </a>
+                        </td>
+                    </tr>
 
-                            <td class="bg-warning-subtle px-3 text-start text-wrap" style="min-width: 200px;">
-                                <span class="fw-bold text-danger"> Question: </span>
-                                <?= htmlspecialchars($thread['thread_title']); ?>
-                            </td>
-                            <td class="bg-light text-muted text-center" style="min-width: 120px;">
-                                <?= htmlspecialchars($thread['time']); ?>
-                            </td>
-                            <td class="w-auto text-center" style="min-width: 150px;">
-                                <!-- Edit Button -->
-                                <button class="btn btn-warning btn-sm mt-1 px-3" data-bs-toggle="modal"
-                                    data-bs-target="#editThreadModal<?= $thread['thread_id']; ?>">
-                                    ✏️ Edit
-                                </button>
-                                <!-- Delete Button -->
-                                <a href="manage_posted_question.php?delete_id=<?= $thread['thread_id']; ?><?= (isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''); ?>"
-                                    class="btn btn-danger btn-sm mt-1 px-3"
-                                    onclick="return confirm('Are you sure you want to delete this question and its comments?');">
-                                    ❌ Delete
-                                </a>
-                            </td>
-                        </tr>
-
-                        <!-- Edit Thread Modal -->
-                        <div class="modal fade" id="editThreadModal<?= $thread['thread_id']; ?>" tabindex="-1"
-                            aria-labelledby="editThreadModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="editThreadModalLabel">Edit Question</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form
-                                            action="manage_posted_question.php<?= (isset($_GET['search']) ? '?search=' . urlencode($_GET['search']) : '') ?>"
-                                            method="POST" enctype="multipart/form-data">
+                    <!-- Edit Thread Modal -->
+                    <div class="modal fade" id="editThreadModal<?= $thread['thread_id']; ?>" tabindex="-1"
+                        aria-labelledby="editThreadModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editThreadModalLabel">Edit Question</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form
+                                        action="manage_posted_question.php<?= (isset($_GET['search']) ? '?search=' . urlencode($_GET['search']) : '') ?>"
+                                        method="POST" enctype="multipart/form-data">
+                                        <div class="mb-3">
+                                            <label for="thread_title" class="form-label">Question</label>
+                                            <textarea class="form-control" name="thread_title" id="thread_title"
+                                                rows="4"><?= htmlspecialchars($thread['thread_title']); ?></textarea>
+                                        </div>
+                                        <!-- Hiển thị ảnh hiện tại nếu có -->
+                                        <?php if (!empty($thread['thread_image'])): ?>
                                             <div class="mb-3">
-                                                <label for="thread_title" class="form-label">Question</label>
-                                                <textarea class="form-control" name="thread_title" id="thread_title"
-                                                    rows="4"><?= htmlspecialchars($thread['thread_title']); ?></textarea>
+                                                <label class="form-label">Current Image:</label><br>
+                                                <img src="../uploads/thread_images/<?= htmlspecialchars($thread['thread_image']); ?>" alt="Thread Image" style="max-width:120px;max-height:120px;">
                                             </div>
-                                            <!-- Hiển thị ảnh hiện tại nếu có -->
-                                            <?php if (!empty($thread['thread_image'])): ?>
-                                                <div class="mb-3">
-                                                    <label class="form-label">Current Image:</label><br>
-                                                    <img src="../uploads/thread_images/<?= htmlspecialchars($thread['thread_image']); ?>" alt="Thread Image" style="max-width:120px;max-height:120px;">
-                                                </div>
-                                            <?php endif; ?>
-                                            <div class="mb-3">
-                                                <label for="thread_image" class="form-label">Change Image (optional)</label>
-                                                <input type="file" class="form-control" name="thread_image" id="thread_image" accept="image/*">
-                                            </div>
-                                            <input type="hidden" name="thread_id" value="<?= $thread['thread_id']; ?>">
-                                            <button type="submit" name="edit_thread" class="btn btn-primary">Save Changes</button>
-                                        </form>
-                                    </div>
+                                        <?php endif; ?>
+                                        <div class="mb-3">
+                                            <label for="thread_image" class="form-label">Change Image (optional)</label>
+                                            <input type="file" class="form-control" name="thread_image" id="thread_image" accept="image/*">
+                                        </div>
+                                        <input type="hidden" name="thread_id" value="<?= $thread['thread_id']; ?>">
+                                        <button type="submit" name="edit_thread" class="btn btn-primary">Save Changes</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                <!-- Comment Section -->
+            <!-- Comment Section -->
                         <tr>
                             <td colspan="5">
                                 <?php
@@ -326,15 +350,29 @@ if (isset($_POST['edit_thread'])) {
                                                     WHERE comments.thread_comment_id = " . $thread['thread_id'];
                                 $comment_result = mysqli_query($conn, $comment_query);
 
-
                                 if ($comment_result && mysqli_num_rows($comment_result) > 0) {
                                     while ($comment = mysqli_fetch_assoc($comment_result)) {
-
                                         ?>
-                                        <div class="comment-box">
-                                            <p><span
-                                                    class="comment-username"><?= htmlspecialchars($comment['user_name']); ?>:</span>
-                                                <?= htmlspecialchars($comment['comment']); ?></p>
+                                        <div class="comment-box mb-2">
+                                            <p>
+                                                <span class="comment-username"><?= htmlspecialchars($comment['user_name']); ?>:</span>
+                                                <?= htmlspecialchars($comment['comment']); ?>
+                                            </p>
+                                            <?php
+                                            // Lấy các reply cho comment này
+                                            $reply_query = "SELECT * FROM replies WHERE comment_id = " . $comment['comment_id'] . " ORDER BY reply_id ASC";
+                                            $reply_result = mysqli_query($conn, $reply_query);
+                                            if ($reply_result && mysqli_num_rows($reply_result) > 0) {
+                                                while ($reply = mysqli_fetch_assoc($reply_result)) {
+                                                    ?>
+                                                    <div class="ms-4 ps-3 border-start border-2 border-primary mb-1">
+                                                        <span class="text-success fw-bold"><?= htmlspecialchars($reply['user_name']); ?>:</span>
+                                                        <?= htmlspecialchars($reply['reply_text']); ?>
+                                                    </div>
+                                                    <?php
+                                                }
+                                            }
+                                            ?>
                                         </div>
                                         <?php
 
