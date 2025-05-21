@@ -232,7 +232,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   </div>
 
 <!-- Display comments in media object format -->
-<div class="container my-3">
+<div class="container my-3" style="max-height: 500px; overflow-y: auto;">
     <h2 class="bg-danger p-2 my-3 rounded"> Discussion </h2>
 
     <?php
@@ -264,16 +264,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <h5 class="mt-0 text-primary"><?php echo htmlspecialchars($comment['user_name']); ?></h5>
                     <!-- Like button and likes count section -->
                     <div class="d-flex align-items-center mt-2">
-                        <!-- The Paragraph shows the like counts -->
-                        <p class="m-0" id="likes-count-<?php echo $comment['comment_id']; ?>"><?php echo $comment['likes']; ?></p>
-                        <!-- The like button -->
-                        <button class="like-btn" 
-                                id="like-<?php echo $comment['comment_id']; ?>" 
-                                data-comment-id="<?php echo $comment['comment_id']; ?>" 
-                                data-liked="<?php echo checkIfLiked($comment['comment_id']) ? '1' : '0'; ?>">
-                            <i class="heart-icon <?php echo checkIfLiked($comment['comment_id']) ? 'liked' : ''; ?> fas fa-heart"></i>
-                        </button>
-                    </div>
+                    <p class="m-0" id="likes-count-<?php echo $comment['comment_id']; ?>"><?php echo $comment['likes']; ?></p>
+                    <button class="like-btn" 
+                        id="like-<?php echo $comment['comment_id']; ?>" 
+                        data-comment-id="<?php echo $comment['comment_id']; ?>" 
+                        data-liked="<?php echo checkIfLiked($comment['comment_id']) ? '1' : '0'; ?>">
+                        <i class="heart-icon <?php echo checkIfLiked($comment['comment_id']) ? 'liked' : ''; ?> fas fa-heart"></i>
+                    </button>
+                    <!-- Reply icon button -->
+                    <button class="btn btn-sm btn-link p-0 ms-2 align-middle" type="button" title="Reply"
+                        onclick="toggleReplyForm(<?php echo $comment['comment_id']; ?>)">
+                        <i class="fas fa-reply"></i>
+                    </button>
+                </div>
                 </div>
                 <!-- Comment text and comment time section -->
                 <div class="comment-container">
@@ -282,8 +285,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <?php echo date('d-m-Y h:i A', strtotime($comment['comment_time'])); ?>
                     </small>
                 </div>
-                <!-- Reply button and form -->
-                <button class="btn btn-sm btn-link text-primary p-0 mt-2" type="button" onclick="toggleReplyForm(<?php echo $comment['comment_id']; ?>)">Reply</button>
+               
                 <form method="POST" class="mt-2" style="display:none;" id="reply-form-<?php echo $comment['comment_id']; ?>">
                     <div class="input-group">
                         <input type="text" name="reply_text" class="form-control form-control-sm" placeholder="Write a reply..." required>
