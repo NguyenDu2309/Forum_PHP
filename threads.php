@@ -303,8 +303,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 while ($reply = $reply_result->fetch_assoc()):
                 ?>
                     <div class="ms-4 mt-2 p-2 bg-light rounded">
-                        <strong class="text-secondary" style="font-size:0.95em;"><?php echo htmlspecialchars($reply['user_name']); ?>:</strong>
-                        <span style="font-size:0.95em;"><?php echo htmlspecialchars($reply['reply_text']); ?></span>
+                        <span style="font-size:0.95em;">
+                            <span class="text-muted">@<?php echo htmlspecialchars($comment['user_name']); ?>:</span>
+                        </span>
+                        <strong class="text-secondary" style="font-size:0.95em;">
+                            <?php echo htmlspecialchars($reply['user_name']); ?>
+                        </strong>
+                            <?php echo htmlspecialchars($reply['reply_text']); ?>
                         <br>
                         <small class="text-muted" style="font-size:0.8em;"><?php echo date('d-m-Y h:i A', strtotime($reply['reply_time'])); ?></small>
                     </div>
