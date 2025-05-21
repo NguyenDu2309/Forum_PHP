@@ -48,11 +48,28 @@ $stmt_total->close();
 // Handle unlike comment
 if (isset($_GET['unlike_id'])) {
     $unlike_id = intval($_GET['unlike_id']);
+    // 1. Bỏ like trong bảng comment_likes
     $unlike_query = "UPDATE comment_likes SET liked = 0 WHERE comment_id = ? AND user_id = ?";
     $stmt_unlike = $conn->prepare($unlike_query);
     $stmt_unlike->bind_param("ii", $unlike_id, $user_id);
     $stmt_unlike->execute();
     $stmt_unlike->close();
+
+    // 2. Đếm lại tổng số like thật sự cho comment này
+    $count_query = "SELECT COUNT(*) FROM comment_likes WHERE comment_id = ? AND liked = 1";
+    $stmt_count = $conn->prepare($count_query);
+    $stmt_count->bind_param("i", $unlike_id);
+    $stmt_count->execute();
+    $stmt_count->bind_result($new_likes);
+    $stmt_count->fetch();
+    $stmt_count->close();
+
+    // 3. Cập nhật lại số like trong bảng comments
+    $update_comment = $conn->prepare("UPDATE comments SET likes = ? WHERE comment_id = ?");
+    $update_comment->bind_param("ii", $new_likes, $unlike_id);
+    $update_comment->execute();
+    $update_comment->close();
+
     header('Location: manage_likes.php');
     exit();
 }
