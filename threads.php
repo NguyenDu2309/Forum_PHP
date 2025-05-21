@@ -206,7 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     if (!empty($fetch['thread_image'])) {
                                         echo '<img src="uploads/thread_images/' . htmlspecialchars($fetch['thread_image']) . '" alt="Thread Image" class="img-fluid mb-3" style="max-width:300px;max-height:300px;border-radius:8px;">';
                                     }
-                      echo '          <h4 style="word-wrap: break-word;"> <span>🔹Q :- </span'. $fetch['thread_title'] .'</h4>
+                      echo '          <h4 style="word-wrap: break-word;"> <span>🔹Q :- </span>'. $fetch['thread_title'] .'</h4>
                                         <p class="py-1" style="word-wrap: break-word; white-space: normal;" <span>🔻 </span> '. $fetch['thread_desc'] .' </p>
                                         <hr>';
                                         if(isset($_SESSION["username"])) {
@@ -223,13 +223,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
           }
      ?>
 
-<!-- here is the php code for comment post -->
- <div class="container">
-     <?php
-        /*  Here we have removed the $post variable from this section 
-         as we are now going to check it in the starting section only */
-     ?>
-  </div>
 
 <!-- Display comments in media object format -->
 <div class="container my-3" style="max-height: 500px; overflow-y: auto;">
