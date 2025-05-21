@@ -38,12 +38,27 @@ $stmt->close();
 // Handle comment deletion
 if (isset($_GET['delete_id'])) {
     $delete_id = intval($_GET['delete_id']);
+    // Xóa reply trước
+    $conn->query("DELETE FROM replies WHERE comment_id = $delete_id");
+    // Xóa comment
     $delete_query = "DELETE FROM comments WHERE comment_id = ?";
     $stmt = $conn->prepare($delete_query);
     $stmt->bind_param("i", $delete_id);
     $stmt->execute();
     $stmt->close();
     header('Location: manage_comments.php'); // Redirect to avoid resubmitting form
+}
+
+// Handle reply deletion
+if (isset($_GET['delete_reply_id'])) {
+    $delete_reply_id = intval($_GET['delete_reply_id']);
+    $delete_reply_query = "DELETE FROM replies WHERE reply_id = ?";
+    $stmt = $conn->prepare($delete_reply_query);
+    $stmt->bind_param("i", $delete_reply_id);
+    $stmt->execute();
+    $stmt->close();
+    header('Location: manage_comments.php' . (isset($_GET['page']) ? '?page=' . intval($_GET['page']) : ''));
+    exit();
 }
 ?>
 
@@ -77,9 +92,17 @@ if (isset($_GET['delete_id'])) {
             margin-bottom: 20px;
         }
 
+        .table td,
+        .table th {
+            word-break: break-word;
+            vertical-align: top;
+            max-width: 350px;
+        }
+
         /* To ensure the page works well on small screens */
         @media (max-width: 768px) {
-            .table th, .table td {
+            .table th,
+            .table td {
                 padding: 10px;
             }
 
@@ -162,7 +185,33 @@ if (isset($_GET['delete_id'])) {
                                 onclick="return confirm('Are you sure you want to delete this comment?');">Delete</a>
                         </td>
                     </tr>
-                    <?php endwhile; ?>
+                    <?php
+                    // Lấy các reply cho comment này
+                    $reply_query = "SELECT * FROM replies WHERE comment_id = " . intval($comment['comment_id']) . " ORDER BY reply_id ASC";
+                    $reply_result = mysqli_query($conn, $reply_query);
+                    if ($reply_result && mysqli_num_rows($reply_result) > 0):
+                        while ($reply = mysqli_fetch_assoc($reply_result)):
+                    ?>
+                    <tr>
+                        <td></td>
+                        <td colspan="4" class="ps-5 border-start border-2 border-primary bg-light">
+                            <span class="fw-bold text-success">Reply by <?= htmlspecialchars($reply['user_name']); ?>:</span>
+                            <?= htmlspecialchars($reply['reply_text']); ?>
+                            <span class="text-muted ms-2" style="font-size:0.9em;">
+                                <?= isset($reply['reply_time']) ? htmlspecialchars($reply['reply_time']) : ''; ?>
+                            </span>
+                        </td>
+                        <td>
+                            <a href="manage_comments.php?delete_reply_id=<?= $reply['reply_id']; ?>&page=<?= $page; ?><?= isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>"
+                               class="btn btn-danger btn-sm"
+                               onclick="return confirm('Are you sure you want to delete this reply?');">Delete</a>
+                        </td>
+                    </tr>
+                    <?php
+                        endwhile;
+                    endif;
+                    endwhile;
+                    ?>
                 </tbody>
             </table>
         </div>
