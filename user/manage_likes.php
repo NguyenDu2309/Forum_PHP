@@ -22,7 +22,7 @@ $query = "SELECT lc.*, c.comment, c.comment_time, t.thread_title, t.thread_user_
           FROM comment_likes lc
           INNER JOIN comments c ON lc.comment_id = c.comment_id
           INNER JOIN thread t ON c.thread_comment_id = t.thread_id
-          WHERE lc.user_id = ?
+          WHERE lc.user_id = ? AND lc.liked = 1
           ORDER BY c.comment_time DESC
           LIMIT ?, ?";
 
@@ -48,12 +48,12 @@ $stmt_total->close();
 // Handle unlike comment
 if (isset($_GET['unlike_id'])) {
     $unlike_id = intval($_GET['unlike_id']);
-    $unlike_query = "DELETE FROM comment_likes WHERE comment_id = ? AND user_id = ?";
+    $unlike_query = "UPDATE comment_likes SET liked = 0 WHERE comment_id = ? AND user_id = ?";
     $stmt_unlike = $conn->prepare($unlike_query);
     $stmt_unlike->bind_param("ii", $unlike_id, $user_id);
     $stmt_unlike->execute();
     $stmt_unlike->close();
-     header('Location: manage_likes.php');
+    header('Location: manage_likes.php');
     exit();
 }
 $stmt->close();
