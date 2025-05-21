@@ -26,6 +26,12 @@
         $result = mysqli_query($conn, $query);
         $row = mysqli_fetch_assoc($result);
         $totalComments = $row['total_comments'];
+
+        // Đếm tổng số like mà các comment của user nhận được
+        $query = "SELECT SUM(likes) AS total_likes FROM comments WHERE user_name = '$user_name'";
+        $result = mysqli_query($conn, $query);
+        $row = mysqli_fetch_assoc($result);
+        $totalLikes = $row['total_likes'] ?? 0;
 ?>
 <!DOCTYPE html>
 <html lang="en">
