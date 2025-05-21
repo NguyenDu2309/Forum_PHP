@@ -148,6 +148,8 @@ CREATE TABLE replies (
     reply_time DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (comment_id) REFERENCES comments(comment_id)
 );
+
+ALTER TABLE replies ADD COLUMN parent_reply_id INT DEFAULT NULL;
 --
 -- Dumping data for table `users`
 --

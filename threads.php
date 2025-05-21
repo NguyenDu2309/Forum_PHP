@@ -55,6 +55,96 @@ function checkIfLiked($comment_id)
     return 0;
 }
 
+// Helper function to display nested replies recursively
+function displayReplies($conn, $comment_id, $parent_reply_id = null, $depth = 0)
+{
+    // Get replies for the current level
+    $reply_sql = "SELECT r.*, rp.user_name AS replied_to_user 
+                 FROM replies r 
+                 LEFT JOIN replies rp ON r.parent_reply_id = rp.reply_id 
+                 WHERE r.comment_id = ? AND r.parent_reply_id ";
+    $reply_sql .= $parent_reply_id === null ? "IS NULL" : "= ?";
+    $reply_sql .= " ORDER BY r.reply_time ASC";
+    
+    $reply_stmt = $conn->prepare($reply_sql);
+    
+    if ($parent_reply_id === null) {
+        $reply_stmt->bind_param("i", $comment_id);
+    } else {
+        $reply_stmt->bind_param("ii", $comment_id, $parent_reply_id);
+    }
+    
+    $reply_stmt->execute();
+    $replies = $reply_stmt->get_result();
+    
+    $output = '';
+    while ($reply = $replies->fetch_assoc()) {
+        // Calculate margin-left based on depth
+        $margin_left = ($depth * 20) + 20; // 20px per level
+        
+        // Get user image for the reply
+        $user_name = $reply['user_name'];
+        $user_sql = "SELECT user_image FROM users WHERE user_name = ?";
+        $user_stmt = $conn->prepare($user_sql);
+        $user_stmt->bind_param("s", $user_name);
+        $user_stmt->execute();
+        $user_result = $user_stmt->get_result();
+        $user_image = 'images/user.png'; // Default user image
+
+        if ($user_result->num_rows > 0) {
+            $user_row = $user_result->fetch_assoc();
+            if (!empty($user_row['user_image'])) {
+                $user_image = "uploads/user_images/" . $user_row['user_image'];
+            }
+        }
+        
+        // Format the reply HTML
+        $output .= '<div class="reply-container ms-' . $margin_left . ' mt-2 p-2 bg-light rounded" id="reply-' . $reply['reply_id'] . '">';
+        $output .= '<div class="d-flex align-items-start">';
+        $output .= '<img src="' . htmlspecialchars($user_image) . '" class="me-2 rounded-circle" alt="User" style="width:30px; height:30px;">';
+        $output .= '<div class="flex-grow-1">';
+        $output .= '<div class="d-flex justify-content-between align-items-center">';
+        $output .= '<strong class="text-primary" style="font-size:0.95em;">' . htmlspecialchars($reply['user_name']) . '</strong>';
+        $output .= '<div>';
+        
+        // Only show reply button if user is logged in
+        if (isset($_SESSION['username'])) {
+            $output .= '<button class="btn btn-sm btn-link p-0 reply-btn" type="button" title="Reply" ';
+            $output .= 'onclick="toggleNestedReplyForm(' . $reply['reply_id'] . ', ' . $comment_id . ')">';
+            $output .= '<i class="fas fa-reply"></i></button>';
+        }
+        
+        $output .= '</div>'; // Close button container
+        $output .= '</div>'; // Close flex container
+        
+        // Reply content
+        $output .= '<p class="mb-1">' . htmlspecialchars($reply['reply_text']) . '</p>';
+        $output .= '<small class="text-muted" style="font-size:0.8em;">' . date('d-m-Y h:i A', strtotime($reply['reply_time'])) . '</small>';
+        
+        // Nested reply form (hidden by default)
+        if (isset($_SESSION['username'])) {
+            $output .= '<form method="POST" class="mt-2" style="display:none;" id="nested-reply-form-' . $reply['reply_id'] . '">';
+            $output .= '<div class="input-group input-group-sm">';
+            $output .= '<input type="text" name="nested_reply_text" class="form-control form-control-sm" placeholder="Write a reply..." required>';
+            $output .= '<input type="hidden" name="reply_comment_id" value="' . $comment_id . '">';
+            $output .= '<input type="hidden" name="parent_reply_id" value="' . $reply['reply_id'] . '">';
+            $output .= '<button type="submit" name="post_nested_reply" class="btn btn-sm btn-success">Reply</button>';
+            $output .= '</div>';
+            $output .= '</form>';
+        }
+        
+        $output .= '</div>'; // Close content div
+        $output .= '</div>'; // Close flex container
+        
+        // Recursively get and display nested replies
+        $output .= displayReplies($conn, $comment_id, $reply['reply_id'], $depth + 1);
+        
+        $output .= '</div>'; // Close reply container
+    }
+    
+    return $output;
+}
+
 // Initialize $post variable
 $post = null; // or false depending on if you want to use it for a default alert
 // Check if the form is submitted
@@ -76,8 +166,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
              $_SESSION['alert_success'] = true;
              header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id);// this code will stop the reposting the comment in order to reload
              exit();  // Don't forget to call exit() after header to stop further code execution
-
-
         }
          // if the query is failed then echo this message and die
           else {
@@ -85,10 +173,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
              $_SESSION['alert_fail'] = true;
              header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id);// this code will stop the reposting the comment in order to reload
              exit();  // Don't forget to call exit() after header to stop further code execution
-
          }
     }
-    // Xử lý reply nếu có
+    
+    // Handle regular replies
     if (isset($_POST['post_reply']) && isset($_POST['reply_text']) && isset($_POST['reply_comment_id'])) {
         $reply_text = trim($_POST['reply_text']);
         $reply_comment_id = intval($_POST['reply_comment_id']);
@@ -98,6 +186,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $reply_stmt = $conn->prepare($reply_sql);
             $reply_stmt->bind_param("iss", $reply_comment_id, $reply_user, $reply_text);
             $reply_stmt->execute();
+            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page);
+            exit();
+        }
+    }
+    
+    // Handle nested replies
+    if (isset($_POST['post_nested_reply']) && isset($_POST['nested_reply_text']) && isset($_POST['reply_comment_id']) && isset($_POST['parent_reply_id'])) {
+        $reply_text = trim($_POST['nested_reply_text']);
+        $reply_comment_id = intval($_POST['reply_comment_id']);
+        $parent_reply_id = intval($_POST['parent_reply_id']);
+        $reply_user = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest';
+        
+        if ($reply_text !== '') {
+            $nested_reply_sql = "INSERT INTO replies (comment_id, user_name, reply_text, parent_reply_id) VALUES (?, ?, ?, ?)";
+            $nested_reply_stmt = $conn->prepare($nested_reply_sql);
+            $nested_reply_stmt->bind_param("issi", $reply_comment_id, $reply_user, $reply_text, $parent_reply_id);
+            $nested_reply_stmt->execute();
+            
+            // Redirect to prevent form resubmission
             header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page);
             exit();
         }
@@ -158,6 +265,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       /* Additional spacing to ensure comments don't overlap header */
       .media {
           margin-top: 20px; /* Give some space from the top */
+      }
+      
+      /* Nested reply styles */
+      .reply-container {
+          border-left: 2px solid #dee2e6;
+          padding-left: 10px;
+      }
+      
+      .reply-btn {
+          color: #6c757d;
+          transition: color 0.2s;
+      }
+      
+      .reply-btn:hover {
+          color: #0d6efd;
       }
     </style>
   </head>
@@ -265,10 +387,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <i class="heart-icon <?php echo checkIfLiked($comment['comment_id']) ? 'liked' : ''; ?> fas fa-heart"></i>
                     </button>
                     <!-- Reply icon button -->
-                    <button class="btn btn-sm btn-link p-0 ms-2 align-middle" type="button" title="Reply"
+                    <?php if(isset($_SESSION['username'])): ?>
+                    <button class="btn btn-sm btn-link p-0 ms-2 align-middle reply-btn" type="button" title="Reply"
                         onclick="toggleReplyForm(<?php echo $comment['comment_id']; ?>)">
                         <i class="fas fa-reply"></i>
                     </button>
+                    <?php endif; ?>
                 </div>
                 </div>
                 <!-- Comment text and comment time section -->
@@ -279,6 +403,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </small>
                 </div>
                
+                <?php if(isset($_SESSION['username'])): ?>
                 <form method="POST" class="mt-2" style="display:none;" id="reply-form-<?php echo $comment['comment_id']; ?>">
                     <div class="input-group">
                         <input type="text" name="reply_text" class="form-control form-control-sm" placeholder="Write a reply..." required>
@@ -286,27 +411,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <button type="submit" name="post_reply" class="btn btn-sm btn-success">Send</button>
                     </div>
                 </form>
-                <!-- Hiển thị replies -->
-                <?php
-                $reply_sql = "SELECT * FROM replies WHERE comment_id = ? ORDER BY reply_time ASC";
-                $reply_stmt = $conn->prepare($reply_sql);
-                $reply_stmt->bind_param("i", $comment['comment_id']);
-                $reply_stmt->execute();
-                $reply_result = $reply_stmt->get_result();
-                while ($reply = $reply_result->fetch_assoc()):
-                ?>
-                    <div class="ms-4 mt-2 p-2 bg-light rounded">
-                        <span style="font-size:0.95em;">
-                            <span class="text-muted">@<?php echo htmlspecialchars($comment['user_name']); ?>:</span>
-                        </span>
-                        <strong class="text-secondary" style="font-size:0.95em;">
-                            <?php echo htmlspecialchars($reply['user_name']); ?>
-                        </strong>
-                            <?php echo htmlspecialchars($reply['reply_text']); ?>
-                        <br>
-                        <small class="text-muted" style="font-size:0.8em;"><?php echo date('d-m-Y h:i A', strtotime($reply['reply_time'])); ?></small>
-                    </div>
-                <?php endwhile; ?>
+                <?php endif; ?>
+                
+                <!-- Display nested replies using the helper function -->
+                <div class="replies-container mt-2">
+                    <?php echo displayReplies($conn, $comment['comment_id']); ?>
+                </div>
             </div>
         </div>
     <?php endwhile; ?>
@@ -372,7 +482,6 @@ $total_pages = ceil($total_comments / $comments_per_page);
 </nav>
     
 <script>
-
     // removing alert after 3 sec with js
     let alerts = document.querySelectorAll('.alert'); // Assuming multiple alerts with 'alert' class
     alerts.forEach(function(alert) {
@@ -381,56 +490,74 @@ $total_pages = ceil($total_comments / $comments_per_page);
         }, 3000);
     });
 
-       
+    // Toggle reply form for main comments
+    function toggleReplyForm(commentId) {
+        var form = document.getElementById('reply-form-' + commentId);
+        if (form.style.display === "none" || form.style.display === "") {
+            form.style.display = "block";
+        } else {
+            form.style.display = "none";
+        }
+    }
     
-     document.addEventListener('DOMContentLoaded', function () {
+    // Toggle reply form for nested replies
+    function toggleNestedReplyForm(replyId, commentId) {
+        var form = document.getElementById('nested-reply-form-' + replyId);
+        if (form.style.display === "none" || form.style.display === "") {
+            form.style.display = "block";
+        } else {
+            form.style.display = "none";
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function () {
         // Select all like buttons on the page
-            document.querySelectorAll('.like-btn').forEach(function(button) {
-                 // Add a click event listener to each button
-                button.addEventListener('click', function() {
-                     // Get the comment ID from the button
-                    const commentId = button.getAttribute('data-comment-id');
-                     // Get the likes count paragraph
-                    const likesCountElement = document.getElementById(`likes-count-${commentId}`);
-                     // Get the heart icon element inside the button
-                    const heartIcon = button.querySelector('.heart-icon');
+        document.querySelectorAll('.like-btn').forEach(function(button) {
+            // Add a click event listener to each button
+            button.addEventListener('click', function() {
+                // Get the comment ID from the button
+                const commentId = button.getAttribute('data-comment-id');
+                // Get the likes count paragraph
+                const likesCountElement = document.getElementById(`likes-count-${commentId}`);
+                // Get the heart icon element inside the button
+                const heartIcon = button.querySelector('.heart-icon');
 
                 // Make an AJAX request to like_comment.php
-                    fetch('like_comment.php', {
-                         // Set request method to POST
-                        method: 'POST',
-                        // Set request body with comment id
-                        body: new URLSearchParams({
-                            'comment_id': commentId
-                        }),
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
+                fetch('like_comment.php', {
+                    // Set request method to POST
+                    method: 'POST',
+                    // Set request body with comment id
+                    body: new URLSearchParams({
+                        'comment_id': commentId
+                    }),
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+                // Convert response to JSON
+                .then(response => response.json())
+                .then(function(data) {
+                    if (data.success) {
+                        button.setAttribute('data-liked', data.liked);
+
+                        // Toggle 'liked' class và cập nhật màu tim
+                        if (data.liked == 1) {
+                            heartIcon.classList.add('liked');
+                            heartIcon.style.color = 'red';
+                        } else {
+                            heartIcon.classList.remove('liked');
+                            heartIcon.style.color = 'gray';
                         }
-                    })
-                    // Convert response to JSON
-                    .then(response => response.json())
-                    .then(function(data) {
-    if (data.success) {
-        button.setAttribute('data-liked', data.liked);
 
-        // Toggle 'liked' class và cập nhật màu tim
-        if (data.liked == 1) {
-            heartIcon.classList.add('liked');
-            heartIcon.style.color = 'red';
-        } else {
-            heartIcon.classList.remove('liked');
-            heartIcon.style.color = 'gray';
-        }
-
-        likesCountElement.textContent = data.newLikes;
-    }
-})
-                    // Handle errors during AJAX request
-                    .catch(error => console.error('Error:', error));
-                });
+                        likesCountElement.textContent = data.newLikes;
+                    }
+                })
+                // Handle errors during AJAX request
+                .catch(error => console.error('Error:', error));
             });
         });
-    </script>
+    });
+</script>
   
      <!-- Optional JavaScript; choose one of the two! -->
 
@@ -446,15 +573,5 @@ $total_pages = ceil($total_comments / $comments_per_page);
     -->
 
     <?php include "Partials/_footer.php"  ?>
-    <script>
-function toggleReplyForm(commentId) {
-    var form = document.getElementById('reply-form-' + commentId);
-    if (form.style.display === "none" || form.style.display === "") {
-        form.style.display = "block";
-    } else {
-        form.style.display = "none";
-    }
-}
-</script>
     </body>
 </html>
