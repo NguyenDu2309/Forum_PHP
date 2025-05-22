@@ -61,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['confirm_delete'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="../Partials/style.css">
-    <title>Delete Account</title>
+    <title>Xóa tài khoản</title>
     <link rel="icon" type="image/jpg" href="/Forum_website/images/favicon1.jpg">
        
     <style>
@@ -124,17 +124,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['confirm_delete'])) {
 <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
             <div class="container-fluid">
-                <a class="navbar-brand" href="user_profile.php">User Panel</a>
+                <a class="navbar-brand" href="user_profile.php">Bảng điều khiển người dùng</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="user_profile.php">Back to Dashboard</a>
+                            <a class="nav-link" href="user_profile.php">Trở về bảng điều khiển</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="../Partials/_handle_logout.php">Logout</a>
+                            <a class="nav-link" href="../Partials/_handle_logout.php">Đăng xuất</a>
                         </li>
                     </ul>
                 </div>
@@ -144,16 +144,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['confirm_delete'])) {
     <div class="wrapper">
         <div class="container">
             <div class="confirmation-box">
-                <h2 class="text-center mb-4">Delete Your Account</h2>
+                <h2 class="text-center mb-4">Xóa tài khoản của bạn</h2>
                 <?php if (!empty($message)): ?>
                     <div class="alert alert-danger"><?= $message ?></div>
                 <?php endif; ?>
-                <p>Are you sure you want to delete your account? This action is irreversible and will permanently remove your profile and all your forum posts and comments.</p>
+                <p>Bạn có chắc chắn muốn xóa tài khoản của mình không? Hành động này không thể đảo ngược và sẽ xóa vĩnh viễn hồ sơ của bạn cùng tất cả bài đăng và bình luận trên diễn đàn.</p>
 
                 <form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
                     <div class="text-center">
-                        <button type="submit" name="confirm_delete" class="btn btn-danger">Yes, Delete My Account</button>
-                        <a href="user_profile.php" class="btn btn-secondary">No, Go Back</a>
+                        <button type="submit" name="confirm_delete" class="btn btn-danger">Có, Xóa Tài khoản của tôi</button>
+                        <a href="user_profile.php" class="btn btn-secondary">Không, Quay lại</a>
                     </div>
                 </form>
             </div>

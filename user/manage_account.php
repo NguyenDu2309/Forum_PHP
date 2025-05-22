@@ -129,17 +129,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container-fluid">
-        <a class="navbar-brand" href="user_profile.php">User Panel</a>
+        <a class="navbar-brand" href="user_profile.php">Bảng điều khiển người dùng</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="user_profile.php">Back to Dashboard</a>
+                    <a class="nav-link" href="user_profile.php">Trở về bảng điều khiển</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="../Partials/_handle_logout.php">Logout</a>
+                    <a class="nav-link" href="../Partials/_handle_logout.php">Đăng xuất</a>
                 </li>
             </ul>
         </div>
@@ -150,59 +150,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="row ">
         <div class="col-md-6">
             <div class="p-4 border rounded mt-5 mb-3">
-                <h2>Change Username & Password</h2>
+                <h2>Đổi tên đăng nhập và mật khẩu</h2>
                 <?php if ($error) echo "<div class='alert alert-danger'>$error</div>"; ?>
                 <?php if ($success) echo "<div class='alert alert-success'>$success</div>"; ?>
                 <form method="post">
                     <input type="hidden" name="update_credentials">
                     <div class="mb-3">
-                        <label>New Username</label>
+                        <label>Tên đăng nhập mới</label>
                         <input type="text" class="form-control" name="new_username" value="<?php echo htmlspecialchars($current_username); ?>" required>
                     </div>
                     <div class="mb-3">
-                        <label>Old Password</label>
+                        <label>Mật khẩu cũ</label>
                         <input type="password" class="form-control" name="old_password" required>
                     </div>
                     <div class="mb-3">
-                        <label>New Password</label>
+                        <label>Mật khẩu mới</label>
                         <input type="password" class="form-control" name="new_password" required>
                     </div>
                     <div class="mb-3">
-                        <label>Confirm New Password</label>
+                        <label>Xác nhận mật khẩu mới</label>
                         <input type="password" class="form-control" name="confirm_password" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="submit" class="btn btn-primary">Cập nhật</button>
                 </form>
             </div>
         </div>
 
         <div class="col-md-6">
             <div class="p-4 border rounded mt-5 mb-3">
-                <h2>Update Profile Image</h2>
+                <h2>Cập nhật hình ảnh hồ sơ</h2>
                 <?php if ($image_error) echo "<div class='alert alert-danger'>$image_error</div>"; ?>
                 <?php if ($image_success) echo "<div class='alert alert-success'>$image_success</div>"; ?>
                 <form method="post" enctype="multipart/form-data">
                     <input type="hidden" name="update_image">
                     <div class="mb-3">
-                        <label>Upload New Image</label>
+                        <label>Tải lên hình ảnh mới</label>
                         <input type="file" class="form-control" name="user_image" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="submit" class="btn btn-primary">Cập nhật</button>
                 </form>
             </div>
 
             <!-- Update Email Form -->
             <div class="p-4 border rounded mt-1 mb-3">
-                <h2>Change Email</h2>
+                <h2>Thay đổi Email</h2>
                 <?php if ($email_error) echo "<div class='alert alert-danger'>$email_error</div>"; ?>
                 <?php if ($email_success) echo "<div class='alert alert-success'>$email_success</div>"; ?>
                 <form method="post">
                     <input type="hidden" name="update_email">
                     <div class="mb-3">
-                        <label>New Email</label>
+                        <label>Email mới</label>
                         <input type="email" class="form-control" name="new_email" value="<?php echo htmlspecialchars($current_email); ?>" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="submit" class="btn btn-primary">Cập nhật</button>
                 </form>
             </div>
         </div>

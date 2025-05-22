@@ -135,25 +135,25 @@ $totalComments = $row['total_comments'];
     <nav class="navbar navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
             <span class="hamburger" id="hamburger"><i class="bi bi-list"></i></span>
-            <span class="navbar-brand">Welcome Admin</span>
+            <span class="navbar-brand">Chào mừng Quản trị viên</span>
         </div>
     </nav>
 
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
-        <h4>Admin Panel</h4>
+        <h4>Bảng điều khiển quản trị</h4>
         <a href="admin_dashboard.php" class="bg-primary text-white">
-            <i class="bi bi-speedometer2"></i> Dashboard
+            <i class="bi bi-speedometer2"></i> Bảng điều khiển
         </a>
-        <a href="manage_users.php"><i class="bi bi-people text-warning"></i> Manage Users</a>
-        <a href="add_category.php"><i class="bi bi-folder-plus text-success"></i> Add Category</a>
-        <a href="manage_category.php"><i class="bi bi-folder text-info"></i> Manage Categories</a>
-        <a href="manage_posts.php"><i class="bi bi-file-earmark-text text-primary"></i> Manage Posted Questions</a>
-        <a href="manage_comments.php"><i class="bi bi-chat-dots text-secondary"></i> Manage Comments</a>
-        <a href="feedback.php"><i class="bi bi-chat-dots text-danger"></i> Message/Feedbacks</a>
-        <a href="change_password.php"><i class="bi bi-key text-warning"></i> Change Password</a>
-        <a href="admin_profile.php"><i class="bi bi-person-circle text-warning"></i> Profile</a>
-        <a href="admin_logout.php"><i class="bi bi-box-arrow-right text-danger"></i> Logout</a>
+        <a href="manage_users.php"><i class="bi bi-people text-warning"></i> Quản lý người dùng</a>
+        <a href="add_category.php"><i class="bi bi-folder-plus text-success"></i> Thêm danh mục</a>
+        <a href="manage_category.php"><i class="bi bi-folder text-info"></i> Quản lý danh mục</a>
+        <a href="manage_posts.php"><i class="bi bi-file-earmark-text text-primary"></i> Quản lý câu hỏi đã đăng</a>
+        <a href="manage_comments.php"><i class="bi bi-chat-dots text-secondary"></i> Quản lý bình luận</a>
+        <a href="feedback.php"><i class="bi bi-chat-dots text-danger"></i> Tin nhắn/Phản hồi</a>
+        <a href="change_password.php"><i class="bi bi-key text-warning"></i> Thay đổi mật khẩu</a>
+        <a href="admin_profile.php"><i class="bi bi-person-circle text-warning"></i> Hồ sơ</a>
+        <a href="admin_logout.php"><i class="bi bi-box-arrow-right text-danger"></i> Đăng xuất</a>
 
     </div>
 
@@ -166,7 +166,7 @@ $totalComments = $row['total_comments'];
                     <div class="card text-white bg-primary shadow">
                         <div class="card-body text-center">
                             <i class="bi bi-people display-4"></i>
-                            <h4 class="card-title mt-3">Total Users</h4>
+                            <h4 class="card-title mt-3">Tổng số người dùng</h4>
                             <p class="card-text fs-4"><?= $totalUsers ?></p>
                         </div>
                     </div>
@@ -177,7 +177,7 @@ $totalComments = $row['total_comments'];
                     <div class="card text-white bg-success shadow">
                         <div class="card-body text-center">
                             <i class="bi bi-folder display-4"></i>
-                            <h4 class="card-title mt-3">Total Categories</h4>
+                            <h4 class="card-title mt-3">Tổng số danh mục</h4>
                             <p class="card-text fs-4"><?= $totalCategories ?></p>
                         </div>
                     </div>
@@ -188,7 +188,7 @@ $totalComments = $row['total_comments'];
                     <div class="card text-white bg-warning shadow">
                         <div class="card-body text-center">
                             <i class="bi bi-file-earmark-text display-4"></i>
-                            <h4 class="card-title mt-3">Total Posts</h4>
+                            <h4 class="card-title mt-3">Tổng số bài viết</h4>
                             <p class="card-text fs-4"><?= $totalThreads ?></p>
                         </div>
                     </div>
@@ -199,7 +199,7 @@ $totalComments = $row['total_comments'];
                     <div class="card text-white bg-danger shadow">
                         <div class="card-body text-center">
                             <i class="bi bi-chat-dots display-4"></i>
-                            <h4 class="card-title mt-3">Total Comments</h4>
+                            <h4 class="card-title mt-3">Tổng số bình luận</h4>
                             <p class="card-text fs-4"><?= $totalComments ?></p>
                         </div>
                     </div>

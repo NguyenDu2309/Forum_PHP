@@ -5,40 +5,40 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="staticBackdropLabel">Signup to iDiscuss</h5>
+                        <h5 class="modal-title" id="staticBackdropLabel">Đăng ký IT Forum</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body align-item-center">
-                        <h3 class="text-center mb-4 p-2 bg-danger rounded">Please Sign Up Here</h3>
+                        <h3 class="text-center mb-4 p-2 bg-danger rounded">Đăng ký tại đây</h3>
                         <form class="w-50 mx-auto" action="Partials/_handle_signup.php" method="POST" enctype="multipart/form-data">
                             <div class="mb-3">
-                                <label for="username" class="form-label"><strong>Username </strong></label>
-                                <input type="text" class="form-control" maxlength="15" id="username" aria-describedby="emailHelp" name="username" placeholder="Enter your username" required>
+                                <label for="username" class="form-label"><strong>Tên đăng nhập </strong></label>
+                                <input type="text" class="form-control" maxlength="15" id="username" aria-describedby="emailHelp" name="username" placeholder="Nhập tên đăng nhập" required>
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label"><strong>Email</strong></label>
-                                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
-                                <div id="emailHelp" class="form-text text-danger"><strong>Please fill this carefully as it will be used for important communications.</strong></div>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Nhập email" required>
+                                <div id="emailHelp" class="form-text text-danger"><strong>Vui lòng điền thông tin này một cách cẩn thận vì nó sẽ được sử dụng cho những thông tin liên lạc quan trọng.</strong></div>
                             </div>
                             <div class="mb-3">
-                                <label for="password" class="form-label"><strong>Password</strong></label>
-                                <input type="password" class="form-control" maxlength="20" id="password" name="password" placeholder="Create a strong password" required>
+                                <label for="password" class="form-label"><strong>Mật khẩu</strong></label>
+                                <input type="password" class="form-control" maxlength="20" id="password" name="password" placeholder="Tạo mật khẩu mạnh" required>
                             </div>
                             <div class="mb-3">
-                                <label for="cpassword" class="form-label"><strong>Confirm Password </strong></label>
-                                <input type="password" class="form-control" maxlength="20" id="cpassword" name="cpassword" placeholder="Confirm your password" required>
-                                <div id="emailHelp" class="form-text"><strong>Please enter the confirm password same as password </strong></div>
+                                <label for="cpassword" class="form-label"><strong>Xác nhận mật khẩu </strong></label>
+                                <input type="password" class="form-control" maxlength="20" id="cpassword" name="cpassword" placeholder="Xác nhận mật khẩu của bạn" required>
+                                <div id="emailHelp" class="form-text"><strong>Vui lòng nhập mật khẩu xác nhận giống như mật khẩu </strong></div>
                             </div>
                             <div class="mb-3">
-                                <label for="user_image" class="form-label"><strong>Profile Image</strong></label>
+                                <label for="user_image" class="form-label"><strong>Ảnh đại diện</strong></label>
                                 <input type="file" id="user_image" name="user_image" accept="image/*">
-                                <div class="form-text">Upload a profile image (optional).</div>
+                                <div class="form-text">Tải lên ảnh đại diện (tùy chọn).</div>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100">Signup</button>
+                            <button type="submit" class="btn btn-primary w-100">Đăng ký</button>
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                     </div>
                 </div>
             </div>

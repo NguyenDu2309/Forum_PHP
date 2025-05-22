@@ -11,7 +11,7 @@
 
   <link rel="stylesheet" href="Partials/style.css">
   <link rel="icon" type="image/jpg" href="images/favicon1.jpg">
-  <title>Contact Us</title>
+  <title>Liên hệ với chúng tôi</title>
 
   <style>
     /* Contact Page Custom Styles */
@@ -163,25 +163,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="row justify-content-center">
       <div class="col-lg-8 col-md-10 col-12">
         <div class="contact-form">
-          <h2>Contact Us</h2>
+          <h2>Liên hệ với chúng tôi</h2>
           <form action="contact_form.php" method="POST">
             <div class="mb-3">
-              <label for="name" class="form-label">Full Name</label>
+              <label for="name" class="form-label">Họ và Tên</label>
               <input type="text" class="form-control" id="name" name="name" required>
             </div>
             <div class="mb-3">
-              <label for="email" class="form-label">Email Address</label>
+              <label for="email" class="form-label">Email</label>
               <input type="email" class="form-control" id="email" name="email" required>
             </div>
             <div class="mb-3">
-              <label for="subject" class="form-label">Subject</label>
+              <label for="subject" class="form-label">Môn học</label>
               <input type="text" class="form-control" id="subject" name="subject" required>
             </div>
             <div class="mb-3">
-              <label for="message" class="form-label">Your Message</label>
+              <label for="message" class="form-label">Vấn đề</label>
               <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
             </div>
-            <button type="submit" class="btn btn-block">Send Message</button>
+            <button type="submit" class="btn btn-block">Gửi</button>
           </form>
         </div>
       </div>
@@ -191,10 +191,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <div class="container-fluid">
   <div class="contact-info rounded bg-info text-white p-3 mb-3">
-    <h4>Need more assistance?</h4>
-    <p class="bg-secondary rounded-3 p-2 ">Feel free to reach out to us anytime at  
-      <a class="text-decoration-none text-white" href="mailto:np8650335794@gmail.com">
-        np8650335794@gmail.com
+    <h4>Cần thêm sự hỗ trợ?</h4>
+    <p class="bg-secondary rounded-3 p-2 ">Vui lòng liên hệ  
+      <a class="text-decoration-none text-white" href="mailto:nguyendu2004.anhuu@gmail.com">
+        nguyendu2004.anhuu@gmail.com
       </a> (clickable).
     </p>
 

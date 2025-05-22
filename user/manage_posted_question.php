@@ -211,7 +211,7 @@ $total_replies = $total_replies_result ? mysqli_fetch_row($total_replies_result)
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="user_profile.php">User Panel</a>
+            <a class="navbar-brand" href="user_profile.php">Bảng điều khiển người dùng</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -219,10 +219,10 @@ $total_replies = $total_replies_result ? mysqli_fetch_row($total_replies_result)
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="user_profile.php">Back to Dashboard</a>
+                        <a class="nav-link" href="user_profile.php">Quay lại Bảng điều khiển</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="../Partials/_handle_logout.php">Logout</a>
+                        <a class="nav-link" href="../Partials/_handle_logout.php">Đăng xuất</a>
                     </li>
                 </ul>
             </div>
@@ -231,23 +231,23 @@ $total_replies = $total_replies_result ? mysqli_fetch_row($total_replies_result)
 
     <div class="container  container1">
         <button class=" button rounded py-2 px-3 mt-2 text-white bg-dark border-0"> <a class="text-white text-decoration-none"
-                href="user_profile.php">Back to Dashboard</a></button>
+                href="user_profile.php">Quay lại Bảng điều khiển</a></button>
     </div>
     <!-- Main Content -->
     <div class="container mt-3">
-        <h2>Manage Posted Questions</h2>
+        <h2>Quản lý câu hỏi đã đăng</h2>
 
         <!-- Search Form -->
         <form class="search-bar" method="GET" action="manage_posted_question.php">
             <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Search by question"
+                <input type="text" name="search" class="form-control" placeholder="Tìm kiếm câu hỏi"
                     value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-                <button type="submit" class="btn btn-primary">Search</button>
+                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
             </div>
         </form>
 
         <?php if (isset($_GET['search']) && !empty($_GET['search'])): ?>
-            <a href="manage_posted_question.php" class="btn btn-secondary mb-3">Back to All Questions</a>
+            <a href="manage_posted_question.php" class="btn btn-secondary mb-3">Quay về các câu hỏi</a>
         <?php endif; ?>
 
         <!-- Table of Questions -->
@@ -278,11 +278,11 @@ $total_replies = $total_replies_result ? mysqli_fetch_row($total_replies_result)
                             </span>
                         </td>
                         <td class="bg-warning-subtle px-3 text-start text-wrap" style="min-width: 200px;">
-                            <span class="fw-bold text-danger"> Question: </span>
+                            <span class="fw-bold text-danger"> Câu hỏi: </span>
                             <?= htmlspecialchars($thread['thread_title']); ?>
                             <br>
-                            <span class="badge bg-info text-dark mt-2">Comments: <?= $comment_count ?></span>
-                            <span class="badge bg-success text-white mt-2">Replies: <?= $reply_count ?></span>
+                            <span class="badge bg-info text-dark mt-2">Bình luận: <?= $comment_count ?></span>
+                            <span class="badge bg-success text-white mt-2">Trả lời: <?= $reply_count ?></span>
                         </td>
                         <td class="bg-light text-muted text-center" style="min-width: 120px;">
                             <?= htmlspecialchars($thread['time']); ?>
@@ -291,13 +291,13 @@ $total_replies = $total_replies_result ? mysqli_fetch_row($total_replies_result)
                             <!-- Edit Button -->
                             <button class="btn btn-warning btn-sm mt-1 px-3" data-bs-toggle="modal"
                                 data-bs-target="#editThreadModal<?= $thread['thread_id']; ?>">
-                                ✏️ Edit
+                                ✏️ Chỉnh sửa
                             </button>
                             <!-- Delete Button -->
                             <a href="manage_posted_question.php?delete_id=<?= $thread['thread_id']; ?><?= (isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''); ?>"
                                 class="btn btn-danger btn-sm mt-1 px-3"
                                 onclick="return confirm('Are you sure you want to delete this question and its comments?');">
-                                ❌ Delete
+                                ❌ Xóa
                             </a>
                         </td>
                     </tr>
@@ -308,7 +308,7 @@ $total_replies = $total_replies_result ? mysqli_fetch_row($total_replies_result)
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="editThreadModalLabel">Edit Question</h5>
+                                    <h5 class="modal-title" id="editThreadModalLabel">Chỉnh sửa câu hỏi</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
@@ -329,11 +329,11 @@ $total_replies = $total_replies_result ? mysqli_fetch_row($total_replies_result)
                                             </div>
                                         <?php endif; ?>
                                         <div class="mb-3">
-                                            <label for="thread_image" class="form-label">Change Image (optional)</label>
+                                            <label for="thread_image" class="form-label">Thay đổi hình ảnh (Tùy chọn)</label>
                                             <input type="file" class="form-control" name="thread_image" id="thread_image" accept="image/*">
                                         </div>
                                         <input type="hidden" name="thread_id" value="<?= $thread['thread_id']; ?>">
-                                        <button type="submit" name="edit_thread" class="btn btn-primary">Save Changes</button>
+                                        <button type="submit" name="edit_thread" class="btn btn-primary">Lưu thay đổi</button>
                                     </form>
                                 </div>
                             </div>

@@ -32,16 +32,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt = $conn->prepare($insertQuery);
             $stmt->bind_param("sss", $category_name, $category_desc, $image_new_name);
             if ($stmt->execute()) {
-                echo "<script>alert('Category added successfully!'); window.location.href = 'add_category.php';</script>";
+                echo "<script>alert('Đã thêm danh mục thành công!'); window.location.href = 'add_category.php';</script>";
             } else {
-                echo "<script>alert('Error adding category!');</script>";
+                echo "<script>alert('Lỗi khi thêm danh mục!');</script>";
             }
             $stmt->close();
         } else {
-            echo "<script>alert('Invalid image file or size too large!');</script>";
+            echo "<script>alert('Tệp hình ảnh không hợp lệ hoặc kích thước quá lớn!');</script>";
         }
     } else {
-        echo "<script>alert('Please upload a category image!');</script>";
+        echo "<script>alert('Vui lòng tải lên hình ảnh danh mục!');</script>";
     }
 }
 ?>
@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="admin_dashboard.php">Admin Dashboard</a>
+            <a class="navbar-brand" href="admin_dashboard.php">Bảng điều khiển quản trị</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -108,10 +108,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="admin_dashboard.php">Back to Dashboard</a>
+                        <a class="nav-link active" href="admin_dashboard.php">Quay lại Bảng điều khiển</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="admin_logout.php">Logout</a>
+                        <a class="nav-link" href="admin_logout.php">Đăng xuất</a>
                     </li>
                 </ul>
             </div>
@@ -120,26 +120,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <!-- Main Content -->
     <div class="container">
-        <h2 class="mb-4">Add New Category</h2>
-        <a href="manage_category.php" class="btn btn-secondary mb-4">Back to Categories</a>
+        <h2 class="mb-4">Thêm danh mục mới</h2>
+        <a href="manage_category.php" class="btn btn-secondary mb-4">Quay lại danh mục</a>
 
         <form action="add_category.php" method="POST" enctype="multipart/form-data" class="form-group">
             <div class="mb-3">
-                <label for="category_name" class="form-label">Category Name</label>
+                <label for="category_name" class="form-label">Tên danh mục</label>
                 <input type="text" name="category_name" id="category_name" class="form-control" required>
             </div>
 
             <div class="mb-3">
-                <label for="category_desc" class="form-label">Category Description</label>
+                <label for="category_desc" class="form-label">Mô tả danh mục</label>
                 <textarea name="category_desc" id="category_desc" class="form-control" rows="4" required></textarea>
             </div>
 
             <div class="mb-3">
-                <label for="category_image" class="form-label">Category Image</label>
+                <label for="category_image" class="form-label">Hình ảnh danh mục</label>
                 <input type="file" name="category_image" id="category_image" class="form-control" accept="image/*" required>
             </div>
 
-            <button type="submit" class="btn btn-primary">Add Category</button>
+            <button type="submit" class="btn btn-primary">Thêm danh mục</button>
         </form>
     </div>
 

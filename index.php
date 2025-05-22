@@ -109,7 +109,7 @@
 
   <!-- Categories Section -->
   <div class="container mt-4">
-    <h3 class="text-center bg-danger p-2 rounded">Categories</h3>
+    <h3 class="text-center bg-danger p-2 rounded">Danh mục</h3>
 
     <!-- Grid Layout for Categories -->
     <div class="row g-4 my-2">
@@ -135,7 +135,7 @@
                   </a>
                 </h4>
                 <p class="card-text">' . substr($fetch['category_desc'], 0, 90) . '... </p>
-                <a href="thread_list.php?id=' . $fetch['category_id'] . '" class="btn btn-primary">Visit thread</a>
+                <a href="thread_list.php?id=' . $fetch['category_id'] . '" class="btn btn-primary">Xem chủ đề</a>
               </div>
             </div>
           </div>';

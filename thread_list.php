@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
         <link rel="icon" type="image/jpg" href="images/favicon1.jpg">
 
-        <title>threads</title>
+        <title>Bài đăng</title>
         <style>
                  .media-body p {
                         word-wrap: break-word; /* Allow long words to break */
@@ -92,12 +92,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php if (isset($message)) : ?>
                 <?php if($message == "success"): ?>
                             <div class="alert alert-success alert-dismissible fade show " role="alert">
-                                     <strong class="ms-1">✔successfully! </strong> posted wait for others reply.
+                                     <strong class="ms-1">✔Thành công! </strong> đã đăng chờ người khác trả lời.
                                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
                     <?php elseif ($message == "failed"): ?>
                             <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                         <strong class="ms-1">Error!</strong> Your question did not post due to some reason please try again.
+                                         <strong class="ms-1">Lỗi!</strong> Vì lý do nào đó mà câu hỏi của bạn không được đăng. Vui lòng thử lại.
                                              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                          </div>
                     <?php endif; ?>
@@ -114,18 +114,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 echo '<div class="container my-4">
                                                                         <div class="col-lg-12">
                                                                                         <div class="h-50 p-3 bg-light border rounded-3">
-                                                                                            <h2> Welcome to ' . $fetch['category_name'] . ' </h2>
+                                                                                            <h2> Chào mừng đến ' . $fetch['category_name'] . ' </h2>
                                                                                             <p class="p-3"> ' . $fetch['category_desc'] . ' </p>
                                                                                             <hr>';
 
                                 if (isset($_SESSION["username"])) {
-                                        echo '<p> Welcome : <span class ="fw-bold text-danger">' . $_SESSION["username"] . '</span></p> ';
+                                        echo '<p> Xin chào : <span class ="fw-bold text-danger">' . $_SESSION["username"] . '</span></p> ';
                                         echo '<hr>';
                                 }
 
                                 echo '
-                                                                                            <h4 class="p-0"> Rules: </h4>
-                                                                                            <p class="p-3">  Be Respectful and Courteous || Stay On Topic || No Spamming or Advertising || Use Appropriate Language || No Illegal Activities || No Offensive Content</p>
+                                                                                            <h4 class="p-0"> Quy định: </h4>
+                                                                                            <p class="p-3">  Hãy tôn trọng và lịch sự || Giữ đúng chủ đề || Không spam hoặc quảng cáo || Sử dụng ngôn ngữ phù hợp || Không trao đổi hoạt động bất hợp pháp || Không xúc phạm</p>
                                                                                         </div>
                                                                                     </div>
                                                                             </div>';
@@ -140,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         <!-- using media object using bs 4.5 by which we will show users queries -->
         <div class="container my-3">
-                <h3 class="p-2 my-3 bg-danger rounded"> Posts </h3>
+                <h3 class="p-2 my-3 bg-danger rounded"> Các bài đăng </h3>
 
                 <!-- now we will show thread queries using the thread table and here we are fetching it -->
                 <?php
@@ -213,31 +213,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 ?>
         </div>
 
-        <!-- Di chuyển form hỏi đáp xuống đây -->
         <div class="container">
             <hr>
             <?php
             if (isset($_SESSION['username'])) {
                 echo '
-                <h3 class="p-2 bg-danger rounded"> Ask questions here </h3>
+                <h3 class="p-2 bg-danger rounded"> Đăng bài tại đây </h3>
                 <form class="my-3" action="' . ($_SERVER["PHP_SELF"]) . '?id=' . $_GET["id"] . '" method="POST" enctype="multipart/form-data">
                     <div class="mb-3">
-                        <label for="titles" class="form-label">Question title</label>
-                        <input type="text" class="form-control" placeholder="Enter your question title" id="titles" aria-describedby="emailHelp" name="title">
-                        <div id="emailHelp" class="form-text" name="title">Question title should be understable and simple-short way</div>
+                        <label for="titles" class="form-label">Tiêu đề</label>
+                        <input type="text" class="form-control" placeholder="Nhập tiêu đề câu hỏi của bạn" id="titles" aria-describedby="emailHelp" name="title">
+                        <div id="emailHelp" class="form-text" name="title">Tiêu đề câu hỏi phải dễ hiểu và ngắn gọn</div>
                     </div>
                     <div class="mb-3">
-                        <label for="description" class="form-label">Full explaination</label>
+                        <label for="description" class="form-label">Giải thích đầy đủ</label>
                         <div class="form-floating">
                             <textarea class="form-control"  id="floatingTextarea2" style="height: 100px" name="desc"  ></textarea>
-                            <label for="floatingTextarea2"  id="description">Explain your question in detail</label>
+                            <label for="floatingTextarea2"  id="description">Giải thích câu hỏi của bạn một cách chi tiết</label>
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="thread_image" class="form-label">Upload Image (optional)</label>
+                        <label for="thread_image" class="form-label">Tải lên hình ảnh (tùy chọn)</label>
                         <input type="file" class="form-control" id="thread_image" name="thread_image" accept="image/*">
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-primary">Đăng</button>
                 </form>
                 ';
             } else {

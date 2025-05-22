@@ -33,9 +33,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
             $stmt->bind_param("ssi", $new_username, $hashed_password, $admin_id);
             $stmt->execute();
             $stmt->close();
-            echo "<script>alert('Profile updated successfully!'); window.location.href = 'admin_profile.php';</script>";
+            echo "<script>alert('Hồ sơ đã được cập nhật thành công!'); window.location.href = 'admin_profile.php';</script>";
         } else {
-            echo "<script>alert('Passwords do not match!'); window.location.href = 'admin_profile.php'; </script>";
+            echo "<script>alert('Mật khẩu không khớp!'); window.location.href = 'admin_profile.php'; </script>";
         }
     } else {
         // Update only the username
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="admin_dashboard.php">Admin Dashboard</a>
+            <a class="navbar-brand" href="admin_dashboard.php">Bảng điều khiển quản trị</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -98,10 +98,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="admin_dashboard.php">Back to Dashboard</a>
+                        <a class="nav-link" href="admin_dashboard.php">Quay lại Bảng điều khiển</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="admin_logout.php">Logout</a>
+                        <a class="nav-link" href="admin_logout.php">Đăng xuất</a>
                     </li>
                 </ul>
             </div>
@@ -114,33 +114,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
-                        <h3>Admin Profile</h3>
+                        <h3>Hồ sơ quản trị</h3>
                     </div>
                     <div class="card-body">
                         <!-- Profile View -->
                         <div id="profile-view">
-                            <p><strong>Username:</strong> <?php echo htmlspecialchars($admin_username); ?></p>
-                            <p><strong>Password:</strong> <?php echo htmlspecialchars($admin_password); ?></p>
-                            <button class="btn btn-primary" onclick="toggleEditMode()">Change</button>
+                            <p><strong>Tên đăng nhập:</strong> <?php echo htmlspecialchars($admin_username); ?></p>
+                            <p><strong>Mật khẩu:</strong> <?php echo htmlspecialchars($admin_password); ?></p>
+                            <button class="btn btn-primary" onclick="toggleEditMode()">Thay đổi</button>
                         </div>
 
                         <!-- Profile Edit -->
                         <div id="profile-edit" class="d-none">
                             <form method="POST" action="admin_profile.php">
                                 <div class="mb-3">
-                                    <label for="new_username" class="form-label">New Username</label>
+                                    <label for="new_username" class="form-label">Tên đăng nhập mới</label>
                                     <input type="text" class="form-control" id="new_username" name="new_username" value="<?php echo htmlspecialchars($admin_username); ?>" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="new_password" class="form-label">New Password (optional)</label>
+                                    <label for="new_password" class="form-label">Mật khẩu mới (tùy chọn)</label>
                                     <input type="password" class="form-control" id="new_password" name="new_password">
                                 </div>
                                 <div class="mb-3">
-                                    <label for="confirm_password" class="form-label">Confirm New Password</label>
+                                    <label for="confirm_password" class="form-label">Xác nhận mật khẩu mới</label>
                                     <input type="password" class="form-control" id="confirm_password" name="confirm_password">
                                 </div>
-                                <button type="submit" name="update" class="btn btn-success">Save Changes</button>
-                                <a href="admin_dashboard.php" class="btn btn-secondary">Cancel</a>
+                                <button type="submit" name="update" class="btn btn-success">Lưu thay đổi</button>
+                                <a href="admin_dashboard.php" class="btn btn-secondary">Hủy</a>
                             </form>
                         </div>
                     </div>

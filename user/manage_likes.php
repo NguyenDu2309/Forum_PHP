@@ -82,7 +82,7 @@ $stmt->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liked Comments</title>
+    <title>Bình luận đã thích</title>
     <link rel="icon" type="image/jpg" href="/Forum_website/images/favicon1.jpg">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -160,7 +160,7 @@ $stmt->close();
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="user_profile.php">User Panel</a>
+            <a class="navbar-brand" href="user_profile.php">Bảng điều khiển người dùng</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -168,10 +168,10 @@ $stmt->close();
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                    <li class="nav-item">
-                         <a class="nav-link" href="user_profile.php">Back to Dashboard</a>
+                         <a class="nav-link" href="user_profile.php">Trở về Bảng điều khiển</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="../Partials/_handle_logout.php">Logout</a>
+                        <a class="nav-link" href="../Partials/_handle_logout.php">Đăng xuất</a>
                     </li>
                 </ul>
             </div>
@@ -181,12 +181,12 @@ $stmt->close();
     <div class="container main-container">
 
     <div class="container1 mt-5">
-    <button  class=" button rounded py-2 px-3 mt-2 text-white bg-dark border-0"> <a class="text-white text-decoration-none" href="user_profile.php">Back to Dashboard</a></button>
+    <button  class=" button rounded py-2 px-3 mt-2 text-white bg-dark border-0"> <a class="text-white text-decoration-none" href="user_profile.php">Trở về Bảng điều khiển</a></button>
     </div>
 
     <!-- Main Content -->
     <div class="container mt-3">
-        <h2>Liked Comments</h2>
+        <h2>Bình luận đã thích</h2>
        <div class="table-responsive">
             <table class="table table-bordered table-hover text-center">
                 <tbody>
@@ -196,15 +196,15 @@ $stmt->close();
                     <tr class="align-middle">
                         <td class="bg-secondary text-center fw-bold mt-3"><?= $serial++; ?></td>
                         <td class="bg-secondary-subtle px-3 w-auto text-start text-wrap" style="min-width: 150px;">
-                             <span class="fw-bold text-primary"> Question Posted by: </span>
+                             <span class="fw-bold text-primary"> Câu hỏi được đăng bởi: </span>
                             <?= htmlspecialchars($like['thread_user_name']); ?>
                         </td>
                         <td class="bg-light px-3 w-auto text-start text-wrap" style="min-width: 180px;">
-                            <span class="fw-bold text-success"> Question: </span>
+                            <span class="fw-bold text-success"> Câu hỏi: </span>
                                 <?= htmlspecialchars($like['thread_title']); ?>
                            </td>
                         <td class="bg-warning-subtle px-3 w-auto text-start text-wrap" style="min-width: 200px;">
-                             <span class="fw-bold text-danger"> Comment: </span>
+                             <span class="fw-bold text-danger"> Bình luận: </span>
                             <?= htmlspecialchars($like['comment']); ?>
                          </td>
                         <td class="bg-light text-muted text-center w-auto" style="min-width: 120px;">
@@ -214,7 +214,7 @@ $stmt->close();
                             <a href="manage_likes.php?unlike_id=<?= $like['comment_id']; ?>"
                                 class="btn btn-danger btn-sm mt-1 px-3"
                                 onclick="return confirm('Are you sure you want to unlike this comment?');">
-                                ❌ Unlike
+                                ❌ Bỏ thích
                             </a>
                         </td>
                     </tr>

@@ -80,7 +80,7 @@ if (isset($_GET['delete_id'])) {
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="admin_dashboard.php">Admin Dashboard</a>
+            <a class="navbar-brand" href="admin_dashboard.php">Bảng điều khiển quản trị</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -88,10 +88,10 @@ if (isset($_GET['delete_id'])) {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="admin_dashboard.php">Back to Dashboard</a>
+                        <a class="nav-link" href="admin_dashboard.php">Quay lại Bảng điều khiển</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="admin_logout.php">Logout</a>
+                        <a class="nav-link" href="admin_logout.php">Đăng xuất</a>
                     </li>
                 </ul>
             </div>
@@ -100,28 +100,28 @@ if (isset($_GET['delete_id'])) {
 
     <!-- Main Content -->
     <div class="container">
-        <h2>Manage Posts</h2>
+        <h2>Quản lý bài viết</h2>
 
         <!-- Search Form -->
         <form class="search-bar" method="GET" action="manage_posts.php">
             <input type="text" name="search" class="form-control" placeholder="Search by title or author"
                 value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-            <button type="submit" class="btn btn-primary mt-2">Search</button>
+            <button type="submit" class="btn btn-primary mt-2">Tìm kiếm</button>
         </form>
 
         <?php if (isset($_GET['search']) && !empty($_GET['search'])): ?>
-        <a href="manage_posts.php" class="btn btn-secondary mb-3">Back to All Posts</a>
+        <a href="manage_posts.php" class="btn btn-secondary mb-3">Quay lại tất cả bài viết</a>
         <?php endif; ?>
 
         <table class="table table-bordered">
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Post Title</th>
-                    <th>Author</th>
-                    <th>Category</th>
-                    <th>Created At</th>
-                    <th>Actions</th>
+                    <th>Tên bài viết</th>
+                    <th>Tác giả</th>
+                    <th>Danh mục</th>
+                    <th>Được tạo lúc</th>
+                    <th>Hành động</th>
                 </tr>
             </thead>
             <tbody>
@@ -136,7 +136,7 @@ if (isset($_GET['delete_id'])) {
                     <td><?= htmlspecialchars($post['time']); ?></td>
                     <td>
                         <a href="manage_posts.php?delete_id=<?= $post['thread_id']; ?>" class="btn btn-danger btn-sm"
-                            onclick="return confirm('Are you sure you want to delete this post?');">Delete</a>
+                            onclick="return confirm('Bạn có chắc chắn muốn xóa bài viết này không?');">Xóa</a>
                     </td>
                 </tr>
                 <?php endwhile; ?>

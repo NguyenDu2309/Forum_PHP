@@ -51,10 +51,10 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                   <a class=" dropdown-item m text-white " href="#" data-bs-toggle="modal" data-bs-target="#loginModal"> User Login</a>
+                   <a class=" dropdown-item m text-white " href="#" data-bs-toggle="modal" data-bs-target="#loginModal"> Đăng nhập người dùng</a>
                 </li>
                 <li class="nav-item">
-                    <a class=" dropdown-item m text-white " href="#" data-bs-toggle="modal" data-bs-target="#loginModal"> Sign up</a>
+                    <a class=" dropdown-item m text-white " href="#" data-bs-toggle="modal" data-bs-target="#loginModal"> Đăng ký</a>
                 </li>
             </ul>
         </div>
@@ -66,7 +66,7 @@
     <div class="row justify-content-center">
         <div class="col-md-6 mt-5">
             <div class="card shadow-lg p-4">
-                <h2 class="text-center mb-4 ">Reset Credentials</h2>
+                <h2 class="text-center mb-4 ">Đặt lại thông tin xác thực</h2>
 
                 <?php if (isset($_SESSION['message'])): ?>
                     <div class="alert alert-info"><?php echo $_SESSION['message']; unset($_SESSION['message']); ?></div>
@@ -74,10 +74,10 @@
 
                 <form action="_all_otp_process.php" method="post">
                     <div class="mb-3">
-                        <label for="email" class="form-label">Enter your registered email address:</label>
+                        <label for="email" class="form-label">Nhập địa chỉ email đã đăng ký của bạn:</label>
                         <input type="email" class="form-control" id="email" name="email" required>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100" name="send_otp">Send OTP</button>
+                    <button type="submit" class="btn btn-primary w-100" name="send_otp">Gửi OTP</button>
                 </form>
             </div>
         </div>

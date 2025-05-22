@@ -93,7 +93,7 @@ $conn->close();
  <!-- Navbar -->
  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="user_profile.php">User Panel</a>
+            <a class="navbar-brand" href="user_profile.php">Bảng điều khiển người dùng</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -101,10 +101,10 @@ $conn->close();
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                         <a class="nav-link" href="user_profile.php">Back to Dashboard</a>
+                         <a class="nav-link" href="user_profile.php">Về bảng điều khiển</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="../Partials/_handle_logout.php">Logout</a>
+                        <a class="nav-link" href="../Partials/_handle_logout.php">Đăng xuất</a>
                     </li>
                 </ul>
             </div>
@@ -122,19 +122,19 @@ $conn->close();
             <div class="row">
                 <div class="col">
                     <h5><?= $post_result['total_posts'] ?></h5>
-                    <p class="text-muted">Total Posts</p>
+                    <p class="text-muted">Tổng số bài đăng</p>
                 </div>
                 <div class="col">
                     <h5><?= $comment_result['total_comments'] ?></h5>
-                    <p class="text-muted">Total Comments</p>
+                    <p class="text-muted">Tổng số bình luận</p>
                 </div>
             </div>
 
             <a href="manage_account.php" class="btn btn-primary w-100">
-                <i class="bi bi-pencil-square"></i> Edit Profile
+                <i class="bi bi-pencil-square"></i> Chỉnh sửa thông tin cá nhân
             </a>
             <a href="javascript:history.back()" class="btn btn-secondary mt-2 w-100 btn-back">
-                <i class="bi bi-arrow-left me-1"></i> Back
+                <i class="bi bi-arrow-left me-1"></i> Trở về
             </a>
         </div>
     </div>

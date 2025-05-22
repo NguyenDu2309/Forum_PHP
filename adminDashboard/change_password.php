@@ -33,16 +33,16 @@ if (isset($_POST['submit'])) {
             $stmt->bind_param("si", $new_password, $admin_id);
 
             if ($stmt->execute()) {
-                echo "<script>alert('Password changed successfully!'); window.location.href = 'admin_dashboard.php';</script>";
+                echo "<script>alert('Thay đổi mật khẩu thành công!'); window.location.href = 'admin_dashboard.php';</script>";
             } else {
-                echo "<script>alert('Error updating password!');</script>";
+                echo "<script>alert('Lỗi khi cập nhật mật khẩu!');</script>";
             }
             $stmt->close();
         } else {
-            echo "<script>alert('New password and confirm password do not match!');</script>";
+            echo "<script>alert('Mật khẩu mới và mật khẩu xác nhận không khớp!');</script>";
         }
     } else {
-        echo "<script>alert('Current password is incorrect!');</script>";
+        echo "<script>alert('Mật khẩu hiện tại không đúng!');</script>";
     }
 }
 ?>
@@ -69,7 +69,7 @@ if (isset($_POST['submit'])) {
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="admin_dashboard.php">Admin Dashboard</a>
+            <a class="navbar-brand" href="admin_dashboard.php">Bảng điều khiển quản trị</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -77,10 +77,10 @@ if (isset($_POST['submit'])) {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="admin_dashboard.php">Back to Dashboard</a>
+                        <a class="nav-link" href="admin_dashboard.php">Quay lại Bảng điều khiển</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="admin_logout.php">Logout</a>
+                        <a class="nav-link" href="admin_logout.php">Đăng xuất</a>
                     </li>
                 </ul>
             </div>
@@ -89,22 +89,22 @@ if (isset($_POST['submit'])) {
 
     <!-- Main Content -->
     <div class="container">
-        <h2 class="mb-4">Change Password</h2>
+        <h2 class="mb-4">Thay đổi mật khẩu</h2>
 
         <form method="POST" action="change_password.php">
             <div class="mb-3">
-                <label for="current_password" class="form-label">Current Password</label>
+                <label for="current_password" class="form-label">Mật khẩu hiện tại</label>
                 <input type="password" class="form-control" id="current_password" name="current_password" required>
             </div>
             <div class="mb-3">
-                <label for="new_password" class="form-label">New Password</label>
+                <label for="new_password" class="form-label">Mật khẩu mới</label>
                 <input type="password" class="form-control" id="new_password" name="new_password" required>
             </div>
             <div class="mb-3">
-                <label for="confirm_password" class="form-label">Confirm New Password</label>
+                <label for="confirm_password" class="form-label">Xác nhận mật khẩu mới</label>
                 <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
             </div>
-            <button type="submit" name="submit" class="btn btn-primary">Change Password</button>
+            <button type="submit" name="submit" class="btn btn-primary">Thay đổi mật khẩu</button>
         </form>
     </div>
 

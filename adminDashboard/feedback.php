@@ -19,7 +19,7 @@ $result = mysqli_query($conn, $query);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Feedbacks</title>
+    <title>Xem phản hồi</title>
     <link rel="icon" type="image/jpg" href="/Forum_website/images/favicon1.jpg">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -84,7 +84,7 @@ $result = mysqli_query($conn, $query);
    <!-- Navbar -->
    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="admin_dashboard.php">Admin Dashboard</a>
+            <a class="navbar-brand" href="admin_dashboard.php">Bảng điều khiển quản trị</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -92,10 +92,10 @@ $result = mysqli_query($conn, $query);
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="admin_dashboard.php">Back to Dashboard</a>
+                        <a class="nav-link active" href="admin_dashboard.php">Quay lại Bảng điều khiển</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="admin_logout.php">Logout</a>
+                        <a class="nav-link" href="admin_logout.php">Đăng xuất</a>
                     </li>
                 </ul>
             </div>
@@ -105,7 +105,7 @@ $result = mysqli_query($conn, $query);
     <!-- Main Content -->
     <div class="main-content" id="main-content">
         <div class="container">
-            <h2 class=" mb-4">All Feedbacks</h2>
+            <h2 class=" mb-4">Tất cả phản hồi</h2>
 
             <div class="table-container">
                 <!-- Feedback Table -->
@@ -113,11 +113,11 @@ $result = mysqli_query($conn, $query);
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Name</th>
+                            <th>Tên</th>
                             <th>Email</th>
-                            <th>Subject</th>
-                            <th>Message</th>
-                            <th>Submitted At</th>
+                            <th>Môn học</th>
+                            <th>Tin nhắn</th>
+                            <th>Đã nộp lúc</th>
                         </tr>
                     </thead>
                     <tbody>

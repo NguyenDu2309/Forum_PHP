@@ -50,16 +50,16 @@ if (isset($_POST['send_otp'])) {
         $mail->Body = "
             <div style='max-width: 600px; margin: auto; font-family: Arial, sans-serif; border: 1px solid #ddd; padding: 20px; border-radius: 10px; background-color: #f9f9f9;'>
                 <div style='text-align: center; padding-bottom: 10px;'>
-                    <h2 style='color: #333; margin-bottom: 5px;'>🔒 Password Reset Request</h2>
-                    <p style='color: #555;'>You're receiving this email because a request was made to reset your password.</p>
+                    <h2 style='color: #333; margin-bottom: 5px;'>🔒 Yêu cầu đặt lại mật khẩu</h2>
+                    <p style='color: #555;'>Bạn nhận được email này vì có yêu cầu đặt lại mật khẩu của bạn.</p>
                 </div>
                 <div style='text-align: center; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);'>
-                    <h3 style='color: #007bff; margin-bottom: 10px;'>Your OTP Code:</h3>
+                    <h3 style='color: #007bff; margin-bottom: 10px;'>Mã OTP của bạn:</h3>
                     <p style='font-size: 24px; font-weight: bold; color: #d9534f; margin: 10px 0;'>$otp</p>
-                    <p style='color: #777; font-size: 14px;'>This OTP is valid for <b>3 minutes</b>. Do not share it with anyone.</p>
+                    <p style='color: #777; font-size: 14px;'>OTP này có hiệu lực trong <b>3 phút</b>. Không chia sẻ nó với bất kỳ ai.</p>
                 </div>
                 <div style='margin-top: 20px; text-align: center;'>
-                    <p style='color: #666; font-size: 14px;'>If you did not request this, please ignore this email or contact support.</p>
+                    <p style='color: #666; font-size: 14px;'>Nếu bạn không yêu cầu điều này, vui lòng bỏ qua email này hoặc liên hệ với bộ phận hỗ trợ.</p>
                     <p style='color: #999; font-size: 12px;'>© 2025 IT Forum. All rights reserved.</p>
                 </div>
             </div>

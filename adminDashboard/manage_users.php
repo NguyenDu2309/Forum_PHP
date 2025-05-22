@@ -57,10 +57,10 @@ if (isset($_GET['delete'])) {
         // Commit transaction
         $conn->commit();
 
-        echo "<script>alert('User and all related data deleted successfully!'); window.location.href = 'manage_users.php';</script>";
+        echo "<script>alert('Người dùng và tất cả dữ liệu liên quan đã được xóa thành công!'); window.location.href = 'manage_users.php';</script>";
     } catch (Exception $e) {
         $conn->rollback();
-        echo "<script>alert('Error deleting user data: " . addslashes($e->getMessage()) . "');</script>";
+        echo "<script>alert('Lỗi khi xóa dữ liệu người dùng: " . addslashes($e->getMessage()) . "');</script>";
     }
 }
 
@@ -79,7 +79,7 @@ if (!$result) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Users</title>
+    <title>Quản lý người dùng</title>
     <link rel="icon" type="image/jpg" href="/Forum_website/images/favicon1.jpg">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -125,7 +125,7 @@ if (!$result) {
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="admin_dashboard.php">Admin Dashboard</a>
+            <a class="navbar-brand" href="admin_dashboard.php">Bảng điều khiển quản trị</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -133,10 +133,10 @@ if (!$result) {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="admin_dashboard.php">Back to Dashboard</a>
+                        <a class="nav-link active" href="admin_dashboard.php">Quay lại Bảng điều khiển</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="admin_logout.php">Logout</a>
+                        <a class="nav-link" href="admin_logout.php">Đăng xuất</a>
                     </li>
                 </ul>
             </div>
@@ -145,17 +145,17 @@ if (!$result) {
 
     <!-- Main Content -->
     <div class="container">
-        <h2 class="mb-4">Manage Users</h2>
-        <a href="admin_dashboard.php" class="btn btn-secondary mb-4">Back to Dashboard</a>
+        <h2 class="mb-4">Quản lý người dùng</h2>
+        <a href="admin_dashboard.php" class="btn btn-secondary mb-4">Quay lại Bảng điều khiển</a>
 
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Username</th>
-                        <th>Last Login</th>
-                        <th>Actions</th>
+                        <th>Tên</th>
+                        <th>Đăng nhập lần cuối</th>
+                        <th>Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -168,14 +168,14 @@ if (!$result) {
                                 <td><?= htmlspecialchars($row['user_name']); ?></td>
                                 <td><?= htmlspecialchars($row['login_time']); ?></td>
                                 <td>
-                                    <a href="user_activity.php?user=<?= htmlspecialchars($row['user_name']); ?>" class="btn btn-primary btn-sm mt-1">View Posts & Comments</a>
-                                    <a href="manage_users.php?delete=<?= htmlspecialchars($row['user_id']); ?>" class="btn btn-danger btn-sm mt-1" onclick="return confirmDelete(<?= $row['user_id']; ?>);">Delete Account</a>
+                                    <a href="user_activity.php?user=<?= htmlspecialchars($row['user_name']); ?>" class="btn btn-primary btn-sm mt-1">Xem bài viết & bình luận</a>
+                                    <a href="manage_users.php?delete=<?= htmlspecialchars($row['user_id']); ?>" class="btn btn-danger btn-sm mt-1" onclick="return confirmDelete(<?= $row['user_id']; ?>);">Xóa tài khoản</a>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="4" class="text-center">No users found!</td>
+                            <td colspan="4" class="text-center">Không tìm thấy người dùng nào!</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>

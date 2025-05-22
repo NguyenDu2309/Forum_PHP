@@ -114,7 +114,7 @@ if (!$result_threads || !$result_comments) {
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="admin_dashboard.php">Admin Dashboard</a>
+            <a class="navbar-brand" href="admin_dashboard.php">Bảng điều khiển quản trị</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -122,10 +122,10 @@ if (!$result_threads || !$result_comments) {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="admin_dashboard.php">Back to Dashboard</a>
+                        <a class="nav-link active" href="admin_dashboard.php">Quay lại Bảng điều khiển</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="admin_logout.php">Logout</a>
+                        <a class="nav-link" href="admin_logout.php">Đăng xuất</a>
                     </li>
                 </ul>
             </div>
@@ -134,19 +134,19 @@ if (!$result_threads || !$result_comments) {
 
     <!-- Main Content -->
     <div class="container">
-        <h2 class="mb-4"><?= $user_name ?>'s Activity</h2>
-        <a href="manage_users.php" class="btn btn-secondary mb-4">Back to Manage Users</a>
+        <h2 class="mb-4">Hoạt động của <?= $user_name ?> </h2>
+        <a href="manage_users.php" class="btn btn-secondary mb-4">Quay lại Quản lý người dùng</a>
 
         <!-- Posted Questions (Threads) -->
-        <h3 class="mb-3">Posted Questions</h3>
+        <h3 class="mb-3">Câu hỏi đã đăng</h3>
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>Thread Title</th>
-                        <th>Thread Description</th>
-                        <th>Posted Time</th>
-                        <th>Actions</th>
+                        <th>Tiêu đề</th>
+                        <th>Mô tả chủ đề</th>
+                        <th>Thời gian đăng</th>
+                        <th>Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -157,13 +157,13 @@ if (!$result_threads || !$result_comments) {
                                 <td><?= htmlspecialchars($row['thread_desc']); ?></td>
                                 <td><?= htmlspecialchars($row['time']); ?></td>
                                 <td>
-                                    <a href="delete_post.php?thread_id=<?= htmlspecialchars($row['thread_id']); ?>" class="btn btn-danger btn-sm mt-1" onclick="return confirm('Are you sure you want to delete this post?');">Delete Post</a>
+                                    <a href="delete_post.php?thread_id=<?= htmlspecialchars($row['thread_id']); ?>" class="btn btn-danger btn-sm mt-1" onclick="return confirm('Bạn có chắc chắn muốn xóa bài viết này không?');">Xóa bài viết</a>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="4" class="text-center">No posts found!</td>
+                            <td colspan="4" class="text-center">Không tìm thấy bài viết nào!</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
@@ -171,15 +171,15 @@ if (!$result_threads || !$result_comments) {
         </div>
 
         <!-- Comments by the User -->
-        <h3 class="mb-3">Comments</h3>
+        <h3 class="mb-3">Bình luận</h3>
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>Thread Title</th>
-                        <th>Comment</th>
-                        <th>Comment Time</th>
-                        <th>Actions</th>
+                        <th>Tiêu đề</th>
+                        <th>Bình luận</th>
+                        <th>Thời gian bình luận</th>
+                        <th>Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -190,13 +190,13 @@ if (!$result_threads || !$result_comments) {
                                 <td><?= htmlspecialchars($row['comment']); ?></td>
                                 <td><?= htmlspecialchars($row['comment_time']); ?></td>
                                 <td>
-                                    <a href="delete_comment.php?comment_id=<?= htmlspecialchars($row['comment_id']); ?>" class="btn btn-danger btn-sm mt-1" onclick="return confirm('Are you sure you want to delete this comment?');">Delete Comment</a>
+                                    <a href="delete_comment.php?comment_id=<?= htmlspecialchars($row['comment_id']); ?>" class="btn btn-danger btn-sm mt-1" onclick="return confirm('Bạn có chắc chắn muốn xóa bình luận này không?');">Xóa bình luận</a>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="4" class="text-center">No comments found!</td>
+                            <td colspan="4" class="text-center">Không tìm thấy bình luận nào!</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>

@@ -17,7 +17,7 @@ $otp_valid = $remaining_time > 0;
 if (!$otp_valid) {
     unset($_SESSION['otp']);
     unset($_SESSION['otp_time']);
-    $_SESSION['message'] = "❌ OTP has expired. Please resend OTP.";
+    $_SESSION['message'] = "❌ OTP đã hết hạn. Vui lòng gửi lại OTP.";
 }
 
 // Handle OTP verification
@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_otp = $_POST['otp'];
 
     if ($otp_valid && isset($_SESSION['otp']) && $_SESSION['otp'] == $user_otp) {
-        $_SESSION['message'] = "✅ OTP Verified Successfully!";
+        $_SESSION['message'] = "✅ Đã xác minh OTP thành công!";
         unset($_SESSION['otp']); 
         unset($_SESSION['otp_time']);
         header("Location: _change_credentials.php");
@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forgot Password</title>
+    <title>Quên mật khẩu</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="icon" type="image/jpg" href="../images/favicon1.jpg">
@@ -81,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container-fluid">
-        <a class="navbar-brand" href="../index.php">iDiscuss</a>
+        <a class="navbar-brand" href="../index.php">IT Forum</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -89,10 +89,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                   <a class=" dropdown-item m text-white " href="#" data-bs-toggle="modal" data-bs-target="#loginModal"> User Login</a>
+                   <a class=" dropdown-item m text-white " href="#" data-bs-toggle="modal" data-bs-target="#loginModal"> Quên mật khẩu</a>
                 </li>
                 <li class="nav-item">
-                    <a class=" dropdown-item m text-white " href="#" data-bs-toggle="modal" data-bs-target="#loginModal"> Sign up</a>
+                    <a class=" dropdown-item m text-white " href="#" data-bs-toggle="modal" data-bs-target="#loginModal"> Đăng ký</a>
                 </li>
             </ul>
         </div>
@@ -106,7 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="row justify-content-center mt-5">
         <div class="col-md-6">
             <div class="card shadow-lg p-4">
-                <h2 class="text-center mb-4">Enter OTP</h2>
+                <h2 class="text-center mb-4">Nhập OTP</h2>
 
                 <?php if (isset($_SESSION['message'])): ?>
                     <div class="alert alert-info text-center"><?php echo $_SESSION['message']; unset($_SESSION['message']); ?></div>
@@ -114,15 +114,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <form action="" method="post">
                     <div class="mb-3">
-                        <label for="otp" class="form-label">Enter OTP sent to your email:</label>
+                        <label for="otp" class="form-label">Nhập OTP được gửi đến email của bạn:</label>
                         <input type="text" class="form-control" id="otp" name="otp" required <?php echo !$otp_valid ? 'disabled' : ''; ?>>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100" <?php echo !$otp_valid ? 'disabled' : ''; ?>>Verify OTP</button>
+                    <button type="submit" class="btn btn-primary w-100" <?php echo !$otp_valid ? 'disabled' : ''; ?>>Xác minh OTP</button>
                 </form>
 
                 <!-- Resend OTP Button -->
                 <form action="_resend_otp.php" method="post" class="mt-3">
-                    <button type="submit" class="btn btn-secondary w-100" id="resendBtn" <?php echo $otp_valid ? 'disabled' : ''; ?>>Resend OTP</button>
+                    <button type="submit" class="btn btn-secondary w-100" id="resendBtn" <?php echo $otp_valid ? 'disabled' : ''; ?>>Gửi lại OTP</button>
                 </form>
             </div>
         </div>

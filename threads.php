@@ -323,7 +323,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="icon" type="image/jpg" href="images/favicon1.jpg">
     
-    <title>threads</title>
+    <title>Bài đăng</title>
     <style>
       /* Custom style for date and time */
       .text-attractive-color {

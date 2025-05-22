@@ -43,10 +43,10 @@ if (isset($_POST['update_category'])) {
             if (move_uploaded_file($category_image["tmp_name"], $target_file)) {
                 $image_path = $target_file; // new image path
             } else {
-                echo "<script>alert('Sorry, there was an error uploading the image.');</script>";
+                echo "<script>alert('Xin lỗi, đã có lỗi khi tải hình ảnh lên.');</script>";
             }
         } else {
-            echo "<script>alert('Only JPG, JPEG, PNG, and GIF files are allowed.');</script>";
+            echo "<script>alert('Chỉ cho phép các tệp JPG, JPEG, PNG và GIF.');</script>";
         }
     }
 
@@ -56,9 +56,9 @@ if (isset($_POST['update_category'])) {
     $stmt->bind_param("sssi", $category_name, $category_desc, $image_path, $category_id);
 
     if ($stmt->execute()) {
-        echo "<script>alert('Category updated successfully!'); window.location.href = 'manage_category.php';</script>";
+        echo "<script>alert('Đã cập nhật danh mục thành công!'); window.location.href = 'manage_category.php';</script>";
     } else {
-        echo "<script>alert('Error updating category!');</script>";
+        echo "<script>alert('Lỗi khi cập nhật danh mục!');</script>";
     }
     $stmt->close();
 }
@@ -70,7 +70,7 @@ if (isset($_POST['update_category'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Category</title>
+    <title>Chỉnh sửa danh mục</title>
     <link rel="icon" type="image/jpg" href="/Forum_website/images/favicon1.jpg">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -98,7 +98,7 @@ if (isset($_POST['update_category'])) {
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="admin_dashboard.php">Admin Dashboard</a>
+            <a class="navbar-brand" href="admin_dashboard.php">Bảng điều khiển quản trị</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -106,10 +106,10 @@ if (isset($_POST['update_category'])) {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="admin_dashboard.php">Back to Dashboard</a>
+                        <a class="nav-link" href="admin_dashboard.php">Quay lại Bảng điều khiển</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="admin_logout.php">Logout</a>
+                        <a class="nav-link" href="admin_logout.php">Đăng xuất</a>
                     </li>
                 </ul>
             </div>
@@ -121,17 +121,17 @@ if (isset($_POST['update_category'])) {
         <h2>Edit Category</h2>
         <form action="edit_category.php?category_id=<?= htmlspecialchars($category['category_id']); ?>" method="post" enctype="multipart/form-data">
             <div class="mb-3">
-                <label for="category_name" class="form-label">Category Name</label>
+                <label for="category_name" class="form-label">Tên danh mục</label>
                 <input type="text" class="form-control" id="category_name" name="category_name" required
                     value="<?= htmlspecialchars($category['category_name']); ?>">
             </div>
             <div class="mb-3">
-                <label for="category_desc" class="form-label">Description</label>
+                <label for="category_desc" class="form-label">Mô tả</label>
                 <textarea class="form-control" id="category_desc" name="category_desc" rows="3" required><?= htmlspecialchars($category['category_desc']); ?></textarea>
             </div>
 
             <div class="mb-3 form-group">
-                <label for="category_image" class="form-label">Category Image</label>
+                <label for="category_image" class="form-label">Hình ảnh danh mục</label>
                 <input type="file" class="form-control" id="category_image" name="category_image">
                 <!-- Display current image -->
                 <?php if ($category['category_image']): ?>
@@ -139,7 +139,7 @@ if (isset($_POST['update_category'])) {
                 <?php endif; ?>
             </div>
 
-            <button type="submit" class="btn btn-primary" name="update_category">Update Category</button>
+            <button type="submit" class="btn btn-primary" name="update_category">Cập nhật danh mục</button>
         </form>
     </div>
 

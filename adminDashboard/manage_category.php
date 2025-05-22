@@ -43,9 +43,9 @@ if (isset($_POST['edit_category'])) {
     $stmt->bind_param("ssi", $category_name, $category_desc, $category_id);
 
     if ($stmt->execute()) {
-        echo "<script>alert('Category updated successfully!'); window.location.href = 'manage_category.php';</script>";
+        echo "<script>alert('Đã cập nhật danh mục thành công!'); window.location.href = 'manage_category.php';</script>";
     } else {
-        echo "<script>alert('Error updating category!');</script>";
+        echo "<script>alert('Lỗi khi cập nhật danh mục!');</script>";
     }
     $stmt->close();
 }
@@ -57,7 +57,7 @@ if (isset($_POST['edit_category'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Categories</title>
+    <title>Quản lý danh mục</title>
     <link rel="icon" type="image/jpg" href="/Forum_website/images/favicon1.jpg">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -115,7 +115,7 @@ if (isset($_POST['edit_category'])) {
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="admin_dashboard.php">Admin Dashboard</a>
+            <a class="navbar-brand" href="admin_dashboard.php">Bảng điều khiển quản trị</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -123,10 +123,10 @@ if (isset($_POST['edit_category'])) {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="admin_dashboard.php">Back to Dashboard</a>
+                        <a class="nav-link active" href="admin_dashboard.php">Quay lại Bảng điều khiển</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="admin_logout.php">Logout</a>
+                        <a class="nav-link" href="admin_logout.php">Đăng xuất</a>
                     </li>
                 </ul>
             </div>
@@ -135,17 +135,17 @@ if (isset($_POST['edit_category'])) {
 
     <!-- Main Content -->
     <div class="container">
-        <h2 class="mb-4">Manage Categories</h2>
-        <a href="add_category.php" class="btn btn-success mb-4">Add New Category</a>
+        <h2 class="mb-4">Quản lý danh mục</h2>
+        <a href="add_category.php" class="btn btn-success mb-4">Thêm danh mục mới</a>
 
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Category Name</th>
-                        <th>Description</th>
-                        <th>Actions</th>
+                        <th>Tên danh mục</th>
+                        <th>Mô tả</th>
+                        <th>Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -158,14 +158,14 @@ if (isset($_POST['edit_category'])) {
                                 <td><?= htmlspecialchars($row['category_name']); ?></td>
                                 <td><?= htmlspecialchars($row['category_desc']); ?></td>
                                 <td>
-                                    <a href="edit_category.php?category_id=<?= htmlspecialchars($row['category_id']); ?>" class="btn btn-warning btn-sm mt-1">Edit</a>
-                                    <a href="manage_category.php?delete=<?= htmlspecialchars($row['category_id']); ?>" class="btn btn-danger btn-sm mt-1" onclick="return confirm('Are you sure you want to delete this category?');">Delete</a>
+                                    <a href="edit_category.php?category_id=<?= htmlspecialchars($row['category_id']); ?>" class="btn btn-warning btn-sm mt-1">Chỉnh sửa</a>
+                                    <a href="manage_category.php?delete=<?= htmlspecialchars($row['category_id']); ?>" class="btn btn-danger btn-sm mt-1" onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này không??');">Xóa</a>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="4" class="text-center">No categories found!</td>
+                            <td colspan="4" class="text-center">Không tìm thấy danh mục nào!</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>

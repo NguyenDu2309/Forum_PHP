@@ -148,7 +148,7 @@ if (isset($_POST['edit_reply'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Comments & Replies</title>
+    <title>Quản lý bình luận và trả lời</title>
     <link rel="icon" type="image/jpg" href="/Forum_website/images/favicon1.jpg">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -246,7 +246,7 @@ if (isset($_POST['edit_reply'])) {
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="user_profile.php">User Panel</a>
+            <a class="navbar-brand" href="user_profile.php">Bảng điều khiển người dùng</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -254,10 +254,10 @@ if (isset($_POST['edit_reply'])) {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="user_profile.php">Back to Dashboard</a>
+                        <a class="nav-link" href="user_profile.php">Trở về bảng điều khiển</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="../Partials/_handle_logout.php">Logout</a>
+                        <a class="nav-link" href="../Partials/_handle_logout.php">Đăng xuất</a>
                     </li>
                 </ul>
             </div>
@@ -266,13 +266,13 @@ if (isset($_POST['edit_reply'])) {
 
     <div class="container container1">
         <button class="button rounded py-2 px-3 mt-2 text-white bg-dark border-0"> 
-            <a class="text-white text-decoration-none" href="user_profile.php">Back to Dashboard</a>
+            <a class="text-white text-decoration-none" href="user_profile.php">Trở về bảng điều khiển</a>
         </button>
     </div>
 
     <!-- Main Content -->
     <div class="container mt-3">
-        <h2>Manage Comments & Replies</h2>
+        <h2>Quản lý bình luận và trả lời</h2>
 
         <!-- Search Form -->
         <form class="search-bar" method="GET" action="manage_comments.php">
@@ -284,7 +284,7 @@ if (isset($_POST['edit_reply'])) {
         </form>
 
         <?php if (isset($_GET['search']) && !empty($_GET['search'])): ?>
-            <a href="manage_comments.php" class="btn btn-secondary mb-3">Back to All Items</a>
+            <a href="manage_comments.php" class="btn btn-secondary mb-3">Quay lại tất cả các mục</a>
         <?php endif; ?>
 
         <!-- Combined Table of Comments and Replies -->
@@ -299,7 +299,7 @@ if (isset($_POST['edit_reply'])) {
                         <tr>
                             <td class="bg-secondary fw-bold text-center"><?= $serial++; ?></td>
                             <td class="bg-secondary-subtle px-3 w-auto text-start" style="min-width: 150px;">
-                                <span class="fw-bold text-primary"> Question Posted by: </span>
+                                <span class="fw-bold text-primary"> Câu hỏi được đăng bởi: </span>
                                 <?= htmlspecialchars($item['thread_user_name']); ?>
                                 <br>
                                 <span class="<?= $is_comment ? 'comment-type' : 'reply-type' ?>">
@@ -307,12 +307,12 @@ if (isset($_POST['edit_reply'])) {
                                 </span>
                             </td>
                             <td class="bg-light px-3 text-start text-wrap" style="min-width: 180px;">
-                                <span class="fw-bold text-success"> Question: </span>
+                                <span class="fw-bold text-success"> Câu hỏi: </span>
                                 <?= htmlspecialchars($item['thread_title']); ?>
                             </td>
                             <td class="bg-warning-subtle px-3 text-start text-wrap" style="min-width: 200px;">
                                 <?php if (!$is_comment): ?>
-                                    <span class="fw-bold text-danger"> Your Reply: </span>
+                                    <span class="fw-bold text-danger"> Câu trả lời của bạn: </span>
                                     <?= nl2br(htmlspecialchars($item['content'])); ?>
                                     <?php if ($item['parent_comment']): ?>
                                         <div class="parent-comment">
@@ -320,7 +320,7 @@ if (isset($_POST['edit_reply'])) {
                                         </div>
                                     <?php endif; ?>
                                 <?php else: ?>
-                                    <span class="fw-bold text-danger"> Your Comment: </span>
+                                    <span class="fw-bold text-danger"> Bình luận của bạn: </span>
                                     <?= nl2br(htmlspecialchars($item['content'])); ?>
                                 <?php endif; ?>
                             </td>
@@ -332,25 +332,25 @@ if (isset($_POST['edit_reply'])) {
                                     <!-- Edit Comment Button -->
                                     <button class="btn btn-warning btn-sm mt-1 px-3" data-bs-toggle="modal"
                                         data-bs-target="#editCommentModal<?= $item['id']; ?>">
-                                        ✏️ Edit
+                                        ✏️ Chỉnh sửa
                                     </button>
                                     <!-- Delete Comment Button -->
                                     <a href="manage_comments.php?delete_comment_id=<?= $item['id']; ?><?= (isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''); ?>"
                                         class="btn btn-danger btn-sm mt-1 px-3"
                                         onclick="return confirm('Are you sure you want to delete this comment?');">
-                                        ❌ Delete
+                                        ❌ Xóa
                                     </a>
                                 <?php else: ?>
                                     <!-- Edit Reply Button -->
                                     <button class="btn btn-warning btn-sm mt-1 px-3" data-bs-toggle="modal"
                                         data-bs-target="#editReplyModal<?= $item['id']; ?>">
-                                        ✏️ Edit
+                                        ✏️ Chỉnh sửa
                                     </button>
                                     <!-- Delete Reply Button -->
                                     <a href="manage_comments.php?delete_reply_id=<?= $item['id']; ?><?= (isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''); ?>"
                                         class="btn btn-danger btn-sm mt-1 px-3"
                                         onclick="return confirm('Are you sure you want to delete this reply?');">
-                                        ❌ Delete
+                                        ❌ Xóa
                                     </a>
                                 <?php endif; ?>
                             </td>

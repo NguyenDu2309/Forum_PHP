@@ -8,19 +8,15 @@
     <!-- Bootstrap CSS -->
     <link rel="icon" type="image/jpg" href="images/favicon1.jpg">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <style>
-
 <style>
-    #alertj {
-        background-color: #f8d7da; /* Light red background */
-        border-color: #f5c6cb; /* Darker red border */
-        border-radius: 0.5rem; /* Rounded corners */
-        padding: 2rem; /* More padding */
-    }
+#alertj {
+    background-color: #f8d7da; /* Light red background */
+    border-color: #f5c6cb; /* Darker red border */
+    border-radius: 0.5rem; /* Rounded corners */
+    padding: 2rem; /* More padding */
+}
 </style>
-
-    </style>
-    <title> search results</title>
+    <title>Kết quả tìm kiếm</title>
   </head>
   <body>
 <!-- included the _header file where is my navbar  -->
@@ -35,7 +31,7 @@
         if(isset($_GET["query"])){
                $search = $_GET['query'];
         
-             echo '<h3 class="text-center bg-danger p-2 rounded my-4">Search results for "'.$search.'"</h3>';
+             echo '<h3 class="text-center bg-danger p-2 rounded my-4">Kết quả tìm kiếm cho "'.$search.'"</h3>';
 
 
              $sql = "SELECT * FROM thread WHERE thread_title LIKE  '%$search%' 
@@ -74,11 +70,11 @@
 
                                 echo '<div class="p-5 mb-4 bg-warning rounded-3 min-vh-100">
                                         <div class="container-fluid py-5">
-                                            <h1 class="display-5 fw-bold ">No search result found for "<em>'.$search.'</em>"</h1>
-                                            <p class="lead">There are no results corresponding to your search.</p>
+                                            <h1 class="display-5 fw-bold ">Không có kết quả cho "<em>'.$search.'</em>"</h1>
+                                            <p class="lead">Không có kết quả nào tương ứng với tìm kiếm của bạn.</p>
                                                 <ul>
-                                                    <li>It seems we could not find any results for <strong>'.$search.'</strong>. Why not try exploring our categories or check the homepage?</li>
-                                                    <li>Check your spelling.</li>
+                                                    <li>Có vẻ như chúng tôi không thể tìm thấy bất kỳ kết quả nào cho <strong>'.$search.'</strong>. Tại sao không thử khám phá các danh mục của chúng tôi hoặc kiểm tra trang chủ?</li>
+                                                    <li>Kiểm tra chính tả của bạn.</li>
                                                 </ul>
                                         </div>
                                         </div>';
@@ -90,15 +86,6 @@
                             
         ?>
     </div>
-
-    
-
-
-
-
-
-
-
 
   <?php include ('Partials/_footer.php'); ?>
     <!-- Optional JavaScript; choose one of the two! -->

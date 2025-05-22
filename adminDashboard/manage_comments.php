@@ -122,7 +122,7 @@ if (isset($_GET['delete_reply_id'])) {
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="admin_dashboard.php">Admin Dashboard</a>
+            <a class="navbar-brand" href="admin_dashboard.php">Bảng điều khiển quản trị</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -130,10 +130,10 @@ if (isset($_GET['delete_reply_id'])) {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="admin_dashboard.php">Back to Dashboard</a>
+                        <a class="nav-link" href="admin_dashboard.php">Quay lại Bảng điều khiển</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="admin_logout.php">Logout</a>
+                        <a class="nav-link" href="admin_logout.php">Đăng xuất</a>
                     </li>
                 </ul>
             </div>
@@ -142,19 +142,19 @@ if (isset($_GET['delete_reply_id'])) {
 
     <!-- Main Content -->
     <div class="container">
-        <h2>Manage Comments</h2>
+        <h2>Quản lý Bình luận</h2>
 
         <!-- Search Form -->
         <form class="search-bar" method="GET" action="manage_comments.php">
             <div class="input-group">
                 <input type="text" name="search" class="form-control" placeholder="Search by comment or author"
                     value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-                <button type="submit" class="btn btn-primary">Search</button>
+                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
             </div>
         </form>
 
         <?php if (isset($_GET['search']) && !empty($_GET['search'])): ?>
-        <a href="manage_comments.php" class="btn btn-secondary mb-3">Back to All Comments</a>
+        <a href="manage_comments.php" class="btn btn-secondary mb-3">Quay lại tất cả bình luận</a>
         <?php endif; ?>
 
         <!-- Table of Comments -->
@@ -163,11 +163,11 @@ if (isset($_GET['delete_reply_id'])) {
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Comment</th>
-                        <th>Author</th>
-                        <th>Post Title</th>
-                        <th>Time</th>
-                        <th>Actions</th>
+                        <th>Bình luận</th>
+                        <th>Tác giả</th>
+                        <th>Tên bài viết</th>
+                        <th>Thời gian</th>
+                        <th>Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -182,7 +182,7 @@ if (isset($_GET['delete_reply_id'])) {
                         <td><?= htmlspecialchars($comment['comment_time']); ?></td>
                         <td>
                             <a href="manage_comments.php?delete_id=<?= $comment['comment_id']; ?>" class="btn btn-danger btn-sm mt-1"
-                                onclick="return confirm('Are you sure you want to delete this comment?');">Delete</a>
+                                onclick="return confirm('Bạn có chắc chắn muốn xóa bình luận này không?');">Xóa</a>
                         </td>
                     </tr>
                     <?php
@@ -195,7 +195,7 @@ if (isset($_GET['delete_reply_id'])) {
                     <tr>
                         <td></td>
                         <td colspan="4" class="ps-5 border-start border-2 border-primary bg-light">
-                            <span class="fw-bold text-success">Reply by <?= htmlspecialchars($reply['user_name']); ?>:</span>
+                            <span class="fw-bold text-success">Trả lời bởi <?= htmlspecialchars($reply['user_name']); ?>:</span>
                             <?= htmlspecialchars($reply['reply_text']); ?>
                             <span class="text-muted ms-2" style="font-size:0.9em;">
                                 <?= isset($reply['reply_time']) ? htmlspecialchars($reply['reply_time']) : ''; ?>
@@ -204,7 +204,7 @@ if (isset($_GET['delete_reply_id'])) {
                         <td>
                             <a href="manage_comments.php?delete_reply_id=<?= $reply['reply_id']; ?>&page=<?= $page; ?><?= isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>"
                                class="btn btn-danger btn-sm"
-                               onclick="return confirm('Are you sure you want to delete this reply?');">Delete</a>
+                               onclick="return confirm('Bạn có chắc chắn muốn xóa bình luận này không?');">Xóa</a>
                         </td>
                     </tr>
                     <?php

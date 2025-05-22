@@ -40,16 +40,16 @@ git clone https://github.com/NguyenDu2309/Forum_website.git
 
 ### 2. Tạo database
 
-- Import file `forum.sql` trong thư mục gốc vào MySQL để tạo database và các bảng.
+- Import file `it_forum.sql` trong thư mục gốc vào MySQL để tạo database và các bảng.
 
 ### 3. Cấu hình kết nối database
 
-- Mở file `includes/db.php` và chỉnh thông tin kết nối:
+- Mở file `includes/db_connection.php` và chỉnh thông tin kết nối:
 
 $host = 'localhost';
 $user = 'root';
 $pass = '';
-$db = 'forum';
+$db = 'tên database';
 
 ### 4. Chạy ứng dụng
 
