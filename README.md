@@ -1,81 +1,89 @@
-Công nghệ sử dụng
+# 🗣️ Forum Website (PHP)
 
-PHP (thuần)
+Diễn đàn thảo luận trực tuyến xây dựng bằng PHP thuần, với các chức năng như đăng ký, đăng nhập, đăng bài, bình luận và đặc biệt là **lọc ngôn ngữ không phù hợp** trong nội dung bài viết và bình luận.
 
-MySQL
+## 🚀 Tính năng nổi bật
 
-Bootstrap 5
+- 👥 Đăng ký, đăng nhập, đăng xuất người dùng
+- 📝 Tạo bài viết, chỉnh sửa, xóa bài
+- 💬 Bình luận bài viết
+- 🔒 Quản lý người dùng và bài viết (admin)
+- 🧹 **Mô hình lọc ngôn ngữ thô tục/bạo lực** để giữ môi trường diễn đàn lành mạnh
+- 🕵️ Tìm kiếm bài viết theo từ khóa
 
-HTML, CSS, JavaScript
+## 🧠 Công nghệ sử dụng
 
-📌 Tính năng chính
-✅ Đăng ký / Đăng nhập người dùng
+- PHP (thuần, không framework)
+- MySQL
+- HTML/CSS (Bootstrap)
+- JavaScript (AJAX một số phần)
+- Bộ lọc ngôn ngữ: Tự xây dựng bằng cách đối chiếu danh sách từ cấm
 
-✅ Tạo chủ đề mới (threads)
+## 🏗️ Cấu trúc thư mục
 
-✅ Thảo luận trong chủ đề bằng cách bình luận
+Forum_website/
+│
+├── admin/               # Trang quản trị bài viết và người dùng
+├── includes/            # Các file cấu hình, kết nối CSDL, session,...
+├── posts/               # Giao diện và xử lý đăng bài
+├── users/               # Giao diện và xử lý tài khoản
+├── assets/              # File CSS, hình ảnh, JavaScript
+├── filter.php           # Mô-đun lọc ngôn ngữ không phù hợp
+├── index.php            # Trang chủ
+└── README.md
 
-✅ Quản lý người dùng và chủ đề từ trang admin
+## ⚙️ Cài đặt và sử dụng
 
-✅ Phân quyền người dùng: người dùng thường và admin
-
-✅ Responsive UI với Bootstrap
-
-📂 Cấu trúc thư mục
-
-/
-
-├── admin/               # Trang quản trị
-
-├── components/          # Các phần header, navbar, footer tái sử dụng
-
-├── includes/            # Kết nối CSDL, xử lý logic
-
-├── partials/            # Các phần nhỏ của trang như form, alerts
-
-├── uploads/             # Nơi lưu file được upload
-
-├── threads/             # Trang chi tiết từng chủ đề
-
-├── index.php            # Trang chủ diễn đàn
-
-└── ...
-⚙️ Cài đặt
-Clone dự án:
+### 1. Clone repo
 
 git clone https://github.com/NguyenDu2309/Forum_website.git
 
-Import cơ sở dữ liệu:
+### 2. Tạo database
 
-Mở file it_forum.sql bằng phpMyAdmin hoặc MySQL Workbench.
+- Import file `forum.sql` trong thư mục gốc vào MySQL để tạo database và các bảng.
 
-Tạo một database mới và import file đó.
+### 3. Cấu hình kết nối database
 
-Cấu hình kết nối cơ sở dữ liệu:
+- Mở file `includes/db.php` và chỉnh thông tin kết nối:
 
-Mở file includes/db.php
+$host = 'localhost';
+$user = 'root';
+$pass = '';
+$db = 'forum';
 
-Sửa thông tin kết nối:
+### 4. Chạy ứng dụng
 
-php
+- Mở trình duyệt và truy cập `http://localhost/Forum_website/`
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$database = "tên database trên phpadmin";
-Chạy ứng dụng:
+## 🧼 Mô hình lọc ngôn ngữ
 
-Dùng XAMPP hoặc một local server khác.
+- File `filter.php` chứa danh sách các từ cần lọc (tiếng Việt và tiếng Anh).
+- Khi người dùng đăng bài hoặc bình luận, hệ thống sẽ kiểm tra nội dung và **ẩn hoặc thay thế** các từ không phù hợp.
+- Có thể mở rộng bằng AI hoặc thư viện học máy để phân loại nội dung.
 
-Đặt project trong thư mục htdocs/ nếu dùng XAMPP.
+Ví dụ xử lý:
 
-Truy cập: http://localhost/Forum_website
+function filterBadWords($text) {
+    $badWords = ['bậy', 'chửi', 'xxx', 'đm', 'cc'];
+    return str_ireplace($badWords, '***', $text);
+}
 
-👤 Tài khoản mẫu
+## 🔐 Tài khoản mẫu
 
-Vai trò	Tên đăng nhập	Mật khẩu
+- **Admin**
+  - Username: `admin`
+  - Password: `admin123`
 
-Admin	admin	123
+- **Người dùng**
+  - Tự đăng ký qua giao diện
 
-Lưu ý: Có thể phải tạo thủ công tài khoản nếu chưa có sẵn.
+## 📌 Kế hoạch mở rộng
 
+- Nâng cấp mô hình lọc ngôn ngữ bằng NLP
+- Thêm markdown cho bài viết
+- Giao diện responsive tốt hơn (Tailwind hoặc React frontend)
+- Thêm hệ thống thông báo
+
+## 📄 Giấy phép
+
+Mã nguồn mở theo giấy phép MIT.
