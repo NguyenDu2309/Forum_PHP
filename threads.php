@@ -55,6 +55,54 @@ function checkIfLiked($comment_id)
     return 0;
 }
 
+// Helper function to moderate content using AI
+function moderateContent($content) {
+    $payload = json_encode([
+        "text" => $content,
+        "prefix" => "hate-speech-detection"
+    ]);
+
+    $ch = curl_init('http://localhost:5000/analyze');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+
+    $response = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    // Check for valid response
+    if ($response === false || $http_code !== 200) {
+        return [
+            'success' => false,
+            'message' => "Không thể kết nối tới máy chủ kiểm duyệt AI."
+        ];
+    }
+
+    $result = json_decode($response, true);
+    $ai_output = strtoupper($result["result"] ?? "");
+
+    // Check if content is offensive, hate speech, or toxic
+    if (strpos($ai_output, "OFFENSIVE") !== false || strpos($ai_output, "HATE") !== false || strpos($ai_output, "TOXIC") !== false) {
+        $reason = "";
+        if (strpos($ai_output, "OFFENSIVE") !== false) {
+            $reason = "Bình luận bị phát hiện là có nội dung <strong>xúc phạm</strong>.";
+        } elseif (strpos($ai_output, "TOXIC") !== false) {
+            $reason = "Bình luận bị phát hiện là có nội dung <strong>độc hại</strong>.";
+        } elseif (strpos($ai_output, "HATE") !== false) {
+            $reason = "Bình luận bị phát hiện là có nội dung <strong>thù ghét</strong>.";
+        }
+        
+        return [
+            'success' => false,
+            'message' => $reason
+        ];
+    }
+
+    return ['success' => true];
+}
+
 // Helper function to display nested replies recursively
 function displayReplies($conn, $comment_id, $parent_reply_id = null, $depth = 0)
 {
@@ -147,11 +195,24 @@ function displayReplies($conn, $comment_id, $parent_reply_id = null, $depth = 0)
 
 // Initialize $post variable
 $post = null; // or false depending on if you want to use it for a default alert
+
 // Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Handle main comments
     if (isset($_POST['comment']) && isset($_GET['id'])) {
         $threadID = $_GET['id'];
         $comment = $_POST['comment'];
+        
+        // AI Content Moderation for main comments
+        $moderation_result = moderateContent($comment);
+        
+        if (!$moderation_result['success']) {
+            $_SESSION['alert_fail'] = true;
+            $_SESSION['fail_reason'] = $moderation_result['message'];
+            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page);
+            exit();
+        }
+        
         $username = $_SESSION['username'];
         $emailID = $_SESSION['email_id'];
         //SQL query to insert new comments
@@ -164,14 +225,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($result2) {
             // set a variable in $_SESSION to show the success message and it will only be true once when user posts comment
              $_SESSION['alert_success'] = true;
-             header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id);// this code will stop the reposting the comment in order to reload
+             header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page);// this code will stop the reposting the comment in order to reload
              exit();  // Don't forget to call exit() after header to stop further code execution
         }
          // if the query is failed then echo this message and die
           else {
               // set a variable in $_SESSION to show the fail message and it will only be true once when user posts comment
              $_SESSION['alert_fail'] = true;
-             header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id);// this code will stop the reposting the comment in order to reload
+             $_SESSION['fail_reason'] = "Không thể đăng bình luận. Vui lòng thử lại sau.";
+             header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page);// this code will stop the reposting the comment in order to reload
              exit();  // Don't forget to call exit() after header to stop further code execution
          }
     }
@@ -181,11 +243,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $reply_text = trim($_POST['reply_text']);
         $reply_comment_id = intval($_POST['reply_comment_id']);
         $reply_user = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest';
+        
         if ($reply_text !== '') {
+            // AI Content Moderation for replies
+            $moderation_result = moderateContent($reply_text);
+            
+            if (!$moderation_result['success']) {
+                $_SESSION['alert_fail'] = true;
+                $_SESSION['fail_reason'] = $moderation_result['message'];
+                header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page);
+                exit();
+            }
+            
             $reply_sql = "INSERT INTO replies (comment_id, user_name, reply_text) VALUES (?, ?, ?)";
             $reply_stmt = $conn->prepare($reply_sql);
             $reply_stmt->bind_param("iss", $reply_comment_id, $reply_user, $reply_text);
-            $reply_stmt->execute();
+            
+            if ($reply_stmt->execute()) {
+                $_SESSION['alert_success'] = true;
+            } else {
+                $_SESSION['alert_fail'] = true;
+                $_SESSION['fail_reason'] = "Không thể đăng phản hồi. Vui lòng thử lại sau.";
+            }
+            
             header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page);
             exit();
         }
@@ -199,10 +279,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $reply_user = isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest';
         
         if ($reply_text !== '') {
+            // AI Content Moderation for nested replies
+            $moderation_result = moderateContent($reply_text);
+            
+            if (!$moderation_result['success']) {
+                $_SESSION['alert_fail'] = true;
+                $_SESSION['fail_reason'] = $moderation_result['message'];
+                header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page);
+                exit();
+            }
+            
             $nested_reply_sql = "INSERT INTO replies (comment_id, user_name, reply_text, parent_reply_id) VALUES (?, ?, ?, ?)";
             $nested_reply_stmt = $conn->prepare($nested_reply_sql);
             $nested_reply_stmt->bind_param("issi", $reply_comment_id, $reply_user, $reply_text, $parent_reply_id);
-            $nested_reply_stmt->execute();
+            
+            if ($nested_reply_stmt->execute()) {
+                $_SESSION['alert_success'] = true;
+            } else {
+                $_SESSION['alert_fail'] = true;
+                $_SESSION['fail_reason'] = "Không thể đăng phản hồi. Vui lòng thử lại sau.";
+            }
             
             // Redirect to prevent form resubmission
             header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page);
@@ -302,12 +398,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
          //Check if $_SESSION variable is true then show the message only once
        elseif (isset($_SESSION['alert_fail']) && $_SESSION['alert_fail'] === true) {
-                echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
-                             <strong class="ms-1">Error!</strong> you can not post comment right now try later.
+                $reason = $_SESSION['fail_reason'] ?? 'you can not post comment right now try later.';
+                echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                             <strong class="ms-1">Error!</strong> ' . $reason . '
                              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>';
                     //Unset the variable to avoid showing the message again
                     unset($_SESSION['alert_fail']);
+                    unset($_SESSION['fail_reason']);
         }
     ?>
      <?php
@@ -430,7 +528,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if(isset($_SESSION['username'])) {
            echo '
             <h2> Post comment for your response</h2>
-            <form class="my-3" action="'.$_SERVER['PHP_SELF'].'?id='.$_GET['id'].'" method="POST">
+            <form class="my-3" action="'.$_SERVER['PHP_SELF'].'?id='.$_GET['id'].'&page='.$page.'" method="POST">
                 <div class="mb-3">
                   <label for="description" class="form-label">Write a solution </label>
                   <div class="form-floating">
@@ -450,6 +548,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </div>
   <hr>
   
+
+
+
 <?php
 $count_sql = "SELECT COUNT(*) as total FROM comments WHERE thread_comment_id = ?";
 $count_stmt = $conn->prepare($count_sql);
