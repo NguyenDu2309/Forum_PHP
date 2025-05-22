@@ -173,10 +173,10 @@ function displayReplies($conn, $comment_id, $parent_reply_id = null, $depth = 0)
         if (isset($_SESSION['username'])) {
             $output .= '<form method="POST" class="mt-2" style="display:none;" id="nested-reply-form-' . $reply['reply_id'] . '">';
             $output .= '<div class="input-group input-group-sm">';
-            $output .= '<input type="text" name="nested_reply_text" class="form-control form-control-sm" placeholder="Write a reply..." required>';
+            $output .= '<input type="text" name="nested_reply_text" class="form-control form-control-sm" placeholder="Viết câu trả lời..." required>';
             $output .= '<input type="hidden" name="reply_comment_id" value="' . $comment_id . '">';
             $output .= '<input type="hidden" name="parent_reply_id" value="' . $reply['reply_id'] . '">';
-            $output .= '<button type="submit" name="post_nested_reply" class="btn btn-sm btn-success">Reply</button>';
+            $output .= '<button type="submit" name="post_nested_reply" class="btn btn-sm btn-success">Trả lời</button>';
             $output .= '</div>';
             $output .= '</form>';
         }
@@ -209,7 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (!$moderation_result['success']) {
             $_SESSION['alert_fail'] = true;
             $_SESSION['fail_reason'] = $moderation_result['message'];
-            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page);
+            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page . "#discussion");
             exit();
         }
         
@@ -225,7 +225,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($result2) {
             // set a variable in $_SESSION to show the success message and it will only be true once when user posts comment
              $_SESSION['alert_success'] = true;
-             header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page);// this code will stop the reposting the comment in order to reload
+             header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page . "#discussion");// this code will stop the reposting the comment in order to reload
              exit();  // Don't forget to call exit() after header to stop further code execution
         }
          // if the query is failed then echo this message and die
@@ -233,7 +233,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
               // set a variable in $_SESSION to show the fail message and it will only be true once when user posts comment
              $_SESSION['alert_fail'] = true;
              $_SESSION['fail_reason'] = "Không thể đăng bình luận. Vui lòng thử lại sau.";
-             header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page);// this code will stop the reposting the comment in order to reload
+             header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page . "#discussion");// this code will stop the reposting the comment in order to reload
              exit();  // Don't forget to call exit() after header to stop further code execution
          }
     }
@@ -249,9 +249,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $moderation_result = moderateContent($reply_text);
             
             if (!$moderation_result['success']) {
-                $_SESSION['alert_fail'] = true;
-                $_SESSION['fail_reason'] = $moderation_result['message'];
-                header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page);
+                $_SESSION['reply_fail'] = true;
+                $_SESSION['reply_fail_reason'] = $moderation_result['message'];
+                header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page . "#discussion");
                 exit();
             }
             
@@ -260,13 +260,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $reply_stmt->bind_param("iss", $reply_comment_id, $reply_user, $reply_text);
             
             if ($reply_stmt->execute()) {
-                $_SESSION['alert_success'] = true;
+                $_SESSION['reply_success'] = true;
             } else {
-                $_SESSION['alert_fail'] = true;
-                $_SESSION['fail_reason'] = "Không thể đăng phản hồi. Vui lòng thử lại sau.";
+                $_SESSION['reply_fail'] = true;
+                $_SESSION['reply_fail_reason'] = "Không thể đăng phản hồi. Vui lòng thử lại sau.";
             }
             
-            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page);
+            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page . "#discussion");
             exit();
         }
     }
@@ -283,9 +283,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $moderation_result = moderateContent($reply_text);
             
             if (!$moderation_result['success']) {
-                $_SESSION['alert_fail'] = true;
-                $_SESSION['fail_reason'] = $moderation_result['message'];
-                header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page);
+                $_SESSION['reply_fail'] = true;
+                $_SESSION['reply_fail_reason'] = $moderation_result['message'];
+                header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page . "#discussion");
                 exit();
             }
             
@@ -294,14 +294,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $nested_reply_stmt->bind_param("issi", $reply_comment_id, $reply_user, $reply_text, $parent_reply_id);
             
             if ($nested_reply_stmt->execute()) {
-                $_SESSION['alert_success'] = true;
+                $_SESSION['reply_success'] = true;
             } else {
-                $_SESSION['alert_fail'] = true;
-                $_SESSION['fail_reason'] = "Không thể đăng phản hồi. Vui lòng thử lại sau.";
+                $_SESSION['reply_fail'] = true;
+                $_SESSION['reply_fail_reason'] = "Không thể đăng phản hồi. Vui lòng thử lại sau.";
             }
             
             // Redirect to prevent form resubmission
-            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page);
+            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $thread_id . "&page=" . $page . "#discussion");
             exit();
         }
     }
@@ -387,26 +387,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php  include"Partials/signup_modal.php"?>
 
     <?php
-      //Check if $_SESSION variable is true then show the message only once
-        if (isset($_SESSION['alert_success']) && $_SESSION['alert_success'] === true) {
-                echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <strong class="ms-1">✔Success!</strong> Comment posted successfully.
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>';
-                     //Unset the variable to avoid showing the message again
-                    unset($_SESSION['alert_success']);
-        }
-         //Check if $_SESSION variable is true then show the message only once
-       elseif (isset($_SESSION['alert_fail']) && $_SESSION['alert_fail'] === true) {
-                $reason = $_SESSION['fail_reason'] ?? 'you can not post comment right now try later.';
-                echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                             <strong class="ms-1">Error!</strong> ' . $reason . '
-                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>';
-                    //Unset the variable to avoid showing the message again
-                    unset($_SESSION['alert_fail']);
-                    unset($_SESSION['fail_reason']);
-        }
+      // ✅ XÓA THÔNG BÁO Ở ĐẦU TRANG VÌ ĐÃ CHUYỂN VÀO DISCUSSION
     ?>
      <?php
     // Get the clicked thread's id, and fetch the thread details from the database and display it
@@ -430,7 +411,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <p class="py-1" style="word-wrap: break-word; white-space: normal;" <span>🔻 </span> '. $fetch['thread_desc'] .' </p>
                                         <hr>';
                                         if(isset($_SESSION["username"])) {
-                                            echo '<p> posted by  : <span class ="fw-bold text-danger">'.$fetch["thread_user_name"].'</span></p> ';
+                                            echo '<p> Được đăng bởi  : <span class ="fw-bold text-danger">'.$fetch["thread_user_name"].'</span></p> ';
                                             echo '<hr>';
                                         }
                       echo '
@@ -445,8 +426,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
 <!-- Display comments in media object format -->
-<div class="container my-3" style="max-height: 500px; overflow-y: auto;">
-    <h2 class="bg-danger p-2 my-3 rounded"> Discussion </h2>
+<div class="container my-3" style="max-height: 500px; overflow-y: auto;" id="discussion">
+    <h2 class="bg-danger p-2 my-3 rounded"> Trao đổi </h2>
+
+    <?php
+    // ✅ HIỂN THỊ THÔNG BÁO NGAY TRONG DISCUSSION
+    if (isset($_SESSION['alert_success']) && $_SESSION['alert_success'] === true) {
+        echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong class="ms-1">✔Success!</strong> Comment posted successfully.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>';
+        unset($_SESSION['alert_success']);
+    }
+    elseif (isset($_SESSION['alert_fail']) && $_SESSION['alert_fail'] === true) {
+        $reason = $_SESSION['fail_reason'] ?? 'Cannot post comment right now, try later.';
+        echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                     <strong class="ms-1">Error!</strong> ' . $reason . '
+                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>';
+        unset($_SESSION['alert_fail']);
+        unset($_SESSION['fail_reason']);
+    }
+    
+    // THÔNG BÁO CHO REPLIES
+    if (isset($_SESSION['reply_success']) && $_SESSION['reply_success'] === true) {
+        echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong class="ms-1">✔Success!</strong> Reply posted successfully.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>';
+        unset($_SESSION['reply_success']);
+    }
+    elseif (isset($_SESSION['reply_fail']) && $_SESSION['reply_fail'] === true) {
+        $reason = $_SESSION['reply_fail_reason'] ?? 'Cannot post reply right now, try later.';
+        echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                     <strong class="ms-1">Error!</strong> ' . $reason . '
+                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>';
+        unset($_SESSION['reply_fail']);
+        unset($_SESSION['reply_fail_reason']);
+    }
+    ?>
 
     <?php
     // Loop through each comment fetched from the database
@@ -504,9 +523,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <?php if(isset($_SESSION['username'])): ?>
                 <form method="POST" class="mt-2" style="display:none;" id="reply-form-<?php echo $comment['comment_id']; ?>">
                     <div class="input-group">
-                        <input type="text" name="reply_text" class="form-control form-control-sm" placeholder="Write a reply..." required>
+                        <input type="text" name="reply_text" class="form-control form-control-sm" placeholder="Viết câu trả lời..." required>
                         <input type="hidden" name="reply_comment_id" value="<?php echo $comment['comment_id']; ?>">
-                        <button type="submit" name="post_reply" class="btn btn-sm btn-success">Send</button>
+                        <button type="submit" name="post_reply" class="btn btn-sm btn-success">Gửi</button>
                     </div>
                 </form>
                 <?php endif; ?>
@@ -523,34 +542,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <!-- here is the form for post comments -->
 <div class="container">
   <hr>
-  <?php
-        //check if the user is logged in if logged in then show the form
-        if(isset($_SESSION['username'])) {
-           echo '
-            <h2> Post comment for your response</h2>
-            <form class="my-3" action="'.$_SERVER['PHP_SELF'].'?id='.$_GET['id'].'&page='.$page.'" method="POST">
-                <div class="mb-3">
-                  <label for="description" class="form-label">Write a solution </label>
-                  <div class="form-floating">
-                  <textarea class="form-control"  id="floatingTextarea2" style="height: 100px" name="comment"  ></textarea>
-                  <label for="floatingTextarea2"  id="description">write the solution if you have</label>
-                </div>
-                </div>
-                <button type="submit" class="btn btn-primary">Post</button>
-              </form>
-            ';
-        }
-        // if the user is not logged in then show this message
-        else {
-            echo '<h3 class="bg-success p-2 text-center rounded-pill"> Please login to reply ! </h3>';
-        }
-    ?>
+  <?php if (isset($_SESSION['username'])): ?>
+    <h2>Viết bình luận</h2>
+
+    <!-- COMMENT FORM -->
+    <form class="my-3" action="<?php echo $_SERVER['PHP_SELF'].'?id='.$_GET['id'].'&page='.$page; ?>" method="POST">
+        <div class="mb-3">
+          <div class="form-floating">
+            <textarea class="form-control" id="floatingTextarea2" style="height: 100px" name="comment" required></textarea>
+            <label for="floatingTextarea2" id="description">Viết giải pháp nếu bạn có</label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Đăng</button>
+    </form>
+
+  <?php else: ?>
+    <h3 class="bg-success p-2 text-center rounded-pill">Đăng nhập để bình luận</h3>
+  <?php endif; ?>
 </div>
   <hr>
   
-
-
-
 <?php
 $count_sql = "SELECT COUNT(*) as total FROM comments WHERE thread_comment_id = ?";
 $count_stmt = $conn->prepare($count_sql);
