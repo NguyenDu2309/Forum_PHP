@@ -157,7 +157,7 @@ if (!$result_threads || !$result_comments) {
                                 <td><?= htmlspecialchars($row['thread_desc']); ?></td>
                                 <td><?= htmlspecialchars($row['time']); ?></td>
                                 <td>
-                                    <a href="delete_post.php?thread_id=<?= htmlspecialchars($row['thread_id']); ?>" class="btn btn-danger btn-sm mt-1" onclick="return confirm('Bạn có chắc chắn muốn xóa bài viết này không?');">Xóa bài viết</a>
+                                    <a href="delete_post.php?thread_id=<?= htmlspecialchars($row['thread_id']); ?>&user=<?= urlencode($user_name) ?>" class="btn btn-danger btn-sm mt-1" onclick="return confirm('Bạn có chắc chắn muốn xóa bài viết này không?');">Xóa bài viết</a>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
@@ -190,7 +190,7 @@ if (!$result_threads || !$result_comments) {
                                 <td><?= htmlspecialchars($row['comment']); ?></td>
                                 <td><?= htmlspecialchars($row['comment_time']); ?></td>
                                 <td>
-                                    <a href="delete_comment.php?comment_id=<?= htmlspecialchars($row['comment_id']); ?>" class="btn btn-danger btn-sm mt-1" onclick="return confirm('Bạn có chắc chắn muốn xóa bình luận này không?');">Xóa bình luận</a>
+                                    <a href="delete_comment.php?comment_id=<?= htmlspecialchars($row['comment_id']); ?>&user=<?= urlencode($user_name) ?>" class="btn btn-danger btn-sm mt-1" onclick="return confirm('Bạn có chắc chắn muốn xóa bình luận này không?');">Xóa bình luận</a>
                                 </td>
                             </tr>
                         <?php endwhile; ?>

@@ -25,6 +25,23 @@ if (isset($_GET['delete'])) {
         $stmt->close();
 
         if (!empty($user_name)) {
+            // Xóa reply của user này
+            $deleteUserReplies = "DELETE FROM replies WHERE user_name = ?";
+            $stmt = $conn->prepare($deleteUserReplies);
+            $stmt->bind_param("s", $user_name);
+            $stmt->execute();
+            $stmt->close();
+
+            // Xóa reply liên quan đến comment của user này
+            $deleteRepliesOfUserComments = "
+                DELETE FROM replies 
+                WHERE comment_id IN (SELECT comment_id FROM comments WHERE user_name = ?)
+            ";
+            $stmt = $conn->prepare($deleteRepliesOfUserComments);
+            $stmt->bind_param("s", $user_name);
+            $stmt->execute();
+            $stmt->close();
+
             // Delete user's likes
             $deleteLikes = "DELETE FROM comment_likes WHERE user_id = ?";
             $stmt = $conn->prepare($deleteLikes);
