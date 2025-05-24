@@ -24,15 +24,15 @@ Diễn đàn thảo luận trực tuyến xây dựng bằng PHP thuần, với 
 Forum_website/
 │
 ├── admin/               # Trang quản trị bài viết và người dùng
-|
+
 ├── includes/            # Các file cấu hình, kết nối CSDL, session,...
-|
+
 ├── users/               # Giao diện và xử lý tài khoản
-|
+
 ├── assets/              # File CSS, hình ảnh, JavaScript
-|
+
 ├── app.py               # Mô-đun lọc ngôn ngữ không phù hợp
-|
+
 ├── index.php            # Trang chủ
 
 ## ⚙️ Cài đặt và sử dụng
