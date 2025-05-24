@@ -141,7 +141,7 @@ $totalComments = $row['total_comments'];
 
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
-        <h4>Bảng điều khiển quản trị</h4>
+        <h4>admin</h4>
         <a href="admin_dashboard.php" class="bg-primary text-white">
             <i class="bi bi-speedometer2"></i> Bảng điều khiển
         </a>
