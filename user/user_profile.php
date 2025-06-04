@@ -1,37 +1,43 @@
 <?php
-        session_start();
-        include '../Partials/db_connection.php';
+    session_start();
+    include '../Partials/db_connection.php';
 
-        // Verify if user is logged in
-        if (!isset($_SESSION['user_id']) || !isset($_SESSION['username'])) {
-            header('Location: index.php');
-            exit();
-        }
+    // Verify if user is logged in
+    if (!isset($_SESSION['user_id']) || !isset($_SESSION['username'])) {
+        header('Location: index.php');
+        exit();
+    }
 
-        $user_id = $_SESSION['user_id'];
-        $user_name = $_SESSION['username'];
+    $user_id = $_SESSION['user_id'];
+    $user_name = $_SESSION['username'];
 
-        // Fetch user-specific data
-        $query = "SELECT COUNT(*) AS total_likes FROM comment_likes WHERE user_id = '$user_id'";
-        $result = mysqli_query($conn, $query);
-        $row = mysqli_fetch_assoc($result);
-        $totalLikes = $row['total_likes'];
+    // Đếm số câu hỏi đã đăng
+    $query = "SELECT COUNT(*) AS total_threads FROM thread WHERE thread_user_name = '$user_name'";
+    $result = mysqli_query($conn, $query);
+    $row = mysqli_fetch_assoc($result);
+    $totalThreads = $row['total_threads'];
 
-        $query = "SELECT COUNT(*) AS total_threads FROM thread WHERE thread_user_name = '$user_name'";
-        $result = mysqli_query($conn, $query);
-        $row = mysqli_fetch_assoc($result);
-        $totalThreads = $row['total_threads'];
+    // Đếm số bình luận đã đăng (bao gồm cả comment và reply)
+    $query = "
+        SELECT 
+            (SELECT COUNT(*) FROM comments WHERE user_name = '$user_name') +
+            (SELECT COUNT(*) FROM replies WHERE user_name = '$user_name')
+            AS total_comments
+    ";
+    $result = mysqli_query($conn, $query);
+    $row = mysqli_fetch_assoc($result);
+    $totalComments = $row['total_comments'];
 
-        $query = "SELECT COUNT(*) AS total_comments FROM comments WHERE user_name = '$user_name'";
-        $result = mysqli_query($conn, $query);
-        $row = mysqli_fetch_assoc($result);
-        $totalComments = $row['total_comments'];
-
-        // Đếm tổng số like mà các comment của user nhận được
-        $query = "SELECT SUM(likes) AS total_likes FROM comments WHERE user_name = '$user_name'";
-        $result = mysqli_query($conn, $query);
-        $row = mysqli_fetch_assoc($result);
-        $totalLikes = $row['total_likes'] ?? 0;
+    // Đếm tổng số bình luận đã thích (bao gồm comment và reply)
+    $query = "
+        SELECT 
+            (SELECT COUNT(*) FROM comment_likes WHERE user_id = '$user_id') +
+            (SELECT COUNT(*) FROM reply_likes WHERE user_id = '$user_id')
+        AS total_likes
+    ";
+    $result = mysqli_query($conn, $query);
+    $row = mysqli_fetch_assoc($result);
+    $totalLikes = $row['total_likes'];
 ?>
 <!DOCTYPE html>
 <html lang="en">

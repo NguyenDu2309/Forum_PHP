@@ -149,6 +149,14 @@ CREATE TABLE replies (
     FOREIGN KEY (comment_id) REFERENCES comments(comment_id)
 );
 
+CREATE TABLE reply_likes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    reply_id INT NOT NULL,
+    user_id INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_like (reply_id, user_id)
+);
+
 ALTER TABLE replies ADD COLUMN parent_reply_id INT DEFAULT NULL;
 --
 -- Dumping data for table `users`

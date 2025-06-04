@@ -26,33 +26,42 @@ $comments = $stmt->get_result();
 // Helper function to check if a comment is liked by the current user
 function checkIfLiked($comment_id)
 {
-    // Use the global database connection
     global $conn;
-    // Check if the user is logged in, if not return 0 (not liked)
     if (!isset($_SESSION['user_id'])) {
         return 0;
     }
-    // Get the user ID from the session
     $user_id = $_SESSION['user_id'];
-
-    // SQL query to check if the user has liked the specific comment
-    $sql = "SELECT liked FROM comment_likes WHERE comment_id = ? AND user_id = ?";
-    // Prepare the SQL query
+    // Chỉ cần kiểm tra có tồn tại dòng like
+    $sql = "SELECT 1 FROM comment_likes WHERE comment_id = ? AND user_id = ? LIMIT 1";
     $stmt = $conn->prepare($sql);
-    // Bind the comment ID and user ID to the prepared statement
     $stmt->bind_param("ii", $comment_id, $user_id);
-    // Execute the prepared statement
     $stmt->execute();
-    // Get the result from the executed statement
     $result = $stmt->get_result();
+    return $result->num_rows > 0 ? 1 : 0;
+}
 
-    // If there is result fetch it from the database
-    if ($result->num_rows > 0) {
-        // return like status
-        return $result->fetch_assoc()['liked'];
-    }
-    // If the user has not liked the comment, return 0
-    return 0;
+function checkIfReplyLiked($reply_id) {
+    global $conn;
+    if (!isset($_SESSION['user_id'])) return 0;
+    $user_id = $_SESSION['user_id'];
+    $sql = "SELECT 1 FROM reply_likes WHERE reply_id = ? AND user_id = ? LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ii", $reply_id, $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->num_rows > 0 ? 1 : 0;
+}
+
+function getReplyLikes($reply_id) {
+    global $conn;
+    $sql = "SELECT COUNT(*) as total FROM reply_likes WHERE reply_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $reply_id);
+    $stmt->execute();
+    $stmt->bind_result($total);
+    $stmt->fetch();
+    $stmt->close();
+    return $total;
 }
 
 // Helper function to moderate content using AI
@@ -154,14 +163,22 @@ function displayReplies($conn, $comment_id, $parent_reply_id = null, $depth = 0)
         $output .= '<div class="d-flex justify-content-between align-items-center">';
         $output .= '<strong class="text-primary" style="font-size:0.95em;">' . htmlspecialchars($reply['user_name']) . '</strong>';
         $output .= '<div>';
-        
-        // Only show reply button if user is logged in
-        if (isset($_SESSION['username'])) {
-            $output .= '<button class="btn btn-sm btn-link p-0 reply-btn" type="button" title="Reply" ';
-            $output .= 'onclick="toggleNestedReplyForm(' . $reply['reply_id'] . ', ' . $comment_id . ')">';
-            $output .= '<i class="fas fa-reply"></i></button>';
+
+        // Tim cho reply
+        if (isset($_SESSION['user_id'])) {
+            $replyLiked = checkIfReplyLiked($reply['reply_id']) ? 'liked' : '';
+            $replyLikes = getReplyLikes($reply['reply_id']);
+            $output .= '<span class="me-1" id="reply-likes-count-' . $reply['reply_id'] . '">' . $replyLikes . '</span>';
+            $output .= '<button class="reply-like-btn border-0 bg-transparent p-0" id="reply-like-' . $reply['reply_id'] . '" data-reply-id="' . $reply['reply_id'] . '" data-liked="' . ($replyLiked ? '1' : '0') . '">';
+            $output .= '<i class="heart-icon ' . $replyLiked . ' fas fa-heart"></i>';
+            $output .= '</button>';
+
+            // Nút trả lời cho reply (icon fas fa-reply)
+            $output .= '<button class="btn btn-sm btn-link p-0 ms-2 align-middle reply-btn" type="button" title="Reply" onclick="toggleNestedReplyForm(' . $reply['reply_id'] . ',' . $comment_id . ')">';
+            $output .= '<i class="fas fa-reply"></i>';
+            $output .= '</button>';
         }
-        
+
         $output .= '</div>'; // Close button container
         $output .= '</div>'; // Close flex container
         
@@ -377,6 +394,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       .reply-btn:hover {
           color: #0d6efd;
       }
+
+      .reply-like-btn {
+          border: none;
+          background: transparent;
+          padding: 0;
+      }
     </style>
   </head>
   <body>
@@ -407,7 +430,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     if (!empty($fetch['thread_image'])) {
                                         echo '<img src="uploads/thread_images/' . htmlspecialchars($fetch['thread_image']) . '" alt="Thread Image" class="img-fluid mb-3" style="max-width:300px;max-height:300px;border-radius:8px;">';
                                     }
-                      echo '          <h4 style="word-wrap: break-word;"> <span>🔹Q :- </span>'. $fetch['thread_title'] .'</h4>
+                      echo '          <h4 style="word-wrap: break-word;"> <span>🔹Q :- </span'. $fetch['thread_title'] .'</h4>
                                         <p class="py-1" style="word-wrap: break-word; white-space: normal;" <span>🔻 </span> '. $fetch['thread_desc'] .' </p>
                                         <hr>';
                                         if(isset($_SESSION["username"])) {
@@ -655,16 +678,41 @@ $total_pages = ceil($total_comments / $comments_per_page);
                         // Toggle 'liked' class và cập nhật màu tim
                         if (data.liked == 1) {
                             heartIcon.classList.add('liked');
-                            heartIcon.style.color = 'red';
                         } else {
                             heartIcon.classList.remove('liked');
-                            heartIcon.style.color = 'gray';
                         }
 
                         likesCountElement.textContent = data.newLikes;
                     }
                 })
                 // Handle errors during AJAX request
+                .catch(error => console.error('Error:', error));
+            });
+        });
+
+        // Like for reply
+        document.querySelectorAll('.reply-like-btn').forEach(function(button) {
+            button.addEventListener('click', function() {
+                const replyId = button.getAttribute('data-reply-id');
+                const likesCountElement = document.getElementById(`reply-likes-count-${replyId}`);
+                const heartIcon = button.querySelector('.heart-icon');
+                fetch('like_reply.php', {
+                    method: 'POST',
+                    body: new URLSearchParams({'reply_id': replyId}),
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                })
+                .then(response => response.json())
+                .then(function(data) {
+                    if (data.success) {
+                        button.setAttribute('data-liked', data.liked);
+                        if (data.liked == 1) {
+                            heartIcon.classList.add('liked');
+                        } else {
+                            heartIcon.classList.remove('liked');
+                        }
+                        likesCountElement.textContent = data.newLikes;
+                    }
+                })
                 .catch(error => console.error('Error:', error));
             });
         });

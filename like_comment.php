@@ -1,53 +1,63 @@
 <?php
 // like_comment.php (Simplified - Not Recommended for Production)
-include('Partials/db_connection.php');
 session_start();
+include('Partials/db_connection.php');
+
+header('Content-Type: application/json');
 
 if (!isset($_SESSION['user_id'])) {
-    echo json_encode(['success' => false, 'message' => 'User not logged in']);
+    echo json_encode(['success' => false, 'message' => 'Bạn cần đăng nhập để thích bình luận.']);
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['comment_id'])) {
-    $comment_id = $_POST['comment_id'];
-    $user_id = $_SESSION['user_id'];
+$user_id = $_SESSION['user_id'];
+$comment_id = intval($_POST['comment_id']);
 
-    // Check if the user has liked the comment
-    $sql = "SELECT liked FROM comment_likes WHERE comment_id = $comment_id AND user_id = $user_id";
-    $result = $conn->query($sql);
-    
-     // Initialize variables before the if statement
-    $new_liked_status = 1;
+// Kiểm tra đã like chưa
+$check_query = "SELECT * FROM comment_likes WHERE comment_id = ? AND user_id = ?";
+$stmt = $conn->prepare($check_query);
+$stmt->bind_param("ii", $comment_id, $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
 
-    if ($result->num_rows > 0) {
-         // If the user has liked the comment, toggle their like
-        $row = $result->fetch_assoc();
-        $current_liked_status = $row['liked'];
-        $new_liked_status = $current_liked_status == 1 ? 0 : 1;
-
-        // Update the like state in the comment_likes table
-         $sql = "UPDATE comment_likes SET liked = $new_liked_status WHERE comment_id = $comment_id AND user_id = $user_id";
-        $conn->query($sql);
-
-    } else {
-           // If the user has not liked the comment, then insert a new record into comment_likes
-       $sql = "INSERT INTO comment_likes (comment_id, user_id, liked) VALUES ($comment_id, $user_id, 1)";
-         $conn->query($sql);
-        
-    }
-    
-     // Calculate total likes for the comment from the comment_likes table
-    $sql = "SELECT COUNT(*) as total_likes FROM comment_likes WHERE comment_id = $comment_id AND liked = 1";
-    $like_result = $conn->query($sql);
-    $new_likes = $like_result->fetch_assoc()['total_likes'];
-
-    // Update the likes count in the comments table
-    $sql = "UPDATE comments SET likes = $new_likes WHERE comment_id = $comment_id";
-    $conn->query($sql);
-
-    echo json_encode(['success' => true, 'newLikes' => $new_likes, 'liked' => $new_liked_status]);
-
+if ($result->num_rows > 0) {
+    // Nếu đã like, thì xóa like (unlike)
+    $delete_query = "DELETE FROM comment_likes WHERE comment_id = ? AND user_id = ?";
+    $stmt_delete = $conn->prepare($delete_query);
+    $stmt_delete->bind_param("ii", $comment_id, $user_id);
+    $stmt_delete->execute();
+    $stmt_delete->close();
+    $liked = 0;
 } else {
-    echo json_encode(['success' => false, 'message' => 'Invalid request']);
+    // Nếu chưa like, thì thêm like
+    $insert_query = "INSERT INTO comment_likes (comment_id, user_id) VALUES (?, ?)";
+    $stmt_insert = $conn->prepare($insert_query);
+    $stmt_insert->bind_param("ii", $comment_id, $user_id);
+    $stmt_insert->execute();
+    $stmt_insert->close();
+    $liked = 1;
 }
+$stmt->close();
+
+// Đếm lại tổng số like cho comment này
+$count_query = "SELECT COUNT(*) AS total FROM comment_likes WHERE comment_id = ?";
+$stmt_count = $conn->prepare($count_query);
+$stmt_count->bind_param("i", $comment_id);
+$stmt_count->execute();
+$stmt_count->bind_result($newLikes);
+$stmt_count->fetch();
+$stmt_count->close();
+
+// Cập nhật lại số like trong bảng comments (nếu có cột likes)
+$update_query = "UPDATE comments SET likes = ? WHERE comment_id = ?";
+$stmt_update = $conn->prepare($update_query);
+$stmt_update->bind_param("ii", $newLikes, $comment_id);
+$stmt_update->execute();
+$stmt_update->close();
+
+echo json_encode([
+    'success' => true,
+    'liked' => $liked,
+    'newLikes' => $newLikes
+]);
 ?>

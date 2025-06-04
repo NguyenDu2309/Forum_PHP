@@ -17,59 +17,78 @@ $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
 $page = ($page <= 0) ? 1 : $page; // If page is less than or equal to 0, reset to 1
 $offset = ($page - 1) * $limit; // Offset for SQL query
 
-// Query to get liked comments
-$query = "SELECT lc.*, c.comment, c.comment_time, t.thread_title, t.thread_user_name
-          FROM comment_likes lc
-          INNER JOIN comments c ON lc.comment_id = c.comment_id
-          INNER JOIN thread t ON c.thread_comment_id = t.thread_id
-          WHERE lc.user_id = ? AND lc.liked = 1
-          ORDER BY c.comment_time DESC
-          LIMIT ?, ?";
+// Query to get liked comments and replies
+$query = "
+    SELECT 'comment' AS type, lc.comment_id AS id, c.comment, c.comment_time AS created_time, t.thread_title, t.thread_user_name, NULL AS reply_text
+    FROM comment_likes lc
+    INNER JOIN comments c ON lc.comment_id = c.comment_id
+    INNER JOIN thread t ON c.thread_comment_id = t.thread_id
+    WHERE lc.user_id = ?
+    UNION ALL
+    SELECT 'reply' AS type, lr.reply_id AS id, NULL AS comment, r.reply_time AS created_time, t.thread_title, t.thread_user_name, r.reply_text
+    FROM reply_likes lr
+    INNER JOIN replies r ON lr.reply_id = r.reply_id
+    INNER JOIN comments c ON r.comment_id = c.comment_id
+    INNER JOIN thread t ON c.thread_comment_id = t.thread_id
+    WHERE lr.user_id = ?
+    ORDER BY created_time DESC
+    LIMIT ?, ?
+";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("iiii", $user_id, $user_id, $offset, $limit);
+$stmt->execute();
+$result = $stmt->get_result();
 
 
-$stmt = $conn->prepare($query);  // Prepare the query
-$stmt->bind_param("iii", $user_id, $offset, $limit); // Bind parameters
-$stmt->execute();  // Execute the query
-$result = $stmt->get_result();  // Get the result
 
-
-
-// Get total number of liked comments for pagination
-$total_query = "SELECT COUNT(*) FROM comment_likes WHERE user_id = ?";
+// Get total number of liked comments and replies for pagination
+$total_query = "
+    SELECT 
+        (SELECT COUNT(*) FROM comment_likes WHERE user_id = ?) +
+        (SELECT COUNT(*) FROM reply_likes WHERE user_id = ?)
+    AS total_liked
+";
 $stmt_total = $conn->prepare($total_query);
-$stmt_total->bind_param("i", $user_id);
+$stmt_total->bind_param("ii", $user_id, $user_id);
 $stmt_total->execute();
 $total_result = $stmt_total->get_result();
 $total_liked_comments = $total_result->fetch_row()[0];
-$total_pages = ceil($total_liked_comments / $limit); // Calculate total pages
+$total_pages = ceil($total_liked_comments / $limit);
 $stmt_total->close();
 
 
 // Handle unlike comment
-if (isset($_GET['unlike_id'])) {
+if (isset($_GET['unlike_id']) && isset($_GET['type'])) {
     $unlike_id = intval($_GET['unlike_id']);
-    // 1. Bỏ like trong bảng comment_likes
-    $unlike_query = "UPDATE comment_likes SET liked = 0 WHERE comment_id = ? AND user_id = ?";
-    $stmt_unlike = $conn->prepare($unlike_query);
-    $stmt_unlike->bind_param("ii", $unlike_id, $user_id);
-    $stmt_unlike->execute();
-    $stmt_unlike->close();
+    $type = $_GET['type'];
+    if ($type == 'comment') {
+        $unlike_query = "DELETE FROM comment_likes WHERE comment_id = ? AND user_id = ?";
+        $stmt_unlike = $conn->prepare($unlike_query);
+        $stmt_unlike->bind_param("ii", $unlike_id, $user_id);
+        $stmt_unlike->execute();
+        $stmt_unlike->close();
 
-    // 2. Đếm lại tổng số like thật sự cho comment này
-    $count_query = "SELECT COUNT(*) FROM comment_likes WHERE comment_id = ? AND liked = 1";
-    $stmt_count = $conn->prepare($count_query);
-    $stmt_count->bind_param("i", $unlike_id);
-    $stmt_count->execute();
-    $stmt_count->bind_result($new_likes);
-    $stmt_count->fetch();
-    $stmt_count->close();
+        // Update comment like count
+        $count_query = "SELECT COUNT(*) FROM comment_likes WHERE comment_id = ?";
+        $stmt_count = $conn->prepare($count_query);
+        $stmt_count->bind_param("i", $unlike_id);
+        $stmt_count->execute();
+        $stmt_count->bind_result($new_likes);
+        $stmt_count->fetch();
+        $stmt_count->close();
 
-    // 3. Cập nhật lại số like trong bảng comments
-    $update_comment = $conn->prepare("UPDATE comments SET likes = ? WHERE comment_id = ?");
-    $update_comment->bind_param("ii", $new_likes, $unlike_id);
-    $update_comment->execute();
-    $update_comment->close();
-
+        $update_comment = $conn->prepare("UPDATE comments SET likes = ? WHERE comment_id = ?");
+        $update_comment->bind_param("ii", $new_likes, $unlike_id);
+        $update_comment->execute();
+        $update_comment->close();
+    } else if ($type == 'reply') {
+        $unlike_query = "DELETE FROM reply_likes WHERE reply_id = ? AND user_id = ?";
+        $stmt_unlike = $conn->prepare($unlike_query);
+        $stmt_unlike->bind_param("ii", $unlike_id, $user_id);
+        $stmt_unlike->execute();
+        $stmt_unlike->close();
+        // Nếu muốn cập nhật số like cho reply, thêm code ở đây
+    }
     header('Location: manage_likes.php');
     exit();
 }
@@ -191,31 +210,44 @@ $stmt->close();
             <table class="table table-bordered table-hover text-center">
                 <tbody>
                     <?php
-                    $serial = $offset + 1; // Serial number starts from 1 on each page
+                    $serial = $offset + 1;
                     while ($like = $result->fetch_assoc()): ?>
                     <tr class="align-middle">
                         <td class="bg-secondary text-center fw-bold mt-3"><?= $serial++; ?></td>
                         <td class="bg-secondary-subtle px-3 w-auto text-start text-wrap" style="min-width: 150px;">
-                             <span class="fw-bold text-primary"> Câu hỏi được đăng bởi: </span>
+                            <span class="fw-bold text-primary"> Câu hỏi được đăng bởi: </span>
                             <?= htmlspecialchars($like['thread_user_name']); ?>
                         </td>
                         <td class="bg-light px-3 w-auto text-start text-wrap" style="min-width: 180px;">
                             <span class="fw-bold text-success"> Câu hỏi: </span>
-                                <?= htmlspecialchars($like['thread_title']); ?>
-                           </td>
+                            <?= htmlspecialchars($like['thread_title']); ?>
+                        </td>
                         <td class="bg-warning-subtle px-3 w-auto text-start text-wrap" style="min-width: 200px;">
-                             <span class="fw-bold text-danger"> Bình luận: </span>
-                            <?= htmlspecialchars($like['comment']); ?>
-                         </td>
+                            <?php if ($like['type'] == 'comment'): ?>
+                                <span class="fw-bold text-danger"> Bình luận: </span>
+                                <?= htmlspecialchars($like['comment']); ?>
+                            <?php else: ?>
+                                <span class="fw-bold text-info"> Phản hồi: </span>
+                                <?= htmlspecialchars($like['reply_text']); ?>
+                            <?php endif; ?>
+                        </td>
                         <td class="bg-light text-muted text-center w-auto" style="min-width: 120px;">
-                            <?= htmlspecialchars($like['comment_time']); ?>
+                            <?= htmlspecialchars($like['created_time']); ?>
                         </td>
                         <td class="text-center w-auto" style="min-width: 150px;">
-                            <a href="manage_likes.php?unlike_id=<?= $like['comment_id']; ?>"
-                                class="btn btn-danger btn-sm mt-1 px-3"
-                                onclick="return confirm('Are you sure you want to unlike this comment?');">
-                                ❌ Bỏ thích
-                            </a>
+                            <?php if ($like['type'] == 'comment'): ?>
+                                <a href="manage_likes.php?unlike_id=<?= $like['id']; ?>&type=comment"
+                                    class="btn btn-danger btn-sm mt-1 px-3"
+                                    onclick="return confirm('Are you sure you want to unlike this comment?');">
+                                    ❌ Bỏ thích
+                                </a>
+                            <?php else: ?>
+                                <a href="manage_likes.php?unlike_id=<?= $like['id']; ?>&type=reply"
+                                    class="btn btn-danger btn-sm mt-1 px-3"
+                                    onclick="return confirm('Are you sure you want to unlike this reply?');">
+                                    ❌ Bỏ thích
+                                </a>
+                            <?php endif; ?>
                         </td>
                     </tr>
                     <?php endwhile; ?>
