@@ -15,7 +15,7 @@ Diễn đàn thảo luận trực tuyến xây dựng bằng PHP thuần, với 
 
 - PHP (thuần, không framework)
 - MySQL
-- HTML/CSS (Bootstrap)
+- HTML/CSS (Tailwind)
 - JavaScript (AJAX một số phần)
 - Bộ lọc ngôn ngữ: Tự xây dựng bằng cách đối chiếu danh sách từ cấm
 
