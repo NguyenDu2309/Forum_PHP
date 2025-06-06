@@ -13,6 +13,7 @@ $username = $_SESSION['username'];
 // Fetch user details
 $user_image = "images/user.png"; // Default image
 $username = "";
+$time = ""; // Thêm dòng này để khởi tạo biến $time
 
 if (isset($_SESSION['username'])) {
     $username = $_SESSION['username'];
@@ -25,9 +26,9 @@ if (isset($_SESSION['username'])) {
         $row = mysqli_fetch_assoc($result);
         if (!empty($row['user_image'])) {
             $user_image = "../uploads/user_images/" . $row['user_image'];
-            $time = $row['login_time'];
-
         }
+        // Lấy thời gian đăng ký tài khoản (hoặc trường phù hợp, ví dụ: created_at)
+        $time = !empty($row['created_at']) ? $row['created_at'] : (isset($row['login_time']) ? $row['login_time'] : '');
     }
 }
 
