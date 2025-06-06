@@ -136,77 +136,67 @@ function displayReplies($conn, $comment_id, $parent_reply_id = null, $depth = 0)
     
     $output = '';
     while ($reply = $replies->fetch_assoc()) {
-        // Calculate margin-left based on depth
-        $margin_left = ($depth * 20) + 20; // 20px per level
-        
-        // Get user image for the reply
+        $margin_left = ($depth * 20) + 20;
         $user_name = $reply['user_name'];
         $user_sql = "SELECT user_image FROM users WHERE user_name = ?";
         $user_stmt = $conn->prepare($user_sql);
         $user_stmt->bind_param("s", $user_name);
         $user_stmt->execute();
         $user_result = $user_stmt->get_result();
-        $user_image = 'images/user.png'; // Default user image
-
+        $user_image = 'images/user.png';
         if ($user_result->num_rows > 0) {
             $user_row = $user_result->fetch_assoc();
             if (!empty($user_row['user_image'])) {
                 $user_image = "uploads/user_images/" . $user_row['user_image'];
             }
         }
-        
-        // Format the reply HTML
-        $output .= '<div class="reply-container ms-' . $margin_left . ' mt-2 p-2 bg-light rounded" id="reply-' . $reply['reply_id'] . '">';
-        $output .= '<div class="d-flex align-items-start">';
-        $output .= '<img src="' . htmlspecialchars($user_image) . '" class="me-2 rounded-circle" alt="User" style="width:30px; height:30px;">';
-        $output .= '<div class="flex-grow-1">';
-        $output .= '<div class="d-flex justify-content-between align-items-center">';
-        $output .= '<strong class="text-primary" style="font-size:0.95em;">' . htmlspecialchars($reply['user_name']) . '</strong>';
-        $output .= '<div>';
 
-        // Tim cho reply
-        if (isset($_SESSION['user_id'])) {
-            $replyLiked = checkIfReplyLiked($reply['reply_id']) ? 'liked' : '';
-            $replyLikes = getReplyLikes($reply['reply_id']);
-            $output .= '<span class="me-1" id="reply-likes-count-' . $reply['reply_id'] . '">' . $replyLikes . '</span>';
-            $output .= '<button class="reply-like-btn border-0 bg-transparent p-0" id="reply-like-' . $reply['reply_id'] . '" data-reply-id="' . $reply['reply_id'] . '" data-liked="' . ($replyLiked ? '1' : '0') . '">';
-            $output .= '<i class="heart-icon ' . $replyLiked . ' fas fa-heart"></i>';
-            $output .= '</button>';
-
-            // Nút trả lời cho reply (icon fas fa-reply)
-            $output .= '<button class="btn btn-sm btn-link p-0 ms-2 align-middle reply-btn" type="button" title="Reply" onclick="toggleNestedReplyForm(' . $reply['reply_id'] . ',' . $comment_id . ')">';
+        $output .= '<div class="reply-container" style="margin-left:' . $margin_left . 'px; margin-top:8px; background:#f8fafc; border-radius:0.5rem; padding:12px;">';
+        $output .= '<div class="flex items-start">';
+        $output .= '<img src="' . htmlspecialchars($user_image) . '" class="rounded-full mr-2" alt="User" style="width:30px; height:30px;">';
+        $output .= '<div class="flex-1">';
+        $output .= '<div class="flex justify-between items-center">';
+        $output .= '<strong class="text-blue-600" style="font-size:0.95em;">' . htmlspecialchars($reply['user_name']) . '</strong>';
+        // Đưa tim và nút reply ra ngoài cùng bên phải
+        $output .= '<div class="flex items-center space-x-2 ml-2">';
+        $replyLikes = getReplyLikes($reply['reply_id']);
+        $replyLiked = checkIfReplyLiked($reply['reply_id']) ? 'liked' : '';
+        $output .= '<p class="m-0" id="reply-likes-count-' . $reply['reply_id'] . '">' . $replyLikes . '</p>';
+        $output .= '<button class="reply-like-btn ml-1" id="reply-like-' . $reply['reply_id'] . '" data-reply-id="' . $reply['reply_id'] . '" data-liked="' . ($replyLiked ? '1' : '0') . '">';
+        $output .= '<i class="heart-icon ' . $replyLiked . ' fas fa-heart"></i>';
+        $output .= '</button>';
+        if (isset($_SESSION['username'])) {
+            $output .= '<button class="reply-btn ml-2" type="button" title="Reply" onclick="toggleNestedReplyForm(' . $reply['reply_id'] . ',' . $comment_id . ')">';
             $output .= '<i class="fas fa-reply"></i>';
             $output .= '</button>';
         }
+        $output .= '</div>'; // end flex items-center space-x-2
+        $output .= '</div>'; // end flex justify-between
 
-        $output .= '</div>'; // Close button container
-        $output .= '</div>'; // Close flex container
-        
-        // Reply content
+        // Nội dung reply
         $output .= '<p class="mb-1">' . htmlspecialchars($reply['reply_text']) . '</p>';
-        $output .= '<small class="text-muted" style="font-size:0.8em;">' . date('d-m-Y h:i A', strtotime($reply['reply_time'])) . '</small>';
-        
-        // Nested reply form (hidden by default)
+        $output .= '<small class="text-gray-500 italic" style="font-size:0.8em;">' . date('d-m-Y h:i A', strtotime($reply['reply_time'])) . '</small>';
+
+        // Form trả lời lồng nhau
         if (isset($_SESSION['username'])) {
             $output .= '<form method="POST" class="mt-2" style="display:none;" id="nested-reply-form-' . $reply['reply_id'] . '">';
-            $output .= '<div class="input-group input-group-sm">';
-            $output .= '<input type="text" name="nested_reply_text" class="form-control form-control-sm" placeholder="Viết câu trả lời..." required>';
+            $output .= '<div class="flex gap-2">';
+            $output .= '<input type="text" name="nested_reply_text" class="flex-1 border border-gray-300 rounded px-2 py-1 text-sm" placeholder="Viết câu trả lời..." required>';
             $output .= '<input type="hidden" name="reply_comment_id" value="' . $comment_id . '">';
             $output .= '<input type="hidden" name="parent_reply_id" value="' . $reply['reply_id'] . '">';
-            $output .= '<button type="submit" name="post_nested_reply" class="btn btn-sm btn-success">Trả lời</button>';
+            $output .= '<button type="submit" name="post_nested_reply" class="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600">Trả lời</button>';
             $output .= '</div>';
             $output .= '</form>';
         }
-        
-        $output .= '</div>'; // Close content div
-        $output .= '</div>'; // Close flex container
-        
-        // Recursively get and display nested replies
+
+        $output .= '</div>'; // flex-1
+        $output .= '</div>'; // flex
+
+        // Đệ quy hiển thị reply con
         $output .= displayReplies($conn, $comment_id, $reply['reply_id'], $depth + 1);
-        
-        $output .= '</div>'; // Close reply container
+
+        $output .= '</div>'; // reply-container
     }
-    
     return $output;
 }
 
@@ -328,81 +318,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel = "stylesheet" href ="Partials/style.css">
-    <!-- this is the link of bs-4.5 . i used media object component from it -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="Partials/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="icon" type="image/jpg" href="images/favicon1.jpg">
-    
     <title>Bài đăng</title>
     <style>
-      /* Custom style for date and time */
-      .text-attractive-color {
-          color: #6c757d; /* A soft gray color */
-          font-size: 0.9rem; /* Slightly smaller font size */
-          font-style: italic; /* To differentiate it from the main text */
-      }
-
-       /* Heart button style */
-        .like-btn {
-            background-color: transparent;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .heart-icon {
-            color: gray;
-            font-size: 24px;
-        }
-        .heart-icon.liked {
-            color: red;
-        }
-      
-      /* Container for comment text and time */
-      .comment-container {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-      }
-
-      .comment-text {
-          margin-bottom: 10px;
-      }
-      
-      /* Additional spacing to ensure comments don't overlap header */
-      .media {
-          margin-top: 20px; /* Give some space from the top */
-      }
-      
-      /* Nested reply styles */
-      .reply-container {
-          border-left: 2px solid #dee2e6;
-          padding-left: 10px;
-      }
-      
-      .reply-btn {
-          color: #6c757d;
-          transition: color 0.2s;
-      }
-      
-      .reply-btn:hover {
-          color: #0d6efd;
-      }
-
-      .reply-like-btn {
-          border: none;
-          background: transparent;
-          padding: 0;
-      }
+      .heart-icon { color: gray; font-size: 24px; }
+      .heart-icon.liked { color: red; }
+      .comment-container { display: flex; flex-direction: column; justify-content: space-between; }
+      .comment-text { margin-bottom: 10px; }
+      .reply-container { border-left: 2px solid #e5e7eb; padding-left: 10px; }
+      .reply-btn { color: #6b7280; transition: color 0.2s; }
+      .reply-btn:hover { color: #2563eb; }
+      .reply-like-btn { border: none; background: transparent; padding: 0; }
     </style>
   </head>
-  <body>
+  <body class="bg-gray-50 min-h-screen flex flex-col">
   <!-- included the _header file where is my navbar  -->
     <?php  include"Partials/_header.php"?>
     <?php  include"Partials/db_connection.php"?>
@@ -410,150 +345,118 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php  include"Partials/signup_modal.php"?>
 
     <?php
-      // ✅ XÓA THÔNG BÁO Ở ĐẦU TRANG VÌ ĐÃ CHUYỂN VÀO DISCUSSION
-    ?>
-     <?php
-    // Get the clicked thread's id, and fetch the thread details from the database and display it
-          if(isset($_GET['id'])) {
-              $threadsID = $_GET['id'];
-              // SQL query to fetch thread details by its ID
-              $sql = "SELECT * FROM `thread` WHERE thread_id = $threadsID";
-              $result = mysqli_query($conn, $sql);
-              // If the query is successfully executed
-              if($result == true) {
-                  // Loop through the fetched threads to display the threads in HTML format
-                  while ($fetch = mysqli_fetch_assoc($result)) {
-                      echo '<div class="container my-4">
-                                <div class="col-lg-12">
-                                    <div class="h-50 p-3 bg-light border rounded-3">';
-                                    // Hiển thị ảnh nếu có
-                                    if (!empty($fetch['thread_image'])) {
-                                        echo '<img src="uploads/thread_images/' . htmlspecialchars($fetch['thread_image']) . '" alt="Thread Image" class="img-fluid mb-3" style="max-width:300px;max-height:300px;border-radius:8px;">';
-                                    }
-                      echo '          <h4 style="word-wrap: break-word;"> <span>🔹Q :- </span'. $fetch['thread_title'] .'</h4>
-                                        <p class="py-1" style="word-wrap: break-word; white-space: normal;" <span>🔻 </span> '. $fetch['thread_desc'] .' </p>
-                                        <hr>';
-                                        if(isset($_SESSION["username"])) {
-                                            echo '<p> Được đăng bởi  : <span class ="fw-bold text-danger">'.$fetch["thread_user_name"].'</span></p> ';
-                                            echo '<hr>';
-                                        }
-                      echo '
-                                        
-                                    </div>
-                                </div>
-                            </div>';
-                  }
+      // Hiển thị chi tiết thread
+      if(isset($_GET['id'])) {
+          $threadsID = $_GET['id'];
+          $sql = "SELECT * FROM `thread` WHERE thread_id = $threadsID";
+          $result = mysqli_query($conn, $sql);
+          if($result == true) {
+              while ($fetch = mysqli_fetch_assoc($result)) {
+                  echo '<div class="container mx-auto my-4 px-4">
+                          <div class="bg-white rounded-lg shadow p-6">
+                              '.(!empty($fetch['thread_image']) ? '<img src="uploads/thread_images/' . htmlspecialchars($fetch['thread_image']) . '" alt="Thread Image" class="mb-3 rounded-lg max-w-xs max-h-72">' : '').'
+                              <h4 class="font-bold text-lg break-words mb-2"><span>🔹Q :- </span>' . htmlspecialchars($fetch['thread_title']) . '</h4>
+                              <p class="mb-2 break-words whitespace-normal"><span>🔻 </span>' . htmlspecialchars($fetch['thread_desc']) . '</p>
+                              <hr class="my-2">
+                              '.(isset($_SESSION["username"]) ? '<p>Được đăng bởi: <span class="font-bold text-red-600">'.$fetch["thread_user_name"].'</span></p><hr class="my-2">' : '').'
+                          </div>
+                        </div>';
               }
           }
-     ?>
+      }
+    ?>
 
-
-<!-- Display comments in media object format -->
-<div class="container my-3" style="max-height: 500px; overflow-y: auto;" id="discussion">
-    <h2 class="bg-danger p-2 my-3 rounded"> Trao đổi </h2>
+<!-- Display comments -->
+<div class="container mx-auto my-3 px-4 max-h-[500px] overflow-y-auto" id="discussion">
+    <h2 class="bg-red-500 text-white p-2 my-3 rounded text-lg font-semibold">Trao đổi</h2>
 
     <?php
-    // ✅ HIỂN THỊ THÔNG BÁO NGAY TRONG DISCUSSION
+    // Alerts
     if (isset($_SESSION['alert_success']) && $_SESSION['alert_success'] === true) {
-        echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <strong class="ms-1">✔Success!</strong> Comment posted successfully.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>';
+        echo '<div class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded shadow z-50 flex items-center justify-between w-full max-w-md">
+                <span class="font-semibold mr-2">✔Success!</span> Comment posted successfully.
+                <button type="button" class="ml-4 text-green-700 hover:text-green-900" onclick="this.parentElement.style.display=\'none\'">&times;</button>
+              </div>';
         unset($_SESSION['alert_success']);
     }
     elseif (isset($_SESSION['alert_fail']) && $_SESSION['alert_fail'] === true) {
         $reason = $_SESSION['fail_reason'] ?? 'Cannot post comment right now, try later.';
-        echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                     <strong class="ms-1">Error!</strong> ' . $reason . '
-                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>';
+        echo '<div class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow z-50 flex items-center justify-between w-full max-w-md">
+                <span class="font-semibold mr-2">Error!</span> ' . $reason . '
+                <button type="button" class="ml-4 text-red-700 hover:text-red-900" onclick="this.parentElement.style.display=\'none\'">&times;</button>
+              </div>';
         unset($_SESSION['alert_fail']);
         unset($_SESSION['fail_reason']);
     }
-    
-    // THÔNG BÁO CHO REPLIES
     if (isset($_SESSION['reply_success']) && $_SESSION['reply_success'] === true) {
-        echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <strong class="ms-1">✔Success!</strong> Reply posted successfully.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>';
+        echo '<div class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded shadow z-50 flex items-center justify-between w-full max-w-md">
+                <span class="font-semibold mr-2">✔Success!</span> Reply posted successfully.
+                <button type="button" class="ml-4 text-green-700 hover:text-green-900" onclick="this.parentElement.style.display=\'none\'">&times;</button>
+              </div>';
         unset($_SESSION['reply_success']);
     }
     elseif (isset($_SESSION['reply_fail']) && $_SESSION['reply_fail'] === true) {
         $reason = $_SESSION['reply_fail_reason'] ?? 'Cannot post reply right now, try later.';
-        echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                     <strong class="ms-1">Error!</strong> ' . $reason . '
-                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>';
+        echo '<div class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow z-50 flex items-center justify-between w-full max-w-md">
+                <span class="font-semibold mr-2">Error!</span> ' . $reason . '
+                <button type="button" class="ml-4 text-red-700 hover:text-red-900" onclick="this.parentElement.style.display=\'none\'">&times;</button>
+              </div>';
         unset($_SESSION['reply_fail']);
         unset($_SESSION['reply_fail_reason']);
     }
     ?>
 
     <?php
-    // Loop through each comment fetched from the database
+    // Loop through each comment
     while ($comment = $comments->fetch_assoc()):
-        // Fetch user image from the users table using the user_name
-        $user_name = $comment['user_name']; // Get the user_name from the comment
+        $user_name = $comment['user_name'];
         $user_sql = "SELECT user_image FROM users WHERE user_name = ?";
         $user_stmt = $conn->prepare($user_sql);
-        $user_stmt->bind_param("s", $user_name); // Bind the user_name as a string
+        $user_stmt->bind_param("s", $user_name);
         $user_stmt->execute();
         $user_result = $user_stmt->get_result();
-        $user_image = 'images/user.png'; // Default user image
-
-        // Check if user image exists and update the $user_image variable
+        $user_image = 'images/user.png';
         if ($user_result->num_rows > 0) {
-            $user_row = $user_result->fetch_assoc(); // Fetch the row with user_image
+            $user_row = $user_result->fetch_assoc();
             if (!empty($user_row['user_image'])) {
                 $user_image = "uploads/user_images/" . $user_row['user_image'];
             }
         }
-        
     ?>
-        <div class="media mb-3">
-            <!-- User Image (Making it round using CSS) -->
-            <img src="<?php echo htmlspecialchars($user_image); ?>" class="mr-3 rounded-circle" alt="User" style="width:40px; height:40px;">
-            <div class="media-body comment-body d-flex flex-column">
-                <div class="d-flex justify-content-between align-items-start">
-                    <h5 class="mt-0 text-primary"><?php echo htmlspecialchars($comment['user_name']); ?></h5>
-                    <!-- Like button and likes count section -->
-                    <div class="d-flex align-items-center mt-2">
-                    <p class="m-0" id="likes-count-<?php echo $comment['comment_id']; ?>"><?php echo $comment['likes']; ?></p>
-                    <button class="like-btn" 
-                        id="like-<?php echo $comment['comment_id']; ?>" 
-                        data-comment-id="<?php echo $comment['comment_id']; ?>" 
-                        data-liked="<?php echo checkIfLiked($comment['comment_id']) ? '1' : '0'; ?>">
-                        <i class="heart-icon <?php echo checkIfLiked($comment['comment_id']) ? 'liked' : ''; ?> fas fa-heart"></i>
-                    </button>
-                    <!-- Reply icon button -->
-                    <?php if(isset($_SESSION['username'])): ?>
-                    <button class="btn btn-sm btn-link p-0 ms-2 align-middle reply-btn" type="button" title="Reply"
-                        onclick="toggleReplyForm(<?php echo $comment['comment_id']; ?>)">
-                        <i class="fas fa-reply"></i>
-                    </button>
-                    <?php endif; ?>
+        <div class="flex mb-3">
+            <img src="<?php echo htmlspecialchars($user_image); ?>" class="rounded-full mr-3" alt="User" style="width:40px; height:40px;">
+            <div class="flex-1 flex flex-col bg-white rounded-lg shadow p-4">
+                <div class="flex justify-between items-start">
+                    <h5 class="text-blue-600 font-semibold"><?php echo htmlspecialchars($comment['user_name']); ?></h5>
+                    <div class="flex items-center mt-2">
+                        <p class="m-0" id="likes-count-<?php echo $comment['comment_id']; ?>"><?php echo $comment['likes']; ?></p>
+                        <button class="like-btn ml-2" 
+                            id="like-<?php echo $comment['comment_id']; ?>" 
+                            data-comment-id="<?php echo $comment['comment_id']; ?>" 
+                            data-liked="<?php echo checkIfLiked($comment['comment_id']) ? '1' : '0'; ?>">
+                            <i class="heart-icon <?php echo checkIfLiked($comment['comment_id']) ? 'liked' : ''; ?> fas fa-heart"></i>
+                        </button>
+                        <?php if(isset($_SESSION['username'])): ?>
+                        <button class="reply-btn ml-3" type="button" title="Reply"
+                            onclick="toggleReplyForm(<?php echo $comment['comment_id']; ?>)">
+                            <i class="fas fa-reply"></i>
+                        </button>
+                        <?php endif; ?>
+                    </div>
                 </div>
-                </div>
-                <!-- Comment text and comment time section -->
                 <div class="comment-container">
                     <p class="comment-text"><?php echo htmlspecialchars($comment['comment']); ?></p>
-                    <small class="text-muted text-attractive-color">
-                        <?php echo date('d-m-Y h:i A', strtotime($comment['comment_time'])); ?>
-                    </small>
+                    <small class="text-gray-500 italic"><?php echo date('d-m-Y h:i A', strtotime($comment['comment_time'])); ?></small>
                 </div>
-               
                 <?php if(isset($_SESSION['username'])): ?>
                 <form method="POST" class="mt-2" style="display:none;" id="reply-form-<?php echo $comment['comment_id']; ?>">
-                    <div class="input-group">
-                        <input type="text" name="reply_text" class="form-control form-control-sm" placeholder="Viết câu trả lời..." required>
+                    <div class="flex gap-2">
+                        <input type="text" name="reply_text" class="flex-1 border border-gray-300 rounded px-2 py-1 text-sm" placeholder="Viết câu trả lời..." required>
                         <input type="hidden" name="reply_comment_id" value="<?php echo $comment['comment_id']; ?>">
-                        <button type="submit" name="post_reply" class="btn btn-sm btn-success">Gửi</button>
+                        <button type="submit" name="post_reply" class="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600">Gửi</button>
                     </div>
                 </form>
                 <?php endif; ?>
-                
-                <!-- Display nested replies using the helper function -->
                 <div class="replies-container mt-2">
                     <?php echo displayReplies($conn, $comment['comment_id']); ?>
                 </div>
@@ -562,29 +465,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php endwhile; ?>
 </div>
 
-<!-- here is the form for post comments -->
-<div class="container">
+<!-- Comment form -->
+<div class="container mx-auto px-4">
   <hr>
   <?php if (isset($_SESSION['username'])): ?>
-    <h2>Viết bình luận</h2>
-
-    <!-- COMMENT FORM -->
+    <h2 class="text-lg font-semibold mb-2">Viết bình luận</h2>
     <form class="my-3" action="<?php echo $_SERVER['PHP_SELF'].'?id='.$_GET['id'].'&page='.$page; ?>" method="POST">
         <div class="mb-3">
-          <div class="form-floating">
-            <textarea class="form-control" id="floatingTextarea2" style="height: 100px" name="comment" required></textarea>
-            <label for="floatingTextarea2" id="description">Viết giải pháp nếu bạn có</label>
-          </div>
+          <textarea class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" style="height: 100px" name="comment" required></textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Đăng</button>
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Đăng</button>
     </form>
-
   <?php else: ?>
-    <h3 class="bg-success p-2 text-center rounded-pill">Đăng nhập để bình luận</h3>
+    <h3 class="bg-green-500 text-white p-2 text-center rounded-full">Đăng nhập để bình luận</h3>
   <?php endif; ?>
 </div>
-  <hr>
-  
+<hr>
+
 <?php
 $count_sql = "SELECT COUNT(*) as total FROM comments WHERE thread_comment_id = ?";
 $count_stmt = $conn->prepare($count_sql);
@@ -595,30 +492,30 @@ $total_comments = $count_result->fetch_assoc()['total'];
 $total_pages = ceil($total_comments / $comments_per_page);
 ?>
 
-<!-- Pagination for comments -->
-<nav aria-label="Comment pagination">
-  <ul class="pagination justify-content-center">
+<!-- Pagination -->
+<nav aria-label="Comment pagination" class="my-4">
+  <ul class="flex justify-center space-x-1">
     <?php if ($page > 1): ?>
-      <li class="page-item">
-        <a class="page-link" href="?id=<?php echo $thread_id; ?>&page=<?php echo $page-1; ?>">Previous</a>
+      <li>
+        <a class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300" href="?id=<?php echo $thread_id; ?>&page=<?php echo $page-1; ?>">Previous</a>
       </li>
     <?php endif; ?>
     <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-      <li class="page-item <?php if ($i == $page) echo 'active'; ?>">
-        <a class="page-link" href="?id=<?php echo $thread_id; ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
+      <li>
+        <a class="px-3 py-1 rounded <?php if ($i == $page) echo 'bg-blue-600 text-white'; else echo 'bg-gray-200 hover:bg-gray-300'; ?>" href="?id=<?php echo $thread_id; ?>&page=<?php echo $i; ?>"><?php echo $i; ?></a>
       </li>
     <?php endfor; ?>
     <?php if ($page < $total_pages): ?>
-      <li class="page-item">
-        <a class="page-link" href="?id=<?php echo $thread_id; ?>&page=<?php echo $page+1; ?>">Next</a>
+      <li>
+        <a class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300" href="?id=<?php echo $thread_id; ?>&page=<?php echo $page+1; ?>">Next</a>
       </li>
     <?php endif; ?>
   </ul>
 </nav>
-    
+
 <script>
-    // removing alert after 3 sec with js
-    let alerts = document.querySelectorAll('.alert'); // Assuming multiple alerts with 'alert' class
+    // Hide alerts after 3 seconds
+    let alerts = document.querySelectorAll('.alert');
     alerts.forEach(function(alert) {
         setTimeout(() => {
             alert.remove();
@@ -634,7 +531,6 @@ $total_pages = ceil($total_comments / $comments_per_page);
             form.style.display = "none";
         }
     }
-    
     // Toggle reply form for nested replies
     function toggleNestedReplyForm(replyId, commentId) {
         var form = document.getElementById('nested-reply-form-' + replyId);
@@ -644,52 +540,33 @@ $total_pages = ceil($total_comments / $comments_per_page);
             form.style.display = "none";
         }
     }
-    
     document.addEventListener('DOMContentLoaded', function () {
-        // Select all like buttons on the page
+        // Like for comment
         document.querySelectorAll('.like-btn').forEach(function(button) {
-            // Add a click event listener to each button
             button.addEventListener('click', function() {
-                // Get the comment ID from the button
                 const commentId = button.getAttribute('data-comment-id');
-                // Get the likes count paragraph
                 const likesCountElement = document.getElementById(`likes-count-${commentId}`);
-                // Get the heart icon element inside the button
                 const heartIcon = button.querySelector('.heart-icon');
-
-                // Make an AJAX request to like_comment.php
                 fetch('like_comment.php', {
-                    // Set request method to POST
                     method: 'POST',
-                    // Set request body with comment id
-                    body: new URLSearchParams({
-                        'comment_id': commentId
-                    }),
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    }
+                    body: new URLSearchParams({'comment_id': commentId}),
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
                 })
-                // Convert response to JSON
                 .then(response => response.json())
                 .then(function(data) {
                     if (data.success) {
                         button.setAttribute('data-liked', data.liked);
-
-                        // Toggle 'liked' class và cập nhật màu tim
                         if (data.liked == 1) {
                             heartIcon.classList.add('liked');
                         } else {
                             heartIcon.classList.remove('liked');
                         }
-
                         likesCountElement.textContent = data.newLikes;
                     }
                 })
-                // Handle errors during AJAX request
                 .catch(error => console.error('Error:', error));
             });
         });
-
         // Like for reply
         document.querySelectorAll('.reply-like-btn').forEach(function(button) {
             button.addEventListener('click', function() {
@@ -718,20 +595,6 @@ $total_pages = ceil($total_comments / $comments_per_page);
         });
     });
 </script>
-  
-     <!-- Optional JavaScript; choose one of the two! -->
-
-    <!-- Option 1: Bootstrap Bundle with Popper -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-
-    <!-- Option 2: Separate Popper and Bootstrap JS -->
-    <!--
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
-    -->
-
-    <?php include "Partials/_footer.php"  ?>
-    </body>
+<?php include "Partials/_footer.php"  ?>
+</body>
 </html>

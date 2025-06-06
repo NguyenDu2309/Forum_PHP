@@ -3,11 +3,10 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Ensure this meta tag is correct -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
   <link rel="stylesheet" href="Partials/style.css">
   <link rel="icon" type="image/jpg" href="images/favicon1.jpg">
@@ -18,7 +17,6 @@
     .contact-container {
       background: linear-gradient(to right, #ff7e5f, #feb47b);
       padding: 50px 15px;
-      /* Reduced padding to avoid overflow */
       border-radius: 15px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
@@ -37,7 +35,8 @@
       text-align: center;
     }
 
-    .contact-form .form-control {
+    .contact-form input,
+    .contact-form textarea {
       border-radius: 8px;
       box-shadow: none;
       border: 1px solid #ddd;
@@ -88,21 +87,16 @@
       }
     }
 
-
     a {
-        display: inline-block;  /* Make the link an inline-block element */
-        /* transition: transform 0.3s ease, color 0.8s ease !important;  Smooth transition for both transform and color */
+      display: inline-block;
+      transition: transform 0.3s ease, color 0.8s ease;
     }
 
     a:hover {
-        text-decoration: underline !important;  /* Ensure underline is applied */
-        /* color: black !important;  Change the color of the link on hover */
-        /* transform: scale(1.1);  Zoom in the link on hover */
+      text-decoration: underline;
+      color: black;
+      transform: scale(1.1);
     }
-
-
-   
-
 
     /* Prevent horizontal overflow */
     body,
@@ -113,10 +107,10 @@
 </head>
 
 <!-- Include the header -->
-    <?php include "Partials/_header.php"; ?>
-    <?php include "Partials/login_modal.php"; ?>
-    <?php include "Partials/signup_modal.php"; ?>
-    <?php include "Partials/admin_login_modal.php"; ?>
+<?php include "Partials/_header.php"; ?>
+<?php include "Partials/login_modal.php"; ?>
+<?php include "Partials/signup_modal.php"; ?>
+<?php include "Partials/admin_login_modal.php"; ?>
 
 <?php
 // Include database connection
@@ -157,31 +151,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 ?>
 
-
-<div class="container-fluid"> <!-- Use container-fluid to cover full width -->
+<div class="container-fluid">
   <div class="contact-container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-lg-8 col-md-10 col-12">
+    <div class="flex justify-center">
+      <div class="w-full lg:w-8/12 md:w-10/12">
         <div class="contact-form">
           <h2>Liên hệ với chúng tôi</h2>
           <form action="contact_form.php" method="POST">
-            <div class="mb-3">
-              <label for="name" class="form-label">Họ và Tên</label>
-              <input type="text" class="form-control" id="name" name="name" required>
+            <div class="mb-4">
+              <label for="name" class="block text-sm font-medium text-gray-700">Họ và Tên</label>
+              <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" id="name" name="name" required>
             </div>
-            <div class="mb-3">
-              <label for="email" class="form-label">Email</label>
-              <input type="email" class="form-control" id="email" name="email" required>
+            <div class="mb-4">
+              <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+              <input type="email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" id="email" name="email" required>
             </div>
-            <div class="mb-3">
-              <label for="subject" class="form-label">Môn học</label>
-              <input type="text" class="form-control" id="subject" name="subject" required>
+            <div class="mb-4">
+              <label for="subject" class="block text-sm font-medium text-gray-700">Môn học</label>
+              <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" id="subject" name="subject" required>
             </div>
-            <div class="mb-3">
-              <label for="message" class="form-label">Vấn đề</label>
-              <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+            <div class="mb-4">
+              <label for="message" class="block text-sm font-medium text-gray-700">Vấn đề</label>
+              <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" id="message" name="message" rows="5" required></textarea>
             </div>
-            <button type="submit" class="btn btn-block">Gửi</button>
+            <button type="submit" class="w-full bg-red-500 text-white px-12 py-3 rounded-lg hover:bg-red-600 transition">Gửi</button>
           </form>
         </div>
       </div>
@@ -190,24 +183,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </div>
 
 <div class="container-fluid">
-  <div class="contact-info rounded bg-info text-white p-3 mb-3">
-    <h4>Cần thêm sự hỗ trợ?</h4>
-    <p class="bg-secondary rounded-3 p-2 ">Vui lòng liên hệ  
-      <a class="text-decoration-none text-white" href="mailto:nguyendu2004.anhuu@gmail.com">
+  <div class="contact-info bg-blue-500 text-white p-3 mb-3 rounded-lg">
+    <h4 class="text-xl font-semibold">Cần thêm sự hỗ trợ?</h4>
+    <p class="bg-gray-600 rounded-lg p-2">Vui lòng liên hệ  
+      <a class="text-white hover:text-black transition-colors duration-300" href="mailto:nguyendu2004.anhuu@gmail.com">
         nguyendu2004.anhuu@gmail.com
       </a> (clickable).
     </p>
-
-
-
   </div>
 </div>
 
 <!-- Include the footer -->
 <?php include "Partials/_footer.php"; ?>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
 </html>
