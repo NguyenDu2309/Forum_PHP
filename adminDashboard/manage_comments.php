@@ -64,125 +64,69 @@ if (isset($_GET['delete_reply_id'])) {
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Comments</title>
+    <title>Quản lý Bình luận</title>
     <link rel="icon" type="image/jpg" href="/Forum_website/images/favicon1.jpg">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f4f4f9;
-        }
-
-        .container {
-            margin-top: 80px;
-        }
-
-        .btn {
-            padding: 8px 15px;
-        }
-
-        .search-bar {
-            margin-bottom: 20px;
-        }
-
-        .table-responsive {
-            margin-bottom: 20px;
-        }
-
-        .table td,
-        .table th {
-            word-break: break-word;
-            vertical-align: top;
-            max-width: 350px;
-        }
-
-        /* To ensure the page works well on small screens */
-        @media (max-width: 768px) {
-            .table th,
-            .table td {
-                padding: 10px;
-            }
-
-            .btn {
-                padding: 6px 12px;
-            }
-
-            .search-bar input {
-                width: 100%;
-            }
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
-<body>
+<body class="bg-gray-100 min-h-screen">
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="admin_dashboard.php">Bảng điều khiển quản trị</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="admin_dashboard.php">Quay lại Bảng điều khiển</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="admin_logout.php">Đăng xuất</a>
-                    </li>
-                </ul>
+    <nav class="fixed top-0 left-0 right-0 bg-gray-800 text-white z-10 shadow">
+        <div class="container mx-auto flex items-center justify-between px-4 py-3">
+            <a class="font-bold text-lg" href="admin_dashboard.php">Bảng điều khiển quản trị</a>
+            <div class="flex gap-4">
+                <a class="hover:text-blue-400 transition" href="admin_dashboard.php">Quay lại Bảng điều khiển</a>
+                <a class="hover:text-blue-400 transition" href="admin_logout.php">Đăng xuất</a>
             </div>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <div class="container">
-        <h2>Quản lý Bình luận</h2>
+    <div class="container mx-auto pt-28 px-2 max-w-6xl">
+        <h2 class="mb-4 text-2xl font-bold text-gray-800">Quản lý Bình luận</h2>
 
         <!-- Search Form -->
-        <form class="search-bar" method="GET" action="manage_comments.php">
-            <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Search by comment or author"
-                    value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
-            </div>
+        <form class="flex flex-col sm:flex-row gap-2 mb-4" method="GET" action="manage_comments.php">
+            <input type="text" name="search" class="flex-1 rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500" placeholder="Tìm kiếm bình luận hoặc tác giả" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Tìm kiếm</button>
         </form>
 
         <?php if (isset($_GET['search']) && !empty($_GET['search'])): ?>
-        <a href="manage_comments.php" class="btn btn-secondary mb-3">Quay lại tất cả bình luận</a>
+            <a href="manage_comments.php" class="inline-block bg-gray-300 text-gray-800 px-3 py-1 rounded mb-3">Quay lại tất cả bình luận</a>
         <?php endif; ?>
 
         <!-- Table of Comments -->
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <thead>
+        <div class="overflow-x-auto rounded shadow bg-white">
+            <table class="min-w-full divide-y divide-gray-200 text-base">
+                <thead class="bg-gray-100">
                     <tr>
-                        <th>#</th>
-                        <th>Bình luận</th>
-                        <th>Tác giả</th>
-                        <th>Tên bài viết</th>
-                        <th>Thời gian</th>
-                        <th>Hành động</th>
+                        <th class="py-3 px-3 text-center font-semibold whitespace-nowrap">#</th>
+                        <th class="py-3 px-3 text-left font-semibold whitespace-nowrap">Bình luận</th>
+                        <th class="py-3 px-3 text-left font-semibold whitespace-nowrap">Tác giả</th>
+                        <th class="py-3 px-3 text-left font-semibold whitespace-nowrap">Tên bài viết</th>
+                        <th class="py-3 px-3 text-center font-semibold whitespace-nowrap">Thời gian</th>
+                        <th class="py-3 px-3 text-center font-semibold whitespace-nowrap">Hành động</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-gray-100">
                     <?php
-                    $serial = $offset + 1; // Serial number starts from 1 on each page
+                    $serial = $offset + 1;
                     while ($comment = $result->fetch_assoc()): ?>
-                    <tr>
-                        <td><?= $serial++; ?></td>
+                    <tr class="hover:bg-gray-50">
+                        <td class="text-center"><?= $serial++; ?></td>
                         <td><?= htmlspecialchars($comment['comment']); ?></td>
-                        <td><?= htmlspecialchars($comment['user_name']); ?></td>
+                        <td class="text-blue-700"><?= htmlspecialchars($comment['user_name']); ?></td>
                         <td><?= htmlspecialchars($comment['thread_comment_id']); ?></td>
-                        <td><?= htmlspecialchars($comment['comment_time']); ?></td>
-                        <td>
-                            <a href="manage_comments.php?delete_id=<?= $comment['comment_id']; ?>" class="btn btn-danger btn-sm mt-1"
-                                onclick="return confirm('Bạn có chắc chắn muốn xóa bình luận này không?');">Xóa</a>
+                        <td class="text-center text-gray-500"><?= htmlspecialchars($comment['comment_time']); ?></td>
+                        <td class="text-center">
+                            <a href="manage_comments.php?delete_id=<?= $comment['comment_id']; ?>"
+                               class="inline-block bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm font-semibold transition mb-1"
+                               onclick="return confirm('Bạn có chắc chắn muốn xóa bình luận này không?');">
+                                Xóa
+                            </a>
                         </td>
                     </tr>
                     <?php
@@ -192,19 +136,21 @@ if (isset($_GET['delete_reply_id'])) {
                     if ($reply_result && mysqli_num_rows($reply_result) > 0):
                         while ($reply = mysqli_fetch_assoc($reply_result)):
                     ?>
-                    <tr>
+                    <tr class="bg-gray-50">
                         <td></td>
-                        <td colspan="4" class="ps-5 border-start border-2 border-primary bg-light">
-                            <span class="fw-bold text-success">Trả lời bởi <?= htmlspecialchars($reply['user_name']); ?>:</span>
+                        <td colspan="4" class="pl-8 border-l-4 border-blue-400">
+                            <span class="font-semibold text-green-700">Trả lời bởi <?= htmlspecialchars($reply['user_name']); ?>:</span>
                             <?= htmlspecialchars($reply['reply_text']); ?>
-                            <span class="text-muted ms-2" style="font-size:0.9em;">
+                            <span class="text-gray-500 ml-2 text-xs">
                                 <?= isset($reply['reply_time']) ? htmlspecialchars($reply['reply_time']) : ''; ?>
                             </span>
                         </td>
-                        <td>
+                        <td class="text-center">
                             <a href="manage_comments.php?delete_reply_id=<?= $reply['reply_id']; ?>&page=<?= $page; ?><?= isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''; ?>"
-                               class="btn btn-danger btn-sm"
-                               onclick="return confirm('Bạn có chắc chắn muốn xóa bình luận này không?');">Xóa</a>
+                               class="inline-block bg-red-400 hover:bg-red-600 text-white px-3 py-1 rounded text-xs font-semibold transition"
+                               onclick="return confirm('Bạn có chắc chắn muốn xóa bình luận này không?');">
+                                Xóa
+                            </a>
                         </td>
                     </tr>
                     <?php
@@ -217,25 +163,30 @@ if (isset($_GET['delete_reply_id'])) {
         </div>
 
         <!-- Pagination -->
-        <nav>
-            <ul class="pagination justify-content-center">
-                <li class="page-item <?= $page <= 1 ? 'disabled' : ''; ?>">
-                    <a class="page-link" href="manage_comments.php?page=<?= $page - 1; ?>&search=<?= isset($_GET['search']) ? $_GET['search'] : ''; ?>">Previous</a>
+        <nav class="flex justify-center mt-6">
+            <ul class="inline-flex items-center -space-x-px">
+                <li>
+                    <a href="manage_comments.php?page=<?= max($page - 1, 1); ?>&search=<?= isset($_GET['search']) ? urlencode($_GET['search']) : ''; ?>"
+                       class="px-3 py-1 rounded-l border border-gray-300 bg-white text-gray-700 hover:bg-gray-200 <?= $page <= 1 ? 'pointer-events-none opacity-50' : '' ?>">
+                        Previous
+                    </a>
                 </li>
                 <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                <li class="page-item <?= $i == $page ? 'active' : ''; ?>">
-                    <a class="page-link" href="manage_comments.php?page=<?= $i; ?>&search=<?= isset($_GET['search']) ? $_GET['search'] : ''; ?>"><?= $i; ?></a>
-                </li>
+                    <li>
+                        <a href="manage_comments.php?page=<?= $i; ?>&search=<?= isset($_GET['search']) ? urlencode($_GET['search']) : ''; ?>"
+                           class="px-3 py-1 border border-gray-300 bg-white text-gray-700 hover:bg-blue-100 <?= $i == $page ? 'bg-blue-500 text-white font-bold' : '' ?>">
+                            <?= $i; ?>
+                        </a>
+                    </li>
                 <?php endfor; ?>
-                <li class="page-item <?= $page >= $total_pages ? 'disabled' : ''; ?>">
-                    <a class="page-link" href="manage_comments.php?page=<?= $page + 1; ?>&search=<?= isset($_GET['search']) ? $_GET['search'] : ''; ?>">Next</a>
+                <li>
+                    <a href="manage_comments.php?page=<?= min($page + 1, $total_pages); ?>&search=<?= isset($_GET['search']) ? urlencode($_GET['search']) : ''; ?>"
+                       class="px-3 py-1 rounded-r border border-gray-300 bg-white text-gray-700 hover:bg-gray-200 <?= $page >= $total_pages ? 'pointer-events-none opacity-50' : '' ?>">
+                        Next
+                    </a>
                 </li>
             </ul>
         </nav>
     </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

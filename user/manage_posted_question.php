@@ -118,303 +118,205 @@ $total_replies = $total_replies_result ? mysqli_fetch_row($total_replies_result)
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Posted Questions</title>
+    <title>Quản lý câu hỏi đã đăng</title>
     <link rel="icon" type="image/jpg" href="/Forum_website/images/favicon1.jpg">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <style>
-        body {
-             background-color: #f4f4f9;
-             display: flex;
-             flex-direction: column;
-             min-height: 100vh;
-                
-        }
-
-        .container1 {
-            margin-top: 80px;
-        }
-
-        .btn {
-            padding: 8px 15px;
-        }
-
-        .search-bar {
-            margin-bottom: 20px;
-        }
-
-        .table-responsive {
-            margin-bottom: 20px;
-        }
-
-        /* To ensure the page works well on small screens */
-        @media (max-width: 768px) {
-            .table th,
-            .table td {
-                padding: 10px;
-            }
-
-            .btn {
-                padding: 6px 12px;
-            }
-
-            .search-bar input {
-                width: 100%;
-            }
-        }
-
-        /* Style for the scrollable td */
-        .table-responsive tbody td {
-            max-height: 150px;
-            /* Adjust max-height as needed */
-            overflow-y: auto;
-            display: block;
-            /* Make td a block-level element */
-            padding: 10px;
-            word-break: break-word;
-            /* Allow long words to break */
-            white-space: normal;
-            /* Allow text to wrap normally */
-        }
-
-        .table th {
-            text-align: center;
-        }
-
-        .table td {
-            white-space: normal;
-            word-break: break-word;
-        }
-
-        .comment-box {
-            background-color: #f0f0f0;
-            border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-
-        .comment-username {
-            font-weight: bold;
-            color: #007bff;
-        }
-        .footer{
-            margin-top: auto;
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
 
-<body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="user_profile.php">Bảng điều khiển người dùng</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="user_profile.php">Quay lại Bảng điều khiển</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../Partials/_handle_logout.php">Đăng xuất</a>
-                    </li>
-                </ul>
+    <nav class="fixed top-0 left-0 right-0 bg-gray-800 text-white z-10 shadow">
+        <div class="container mx-auto flex items-center justify-between px-4 py-3">
+            <a class="font-bold text-lg" href="user_profile.php">Bảng điều khiển người dùng</a>
+            <div class="flex space-x-4">
+                <a class="hover:text-blue-400 transition" href="user_profile.php">Quay lại Bảng điều khiển</a>
+                <a class="hover:text-blue-400 transition" href="../Partials/_handle_logout.php">Đăng xuất</a>
             </div>
         </div>
     </nav>
 
-    <div class="container  container1">
-        <button class=" button rounded py-2 px-3 mt-2 text-white bg-dark border-0"> <a class="text-white text-decoration-none"
-                href="user_profile.php">Quay lại Bảng điều khiển</a></button>
-    </div>
-    <!-- Main Content -->
-    <div class="container mt-3">
-        <h2>Quản lý câu hỏi đã đăng</h2>
+    <div class="container mx-auto pt-20 flex-1 w-full">
+        <a href="user_profile.php" class="inline-block bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700 transition text-sm mb-4">← Quay lại Bảng điều khiển</a>
+        <h2 class="text-2xl font-bold mb-4 text-gray-800">Quản lý câu hỏi đã đăng</h2>
 
         <!-- Search Form -->
-        <form class="search-bar" method="GET" action="manage_posted_question.php">
-            <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Tìm kiếm câu hỏi"
-                    value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-                <button type="submit" class="btn btn-primary">Tìm kiếm</button>
-            </div>
+        <form class="mb-4 flex flex-col sm:flex-row gap-2" method="GET" action="manage_posted_question.php">
+            <input type="text" name="search" class="flex-1 rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500" placeholder="Tìm kiếm câu hỏi" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Tìm kiếm</button>
         </form>
-
         <?php if (isset($_GET['search']) && !empty($_GET['search'])): ?>
-            <a href="manage_posted_question.php" class="btn btn-secondary mb-3">Quay về các câu hỏi</a>
+            <a href="manage_posted_question.php" class="inline-block bg-gray-300 text-gray-800 px-3 py-1 rounded mb-3">Quay về các câu hỏi</a>
         <?php endif; ?>
 
         <!-- Table of Questions -->
-        <div class="table-responsive ">
-            <table class="table table-bordered table-hover ">
-                <tbody>
+        <div class="overflow-x-auto rounded shadow bg-white">
+            <table class="min-w-full divide-y divide-gray-200 text-sm">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="py-2 px-2 text-center font-semibold whitespace-nowrap">#</th>
+                        <th class="py-2 px-2 text-left font-semibold whitespace-nowrap">Danh mục & Câu hỏi</th>
+                        <th class="py-2 px-2 text-center font-semibold whitespace-nowrap">Thời gian</th>
+                        <th class="py-2 px-2 text-center font-semibold whitespace-nowrap">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
                     <?php
                     $serial = $offset + 1;
                     while ($thread = $result->fetch_assoc()):
-                        // Đếm số comment cho thread này
                         $thread_id = $thread['thread_id'];
                         $comment_count_query = "SELECT COUNT(*) FROM comments WHERE thread_comment_id = $thread_id";
                         $comment_count_result = mysqli_query($conn, $comment_count_query);
                         $comment_count = $comment_count_result ? mysqli_fetch_row($comment_count_result)[0] : 0;
-
-                        // Đếm số reply cho thread này (tính tất cả reply của các comment thuộc thread)
-                        $reply_count_query = "SELECT COUNT(*) 
-                                              FROM replies 
-                                              WHERE comment_id IN (SELECT comment_id FROM comments WHERE thread_comment_id = $thread_id)";
+                        $reply_count_query = "SELECT COUNT(*) FROM replies WHERE comment_id IN (SELECT comment_id FROM comments WHERE thread_comment_id = $thread_id)";
                         $reply_count_result = mysqli_query($conn, $reply_count_query);
                         $reply_count = $reply_count_result ? mysqli_fetch_row($reply_count_result)[0] : 0;
                     ?>
-                        <tr class="">
-                        <td class="bg-secondary fw-bold d-flex align-items-center justify-content-between px-3 mt-4" style="min-width: 100px;">
-                            <span><?= $serial++; ?></span>
-                            <span class="text-wrap text-center">
-                                Category - <?= htmlspecialchars($thread['category_name']); ?>
-                            </span>
+                    <tr>
+                        <td class="bg-gray-200 text-center font-semibold"><?= $serial++; ?></td>
+                        <td class="px-2 py-2">
+                            <div class="font-semibold text-blue-700 mb-1">Danh mục: <?= htmlspecialchars($thread['category_name']); ?></div>
+                            <div class="font-bold text-red-600">Câu hỏi:</div>
+                            <div class="mb-2"><?= htmlspecialchars($thread['thread_title']); ?></div>
+                            <span class="inline-block bg-blue-100 text-blue-800 rounded px-2 py-1 text-xs mr-2">Bình luận: <?= $comment_count ?></span>
+                            <span class="inline-block bg-green-100 text-green-800 rounded px-2 py-1 text-xs">Trả lời: <?= $reply_count ?></span>
                         </td>
-                        <td class="bg-warning-subtle px-3 text-start text-wrap" style="min-width: 200px;">
-                            <span class="fw-bold text-danger"> Câu hỏi: </span>
-                            <?= htmlspecialchars($thread['thread_title']); ?>
-                            <br>
-                            <span class="badge bg-info text-dark mt-2">Bình luận: <?= $comment_count ?></span>
-                            <span class="badge bg-success text-white mt-2">Trả lời: <?= $reply_count ?></span>
-                        </td>
-                        <td class="bg-light text-muted text-center" style="min-width: 120px;">
-                            <?= htmlspecialchars($thread['time']); ?>
-                        </td>
-                        <td class="w-auto text-center" style="min-width: 150px;">
+                        <td class="text-center text-gray-500 whitespace-nowrap"><?= htmlspecialchars($thread['time']); ?></td>
+                        <td class="text-center space-y-2">
                             <!-- Edit Button -->
-                            <button class="btn btn-warning btn-sm mt-1 px-3" data-bs-toggle="modal"
-                                data-bs-target="#editThreadModal<?= $thread['thread_id']; ?>">
+                            <button class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded text-sm font-semibold transition w-full sm:w-auto mt-1"
+                                onclick="document.getElementById('editThreadModal<?= $thread['thread_id']; ?>').classList.remove('hidden')">
                                 ✏️ Chỉnh sửa
                             </button>
                             <!-- Delete Button -->
                             <a href="manage_posted_question.php?delete_id=<?= $thread['thread_id']; ?><?= (isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''); ?>"
-                                class="btn btn-danger btn-sm mt-1 px-3"
+                                class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-semibold transition w-full sm:w-auto mt-1 inline-block"
                                 onclick="return confirm('Are you sure you want to delete this question and its comments?');">
                                 ❌ Xóa
                             </a>
                         </td>
                     </tr>
 
-                    <!-- Edit Thread Modal -->
-                    <div class="modal fade" id="editThreadModal<?= $thread['thread_id']; ?>" tabindex="-1"
-                        aria-labelledby="editThreadModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="editThreadModalLabel">Chỉnh sửa câu hỏi</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form
-                                        action="manage_posted_question.php<?= (isset($_GET['search']) ? '?search=' . urlencode($_GET['search']) : '') ?>"
-                                        method="POST" enctype="multipart/form-data">
+                    <!-- Edit Thread Modal (Tailwind) -->
+                    <div id="editThreadModal<?= $thread['thread_id']; ?>" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+                        <div class="bg-white rounded-lg shadow-lg w-full max-w-md mx-2">
+                            <div class="flex justify-between items-center border-b px-4 py-2">
+                                <h5 class="font-bold text-lg">Chỉnh sửa câu hỏi</h5>
+                                <button type="button" class="text-2xl font-bold text-gray-500 hover:text-red-500" onclick="document.getElementById('editThreadModal<?= $thread['thread_id']; ?>').classList.add('hidden')">&times;</button>
+                            </div>
+                            <div class="p-4">
+                                <form action="manage_posted_question.php<?= (isset($_GET['search']) ? '?search=' . urlencode($_GET['search']) : '') ?>" method="POST" enctype="multipart/form-data">
+                                    <div class="mb-3">
+                                        <label for="thread_title" class="block font-semibold mb-1">Câu hỏi</label>
+                                        <textarea class="w-full border border-gray-300 rounded px-3 py-2" name="thread_title" id="thread_title" rows="4"><?= htmlspecialchars($thread['thread_title']); ?></textarea>
+                                    </div>
+                                    <?php if (!empty($thread['thread_image'])): ?>
                                         <div class="mb-3">
-                                            <label for="thread_title" class="form-label">Question</label>
-                                            <textarea class="form-control" name="thread_title" id="thread_title"
-                                                rows="4"><?= htmlspecialchars($thread['thread_title']); ?></textarea>
+                                            <label class="block font-semibold mb-1">Ảnh hiện tại:</label>
+                                            <img src="../uploads/thread_images/<?= htmlspecialchars($thread['thread_image']); ?>" alt="Thread Image" class="max-w-[120px] max-h-[120px] rounded shadow">
                                         </div>
-                                        <!-- Hiển thị ảnh hiện tại nếu có -->
-                                        <?php if (!empty($thread['thread_image'])): ?>
-                                            <div class="mb-3">
-                                                <label class="form-label">Current Image:</label><br>
-                                                <img src="../uploads/thread_images/<?= htmlspecialchars($thread['thread_image']); ?>" alt="Thread Image" style="max-width:120px;max-height:120px;">
-                                            </div>
-                                        <?php endif; ?>
-                                        <div class="mb-3">
-                                            <label for="thread_image" class="form-label">Thay đổi hình ảnh (Tùy chọn)</label>
-                                            <input type="file" class="form-control" name="thread_image" id="thread_image" accept="image/*">
-                                        </div>
-                                        <input type="hidden" name="thread_id" value="<?= $thread['thread_id']; ?>">
-                                        <button type="submit" name="edit_thread" class="btn btn-primary">Lưu thay đổi</button>
-                                    </form>
-                                </div>
+                                    <?php endif; ?>
+                                    <div class="mb-3">
+                                        <label for="thread_image" class="block font-semibold mb-1">Thay đổi hình ảnh (Tùy chọn)</label>
+                                        <input type="file" class="block w-full border border-gray-300 rounded px-3 py-2" name="thread_image" id="thread_image" accept="image/*">
+                                    </div>
+                                    <input type="hidden" name="thread_id" value="<?= $thread['thread_id']; ?>">
+                                    <div class="flex justify-end gap-2">
+                                        <button type="button" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition" onclick="document.getElementById('editThreadModal<?= $thread['thread_id']; ?>').classList.add('hidden')">Hủy</button>
+                                        <button type="submit" name="edit_thread" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Lưu thay đổi</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
 
-            <!-- Comment Section -->
-                        <tr>
-                            <td colspan="5">
-                                <?php
-                                $comment_query = "SELECT comments.*, users.user_name
-                                                    FROM comments
-                                                    INNER JOIN users ON comments.user_name = users.user_name
-                                                    WHERE comments.thread_comment_id = " . $thread['thread_id'];
-                                $comment_result = mysqli_query($conn, $comment_query);
+                    <!-- Comment Section -->
+                    <tr>
+                        <td colspan="4" class="bg-gray-50">
+                            <?php
+                            $comment_query = "SELECT comments.*, users.user_name
+                                                FROM comments
+                                                INNER JOIN users ON comments.user_name = users.user_name
+                                                WHERE comments.thread_comment_id = " . $thread['thread_id'];
+                            $comment_result = mysqli_query($conn, $comment_query);
 
-                                if ($comment_result && mysqli_num_rows($comment_result) > 0) {
-                                    while ($comment = mysqli_fetch_assoc($comment_result)) {
-                                        ?>
-                                        <div class="comment-box mb-2">
-                                            <p>
-                                                <span class="comment-username"><?= htmlspecialchars($comment['user_name']); ?>:</span>
-                                                <?= htmlspecialchars($comment['comment']); ?>
-                                            </p>
-                                            <?php
-                                            // Lấy các reply cho comment này
-                                            $reply_query = "SELECT * FROM replies WHERE comment_id = " . $comment['comment_id'] . " ORDER BY reply_id ASC";
-                                            $reply_result = mysqli_query($conn, $reply_query);
-                                            if ($reply_result && mysqli_num_rows($reply_result) > 0) {
-                                                while ($reply = mysqli_fetch_assoc($reply_result)) {
-                                                    ?>
-                                                    <div class="ms-4 ps-3 border-start border-2 border-primary mb-1">
-                                                        <span class="text-success fw-bold"><?= htmlspecialchars($reply['user_name']); ?>:</span>
-                                                        <?= htmlspecialchars($reply['reply_text']); ?>
-                                                    </div>
-                                                    <?php
-                                                }
-                                            }
-                                            ?>
-                                        </div>
+                            if ($comment_result && mysqli_num_rows($comment_result) > 0) {
+                                while ($comment = mysqli_fetch_assoc($comment_result)) {
+                                    ?>
+                                    <div class="bg-gray-100 rounded p-3 mb-2">
+                                        <p>
+                                            <span class="font-bold text-blue-600"><?= htmlspecialchars($comment['user_name']); ?>:</span>
+                                            <?= htmlspecialchars($comment['comment']); ?>
+                                        </p>
                                         <?php
+                                        // Lấy các reply cho comment này
+                                        $reply_query = "SELECT * FROM replies WHERE comment_id = " . $comment['comment_id'] . " ORDER BY reply_id ASC";
+                                        $reply_result = mysqli_query($conn, $reply_query);
+                                        if ($reply_result && mysqli_num_rows($reply_result) > 0) {
+                                            while ($reply = mysqli_fetch_assoc($reply_result)) {
+                                                ?>
+                                                <div class="ml-4 pl-3 border-l-4 border-blue-400 mb-1">
+                                                    <span class="text-green-700 font-semibold"><?= htmlspecialchars($reply['user_name']); ?>:</span>
+                                                    <?= htmlspecialchars($reply['reply_text']); ?>
+                                                </div>
+                                                <?php
+                                            }
+                                        }
+                                        ?>
+                                    </div>
+                                    <?php
 
-                                    }
-                                } else {
-                                    echo '<p class="text-center fst-italic">No answers yet.</p>';
                                 }
-                                ?>
-                            </td>
-                        </tr>
-
+                            } else {
+                                echo '<p class="text-center italic text-gray-500">Chưa có trả lời nào.</p>';
+                            }
+                            ?>
+                        </td>
+                    </tr>
                     <?php endwhile; ?>
                 </tbody>
             </table>
-         </div>
+        </div>
 
         <!-- Pagination -->
-        <nav>
-            <ul class="pagination justify-content-center">
-                <li class="page-item <?= $page <= 1 ? 'disabled' : ''; ?>">
-                    <a class="page-link"
-                        href="manage_posted_question.php?page=<?= max($page - 1, 1); ?><?= (isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''); ?>">Previous</a>
+        <nav class="flex justify-center mt-6">
+            <ul class="inline-flex items-center -space-x-px">
+                <li>
+                    <a href="manage_posted_question.php?page=<?= max($page - 1, 1); ?><?= (isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''); ?>"
+                       class="px-3 py-1 rounded-l border border-gray-300 bg-white text-gray-700 hover:bg-gray-200 <?= $page <= 1 ? 'pointer-events-none opacity-50' : '' ?>">
+                        Previous
+                    </a>
                 </li>
                 <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                    <li class="page-item <?= $i == $page ? 'active' : ''; ?>">
-                        <a class="page-link"
-                            href="manage_posted_question.php?page=<?= $i; ?><?= (isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''); ?>"><?= $i; ?></a>
+                    <li>
+                        <a href="manage_posted_question.php?page=<?= $i; ?><?= (isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''); ?>"
+                           class="px-3 py-1 border border-gray-300 bg-white text-gray-700 hover:bg-blue-100 <?= $i == $page ? 'bg-blue-500 text-white font-bold' : '' ?>">
+                            <?= $i; ?>
+                        </a>
                     </li>
                 <?php endfor; ?>
-                <li class="page-item <?= $page >= $total_pages ? 'disabled' : ''; ?>">
-                    <a class="page-link"
-                        href="manage_posted_question.php?page=<?= min($page + 1, $total_pages); ?><?= (isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''); ?>">Next</a>
+                <li>
+                    <a href="manage_posted_question.php?page=<?= min($page + 1, $total_pages); ?><?= (isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''); ?>"
+                       class="px-3 py-1 rounded-r border border-gray-300 bg-white text-gray-700 hover:bg-gray-200 <?= $page >= $total_pages ? 'pointer-events-none opacity-50' : '' ?>">
+                        Next
+                    </a>
                 </li>
             </ul>
         </nav>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <div class="footer">
+    <div class="mt-auto">
         <?php include '../Partials/_footer.php'; ?>
     </div>
+    <script>
+        // Đóng modal khi nhấn Esc
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "Escape") {
+                document.querySelectorAll('[id^="editThreadModal"]').forEach(modal => modal.classList.add('hidden'));
+            }
+        });
+    </script>
 </body>
-
 </html>

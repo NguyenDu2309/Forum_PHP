@@ -43,104 +43,58 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quên mật khẩu</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="icon" type="image/jpg" href="../images/favicon1.jpg">
-   <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh; /* Ensures full height */
-            background-color: #f4f4f9;
-        }
-        .nav-item .m {
-                color: white !important;  /* Ensures text color stays white */
-                background-color: transparent !important;  /* Ensures no background change */
-            }
-
-        .nav-item .m:hover {
-            color: white !important;  /* Keeps text color white on hover */
-            background-color: transparent !important;  /* Prevents background color change */
-        }
-
-        .container {
-                    flex: 1; /* Pushes footer down */
-                }
-        .footer {
-            margin-top: auto;
-        }
-
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<!-- including files for laod login and sign up modal -->
-  <?php include "../Partials/db_connection.php"; ?>
-  <?php include "../Partials/login_modal.php"; ?>
-  <?php include "../Partials/signup_modal.php"; ?>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+<?php include "../Partials/db_connection.php"; ?>
+<?php include "../Partials/login_modal.php"; ?>
+<?php include "../Partials/signup_modal.php"; ?>
 
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="../index.php">IT Forum</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                   <a class=" dropdown-item m text-white " href="#" data-bs-toggle="modal" data-bs-target="#loginModal"> Quên mật khẩu</a>
-                </li>
-                <li class="nav-item">
-                    <a class=" dropdown-item m text-white " href="#" data-bs-toggle="modal" data-bs-target="#loginModal"> Đăng ký</a>
-                </li>
-            </ul>
+<nav class="fixed top-0 left-0 right-0 bg-gray-800 text-white z-10 shadow">
+    <div class="container mx-auto flex items-center justify-between px-4 py-3">
+        <a class="font-bold text-lg" href="../index.php">IT Forum</a>
+        <div class="flex gap-2">
+            <a href="#" class="hover:text-blue-400 transition" data-modal-toggle="loginModal">Quên mật khẩu</a>
+            <a href="#" class="hover:text-blue-400 transition" data-modal-toggle="signupModal">Đăng ký</a>
         </div>
     </div>
 </nav>
 
 <!-- Main Content -->
-<body>
+<div class="flex-1 flex flex-col justify-center items-center pt-28 pb-8">
+    <div class="bg-white rounded-xl shadow-lg w-full max-w-md mx-2 p-6">
+        <h2 class="text-2xl font-bold text-center mb-4">Nhập OTP</h2>
 
-<div class="container mt-5">
-    <div class="row justify-content-center mt-5">
-        <div class="col-md-6">
-            <div class="card shadow-lg p-4">
-                <h2 class="text-center mb-4">Nhập OTP</h2>
-
-                <?php if (isset($_SESSION['message'])): ?>
-                    <div class="alert alert-info text-center"><?php echo $_SESSION['message']; unset($_SESSION['message']); ?></div>
-                <?php endif; ?>
-
-                <form action="" method="post">
-                    <div class="mb-3">
-                        <label for="otp" class="form-label">Nhập OTP được gửi đến email của bạn:</label>
-                        <input type="text" class="form-control" id="otp" name="otp" required <?php echo !$otp_valid ? 'disabled' : ''; ?>>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100" <?php echo !$otp_valid ? 'disabled' : ''; ?>>Xác minh OTP</button>
-                </form>
-
-                <!-- Resend OTP Button -->
-                <form action="_resend_otp.php" method="post" class="mt-3">
-                    <button type="submit" class="btn btn-secondary w-100" id="resendBtn" <?php echo $otp_valid ? 'disabled' : ''; ?>>Gửi lại OTP</button>
-                </form>
+        <?php if (isset($_SESSION['message'])): ?>
+            <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-2 rounded mb-3 text-center text-sm">
+                <?php echo $_SESSION['message']; unset($_SESSION['message']); ?>
             </div>
-        </div>
+        <?php endif; ?>
+
+        <form action="" method="post" class="space-y-4">
+            <div>
+                <label for="otp" class="block font-semibold mb-1 text-gray-700">Nhập OTP được gửi đến email của bạn:</label>
+                <input type="text" class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500" id="otp" name="otp" required <?php echo !$otp_valid ? 'disabled' : ''; ?>>
+            </div>
+            <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition font-semibold" <?php echo !$otp_valid ? 'disabled' : ''; ?>>Xác minh OTP</button>
+        </form>
+
+        <!-- Resend OTP Button -->
+        <form action="_resend_otp.php" method="post" class="mt-3">
+            <button type="submit" class="w-full bg-gray-400 text-white py-2 rounded hover:bg-gray-500 transition font-semibold" id="resendBtn" <?php echo $otp_valid ? 'disabled' : ''; ?>>Gửi lại OTP</button>
+        </form>
     </div>
 </div>
 
-
-<!-- Footer -->
-<div class="footer">
+<div class="mt-auto">
     <?php include '../Partials/_footer.php'; ?>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-    crossorigin="anonymous"></script>
-
 <script>
-    let alert = document.querySelector('.alert');
+    let alert = document.querySelector('.bg-blue-100');
     if (alert) {
         setTimeout(() => {
             alert.style.display = 'none';
@@ -149,13 +103,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Reload page when OTP expires
     let remainingTime = <?php echo $remaining_time > 0 ? $remaining_time : 0; ?>;
-    
     if (remainingTime > 0) {
         setTimeout(() => {
-            location.reload(); // Reload page when OTP expires
-        }, remainingTime * 1000); // Reload exactly when OTP expires
+            location.reload();
+        }, remainingTime * 1000);
     }
 </script>
-</body>
 </body>
 </html>

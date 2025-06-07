@@ -52,63 +52,41 @@ if (isset($_POST['submit'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thay đổi mật khẩu</title>
     <link rel="icon" type="image/jpg" href="/Forum_website/images/favicon1.jpg">
-    <title>Change Password</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f4f4f9;
-        }
-        .container {
-            margin-top: 80px;
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen">
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="admin_dashboard.php">Bảng điều khiển quản trị</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="admin_dashboard.php">Quay lại Bảng điều khiển</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="admin_logout.php">Đăng xuất</a>
-                    </li>
-                </ul>
+    <nav class="fixed top-0 left-0 right-0 bg-gray-800 text-white z-10 shadow">
+        <div class="container mx-auto flex items-center justify-between px-4 py-3">
+            <a class="font-bold text-lg" href="admin_dashboard.php">Bảng điều khiển quản trị</a>
+            <div class="flex gap-4">
+                <a class="hover:text-blue-400 transition" href="admin_dashboard.php">Quay lại Bảng điều khiển</a>
+                <a class="hover:text-blue-400 transition" href="admin_logout.php">Đăng xuất</a>
             </div>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <div class="container">
-        <h2 class="mb-4">Thay đổi mật khẩu</h2>
-
-        <form method="POST" action="change_password.php">
-            <div class="mb-3">
-                <label for="current_password" class="form-label">Mật khẩu hiện tại</label>
-                <input type="password" class="form-control" id="current_password" name="current_password" required>
+    <div class="container mx-auto pt-28 px-2 max-w-md">
+        <h2 class="mb-6 text-2xl font-bold text-gray-800 text-center">Thay đổi mật khẩu</h2>
+        <form method="POST" action="change_password.php" class="bg-white rounded-xl shadow p-6 space-y-5">
+            <div>
+                <label for="current_password" class="block font-semibold mb-1 text-gray-700">Mật khẩu hiện tại</label>
+                <input type="password" class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500" id="current_password" name="current_password" required>
             </div>
-            <div class="mb-3">
-                <label for="new_password" class="form-label">Mật khẩu mới</label>
-                <input type="password" class="form-control" id="new_password" name="new_password" required>
+            <div>
+                <label for="new_password" class="block font-semibold mb-1 text-gray-700">Mật khẩu mới</label>
+                <input type="password" class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500" id="new_password" name="new_password" required>
             </div>
-            <div class="mb-3">
-                <label for="confirm_password" class="form-label">Xác nhận mật khẩu mới</label>
-                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+            <div>
+                <label for="confirm_password" class="block font-semibold mb-1 text-gray-700">Xác nhận mật khẩu mới</label>
+                <input type="password" class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500" id="confirm_password" name="confirm_password" required>
             </div>
-            <button type="submit" name="submit" class="btn btn-primary">Thay đổi mật khẩu</button>
+            <button type="submit" name="submit" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition font-semibold">Thay đổi mật khẩu</button>
         </form>
     </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

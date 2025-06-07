@@ -98,101 +98,61 @@ if (!$result) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý người dùng</title>
     <link rel="icon" type="image/jpg" href="/Forum_website/images/favicon1.jpg">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f4f4f9;
-        }
-        .container {
-            margin-top: 80px;
-        }
-        .table {
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .table th, .table td {
-            border: 2px solid #ddd;
-        }
-        .table thead {
-            background-color: #007bff;
-            color: white;
-        }
-        .table tbody tr:hover {
-            background-color: rgba(0, 123, 255, 0.1);
-        }
-        .btn {
-            padding: 8px 15px;
-        }
-        @media (max-width: 576px) {
-            .table th, .table td {
-                font-size: 14px;
-            }
-            .navbar-brand {
-                font-size: 16px;
-            }
-            .navbar-toggler {
-                border-color: #fff;
-            }
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen">
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="admin_dashboard.php">Bảng điều khiển quản trị</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="admin_dashboard.php">Quay lại Bảng điều khiển</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="admin_logout.php">Đăng xuất</a>
-                    </li>
-                </ul>
+    <nav class="fixed top-0 left-0 right-0 bg-gray-800 text-white z-10 shadow">
+        <div class="container mx-auto flex items-center justify-between px-4 py-3">
+            <a class="font-bold text-lg" href="admin_dashboard.php">Bảng điều khiển quản trị</a>
+            <div class="flex gap-4">
+                <a class="hover:text-blue-400 transition" href="admin_dashboard.php">Quay lại Bảng điều khiển</a>
+                <a class="hover:text-blue-400 transition" href="admin_logout.php">Đăng xuất</a>
             </div>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <div class="container">
-        <h2 class="mb-4">Quản lý người dùng</h2>
-        <a href="admin_dashboard.php" class="btn btn-secondary mb-4">Quay lại Bảng điều khiển</a>
+    <div class="container mx-auto pt-28 px-2 max-w-6xl">
+        <h2 class="mb-4 text-3xl font-bold text-gray-800">Quản lý người dùng</h2>
+        <a href="admin_dashboard.php" class="inline-block bg-gray-700 text-white px-5 py-2 rounded hover:bg-gray-900 transition text-base mb-4">← Quay lại Bảng điều khiển</a>
 
-        <div class="table-responsive">
-            <table class="table table-bordered">
-                <thead>
+        <div class="overflow-x-auto rounded shadow bg-white">
+            <table class="min-w-full divide-y divide-gray-200 text-base">
+                <thead class="bg-gray-100">
                     <tr>
-                        <th>#</th>
-                        <th>Tên</th>
-                        <th>Đăng nhập lần cuối</th>
-                        <th>Hành động</th>
+                        <th class="py-3 px-3 text-center font-semibold whitespace-nowrap">#</th>
+                        <th class="py-3 px-3 text-left font-semibold whitespace-nowrap">Tên</th>
+                        <th class="py-3 px-3 text-center font-semibold whitespace-nowrap">Đăng nhập lần cuối</th>
+                        <th class="py-3 px-3 text-center font-semibold whitespace-nowrap">Hành động</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-gray-100">
                     <?php if ($result->num_rows > 0): ?>
                         <?php 
                         $serial_number = 1;
                         while ($row = $result->fetch_assoc()): ?>
-                            <tr>
-                                <td><?= $serial_number++; ?></td>
-                                <td><?= htmlspecialchars($row['user_name']); ?></td>
-                                <td><?= htmlspecialchars($row['login_time']); ?></td>
-                                <td>
-                                    <a href="user_activity.php?user=<?= htmlspecialchars($row['user_name']); ?>" class="btn btn-primary btn-sm mt-1">Xem bài viết & bình luận</a>
-                                    <a href="manage_users.php?delete=<?= htmlspecialchars($row['user_id']); ?>" class="btn btn-danger btn-sm mt-1" onclick="return confirmDelete(<?= $row['user_id']; ?>);">Xóa tài khoản</a>
+                            <tr class="hover:bg-gray-50">
+                                <td class="text-center"><?= $serial_number++; ?></td>
+                                <td class="font-medium text-blue-700 text-lg"><?= htmlspecialchars($row['user_name']); ?></td>
+                                <td class="text-center text-gray-500"><?= htmlspecialchars($row['login_time']); ?></td>
+                                <td class="text-center space-y-2">
+                                    <a href="user_activity.php?user=<?= htmlspecialchars($row['user_name']); ?>"
+                                       class="inline-block bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm font-semibold transition mb-1">
+                                        Xem bài viết & bình luận
+                                    </a>
+                                    <a href="manage_users.php?delete=<?= htmlspecialchars($row['user_id']); ?>"
+                                       class="inline-block bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded text-sm font-semibold transition mb-1"
+                                       onclick="return confirmDelete(<?= $row['user_id']; ?>);">
+                                        Xóa tài khoản
+                                    </a>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="4" class="text-center">Không tìm thấy người dùng nào!</td>
+                            <td colspan="4" class="text-center py-6 text-gray-500 text-lg">Không tìm thấy người dùng nào!</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
@@ -200,17 +160,10 @@ if (!$result) {
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
         function confirmDelete(userId) {
-            if (confirm("Are you sure you want to delete this account?")) {
-                window.location.href = "manage_users.php?delete=" + userId;
-            }
-            return false;
+            return confirm("Bạn có chắc chắn muốn xóa tài khoản này?");
         }
     </script>
-
 </body>
 </html>

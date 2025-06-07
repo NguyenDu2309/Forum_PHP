@@ -55,95 +55,42 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
+    <title>Hồ sơ người dùng</title>
     <link rel="icon" type="image/jpg" href="/Forum_website/images/favicon1.jpg">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <style>
-        body {
-                    background-color: #f8f9fa;
-                    display: flex;
-                    flex-direction: column;
-                    min-height: 100vh;
-                }
-
-                .profile-card {
-                    max-width: 450px;
-                    margin: auto;
-                    border-radius: 10px;
-                }
-
-                .profile-icon {
-                    font-size: 100px;
-                    color: #6c757d;
-                }
-
-                .btn-back {
-                    display: inline-flex;
-                    align-items: center;
-                }
-
-                .footer {
-                    margin-top: auto; /* Push the footer to the bottom */
-                }
-
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen flex flex-col">
 
- <!-- Navbar -->
- <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="user_profile.php">Bảng điều khiển người dùng</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                         <a class="nav-link" href="user_profile.php">Về bảng điều khiển</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../Partials/_handle_logout.php">Đăng xuất</a>
-                    </li>
-                </ul>
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 bg-gray-800 text-white z-10 shadow">
+        <div class="container mx-auto flex items-center justify-between px-4 py-3">
+            <a class="font-bold text-lg" href="user_profile.php">Bảng điều khiển người dùng</a>
+            <div class="flex space-x-4">
+                <a class="hover:text-blue-400 transition" href="user_profile.php">Về bảng điều khiển</a>
+                <a class="hover:text-blue-400 transition" href="../Partials/_handle_logout.php">Đăng xuất</a>
             </div>
         </div>
     </nav>
 
-<!-- Profile Section -->
-<div class="container " style="margin-top: 100px;">
-    <div class="card shadow-lg profile-card">
-        <div class="card-body text-center">
-          <img src="<?= $user_image ?>"  width="100" height="100" class="rounded-circle">
-            <h3 class="mt-2"><?= htmlspecialchars($username) ?></h3>
-            <p><strong>Joined:</strong> <?= date('F j, Y', strtotime($time)) ?></p>
-            
-            <div class="row">
-                <div class="col">
-                    <h5><?= $post_result['total_posts'] ?></h5>
-                    <p class="text-muted">Tổng số bài đăng</p>
-                </div>
-                <div class="col">
-                    <h5><?= $comment_result['total_comments'] ?></h5>
-                    <p class="text-muted">Tổng số bình luận</p>
-                </div>
-            </div>
-
-            <a href="manage_account.php" class="btn btn-primary w-100">
-                <i class="bi bi-pencil-square"></i> Chỉnh sửa thông tin cá nhân
+    <!-- Profile Section -->
+    <div class="container mx-auto flex-1 flex flex-col justify-center items-center pt-24 pb-8">
+        <div class="bg-white rounded-xl shadow-lg w-full max-w-md mx-auto p-8 flex flex-col items-center">
+            <img src="<?= $user_image ?>" alt="User Image" class="rounded-full w-28 h-28 object-cover border-4 border-gray-200 shadow mb-4">
+            <h3 class="text-2xl font-bold mt-2 mb-1"><?= htmlspecialchars($username) ?></h3>
+            <p class="text-gray-500 mb-4"><strong>Tham gia:</strong> <?= $time ? date('d/m/Y', strtotime($time)) : 'Không rõ' ?></p>
+            <a href="manage_account.php" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition font-semibold flex items-center justify-center mb-2">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536M9 13h3l8-8a2.828 2.828 0 00-4-4l-8 8v3zm-2 6h12"></path></svg>
+                Chỉnh sửa thông tin cá nhân
             </a>
-            <a href="javascript:history.back()" class="btn btn-secondary mt-2 w-100 btn-back">
-                <i class="bi bi-arrow-left me-1"></i> Trở về
+            <a href="javascript:history.back()" class="w-full bg-gray-300 text-gray-800 py-2 rounded-lg hover:bg-gray-400 transition font-semibold flex items-center justify-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
+                Trở về
             </a>
         </div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-<div class="footer">
-<?php include '../Partials/_footer.php'; ?>
-</div>
+    <div class="mt-auto">
+        <?php include '../Partials/_footer.php'; ?>
+    </div>
 </body>
 </html>

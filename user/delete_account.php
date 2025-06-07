@@ -58,115 +58,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['confirm_delete'])) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="../Partials/style.css">
     <title>Xóa tài khoản</title>
     <link rel="icon" type="image/jpg" href="/Forum_website/images/favicon1.jpg">
-       
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
-        .wrapper {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        .container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            flex: 1;
-            padding: 20px;
-        }
-
-        .confirmation-box {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            width: 100%;
-            max-width: 500px;
-        }
-
-        .footer {
-            margin-top: auto;
-            
-            background-color: #f8f9fa;
-            text-align: center;
-            width: 100%;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 576px) {
-            .confirmation-box {
-                padding: 20px;
-                max-width: 90%;
-            }
-
-            .container {
-                padding: 10px;
-            }
-           
-            a{
-                margin-top:3px;
-            }
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="user_profile.php">Bảng điều khiển người dùng</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="user_profile.php">Trở về bảng điều khiển</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="../Partials/_handle_logout.php">Đăng xuất</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+<body class="bg-gray-100 min-h-screen flex flex-col">
 
-    <div class="wrapper">
-        <div class="container">
-            <div class="confirmation-box">
-                <h2 class="text-center mb-4">Xóa tài khoản của bạn</h2>
-                <?php if (!empty($message)): ?>
-                    <div class="alert alert-danger"><?= $message ?></div>
-                <?php endif; ?>
-                <p>Bạn có chắc chắn muốn xóa tài khoản của mình không? Hành động này không thể đảo ngược và sẽ xóa vĩnh viễn hồ sơ của bạn cùng tất cả bài đăng và bình luận trên diễn đàn.</p>
-
-                <form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
-                    <div class="text-center">
-                        <button type="submit" name="confirm_delete" class="btn btn-danger">Có, Xóa Tài khoản của tôi</button>
-                        <a href="user_profile.php" class="btn btn-secondary">Không, Quay lại</a>
-                    </div>
-                </form>
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 bg-gray-800 text-white z-10 shadow">
+        <div class="container mx-auto flex items-center justify-between px-4 py-3">
+            <a class="font-bold text-lg" href="user_profile.php">Bảng điều khiển người dùng</a>
+            <div class="flex space-x-4">
+                <a class="hover:text-blue-400 transition" href="user_profile.php">Trở về bảng điều khiển</a>
+                <a class="hover:text-blue-400 transition" href="../Partials/_handle_logout.php">Đăng xuất</a>
             </div>
         </div>
+    </nav>
 
-        <!-- Footer -->
-        <footer class="footer">
-            <?php include "../Partials/_footer.php"; ?>
-        </footer>
+    <div class="flex-1 flex flex-col justify-center items-center pt-24 pb-8">
+        <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md mx-2">
+            <h2 class="text-2xl font-bold text-center mb-4">Xóa tài khoản của bạn</h2>
+            <?php if (!empty($message)): ?>
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-3"><?= $message ?></div>
+            <?php endif; ?>
+            <p class="mb-4 text-gray-700">
+                Bạn có chắc chắn muốn xóa tài khoản của mình không?<br>
+                <span class="font-semibold text-red-600">Hành động này không thể đảo ngược</span> và sẽ xóa vĩnh viễn hồ sơ của bạn cùng tất cả bài đăng và bình luận trên diễn đàn.
+            </p>
+            <form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+                <div class="flex flex-col sm:flex-row gap-3 justify-center mt-4">
+                    <button type="submit" name="confirm_delete"
+                        class="bg-red-600 hover:bg-red-700 text-white font-semibold px-5 py-2 rounded transition">
+                        Có, Xóa Tài khoản của tôi
+                    </button>
+                    <a href="user_profile.php"
+                        class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold px-5 py-2 rounded transition text-center">
+                        Không, Quay lại
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
+    <div class="mt-auto">
+        <?php include "../Partials/_footer.php"; ?>
+    </div>
 </body>
 </html>

@@ -144,302 +144,179 @@ if (isset($_POST['edit_reply'])) {
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản lý bình luận và trả lời</title>
     <link rel="icon" type="image/jpg" href="/Forum_website/images/favicon1.jpg">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <style>
-        body {
-            background-color: #f4f4f9;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        .container1 {
-            margin-top: 80px;
-        }
-
-        .btn {
-            padding: 8px 15px;
-        }
-
-        .search-bar {
-            margin-bottom: 20px;
-        }
-
-        .table-responsive {
-            margin-bottom: 20px;
-        }
-
-        /* To ensure the page works well on small screens */
-        @media (max-width: 768px) {
-            .table th,
-            .table td {
-                padding: 10px;
-            }
-
-            .btn {
-                padding: 6px 12px;
-            }
-
-            .search-bar input {
-                width: 100%;
-            }
-        }
-
-        /* Style for the scrollable td */
-        .table-responsive tbody td {
-            max-height: 150px;
-            /* Adjust max-height as needed */
-            overflow-y: auto;
-            display: block;
-            /* Make td a block-level element */
-            padding: 10px;
-            word-break: break-word;
-            /* Allow long words to break */
-            white-space: normal;
-            /* Allow text to wrap normally */
-        }
-
-        .table th {
-            text-align: center;
-        }
-
-        .table td {
-            white-space: normal;
-            word-break: break-word;
-        }
-        .footer{
-            margin-top: auto;
-        }
-        .comment-type {
-            background-color: #e7f3ff;
-            border-radius: 4px;
-            padding: 2px 8px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-        .reply-type {
-            background-color: #e7fff3;
-            border-radius: 4px;
-            padding: 2px 8px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-        .parent-comment {
-            background-color: #f8f9fa;
-            border-left: 3px solid #6c757d;
-            padding: 8px;
-            margin-top: 5px;
-            font-style: italic;
-            font-size: 0.9rem;
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
-<body>
+<body class="bg-gray-100 min-h-screen flex flex-col">
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="user_profile.php">Bảng điều khiển người dùng</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="user_profile.php">Trở về bảng điều khiển</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../Partials/_handle_logout.php">Đăng xuất</a>
-                    </li>
-                </ul>
+    <nav class="fixed top-0 left-0 right-0 bg-gray-800 text-white z-10 shadow">
+        <div class="container mx-auto flex items-center justify-between px-4 py-3">
+            <a class="font-bold text-lg" href="user_profile.php">Bảng điều khiển người dùng</a>
+            <div class="flex space-x-4">
+                <a class="hover:text-blue-400 transition" href="user_profile.php">Trở về bảng điều khiển</a>
+                <a class="hover:text-blue-400 transition" href="../Partials/_handle_logout.php">Đăng xuất</a>
             </div>
         </div>
     </nav>
 
-    <div class="container container1">
-        <button class="button rounded py-2 px-3 mt-2 text-white bg-dark border-0"> 
-            <a class="text-white text-decoration-none" href="user_profile.php">Trở về bảng điều khiển</a>
-        </button>
-    </div>
-
-    <!-- Main Content -->
-    <div class="container mt-3">
-        <h2>Quản lý bình luận và trả lời</h2>
+    <div class="container mx-auto pt-20 flex-1 w-full">
+        <a href="user_profile.php" class="inline-block bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700 transition text-sm mb-4">← Trở về bảng điều khiển</a>
+        <h2 class="text-2xl font-bold mb-4 text-gray-800">Quản lý bình luận và trả lời</h2>
 
         <!-- Search Form -->
-        <form class="search-bar" method="GET" action="manage_comments.php">
-            <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Search by comment, reply, or question"
-                    value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-                <button type="submit" class="btn btn-primary">Search</button>
-            </div>
+        <form class="mb-4 flex flex-col sm:flex-row gap-2" method="GET" action="manage_comments.php">
+            <input type="text" name="search" class="flex-1 rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500" placeholder="Tìm kiếm bình luận, trả lời hoặc câu hỏi" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Tìm kiếm</button>
         </form>
-
         <?php if (isset($_GET['search']) && !empty($_GET['search'])): ?>
-            <a href="manage_comments.php" class="btn btn-secondary mb-3">Quay lại tất cả các mục</a>
+            <a href="manage_comments.php" class="inline-block bg-gray-300 text-gray-800 px-3 py-1 rounded mb-3">Quay lại tất cả các mục</a>
         <?php endif; ?>
 
         <!-- Combined Table of Comments and Replies -->
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover text-center">
-                <tbody>
+        <div class="overflow-x-auto rounded shadow bg-white">
+            <table class="min-w-full divide-y divide-gray-200 text-sm">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="py-2 px-2 text-center font-semibold whitespace-nowrap">#</th>
+                        <th class="py-2 px-2 text-left font-semibold whitespace-nowrap">Câu hỏi được đăng bởi</th>
+                        <th class="py-2 px-2 text-left font-semibold whitespace-nowrap">Câu hỏi</th>
+                        <th class="py-2 px-2 text-left font-semibold whitespace-nowrap">Nội dung</th>
+                        <th class="py-2 px-2 text-center font-semibold whitespace-nowrap">Thời gian</th>
+                        <th class="py-2 px-2 text-center font-semibold whitespace-nowrap">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
                     <?php
-                    $serial = $offset + 1; // Serial number starts from 1 on each page
-                    while ($item = $combined_result->fetch_assoc()): 
+                    $serial = $offset + 1;
+                    while ($item = $combined_result->fetch_assoc()):
                         $is_comment = ($item['type'] == 'comment');
                     ?>
-                        <tr>
-                            <td class="bg-secondary fw-bold text-center"><?= $serial++; ?></td>
-                            <td class="bg-secondary-subtle px-3 w-auto text-start" style="min-width: 150px;">
-                                <span class="fw-bold text-primary"> Câu hỏi được đăng bởi: </span>
-                                <?= htmlspecialchars($item['thread_user_name']); ?>
-                                <br>
-                                <span class="<?= $is_comment ? 'comment-type' : 'reply-type' ?>">
-                                    <?= $is_comment ? 'Comment' : 'Reply' ?>
-                                </span>
-                            </td>
-                            <td class="bg-light px-3 text-start text-wrap" style="min-width: 180px;">
-                                <span class="fw-bold text-success"> Câu hỏi: </span>
-                                <?= htmlspecialchars($item['thread_title']); ?>
-                            </td>
-                            <td class="bg-warning-subtle px-3 text-start text-wrap" style="min-width: 200px;">
-                                <?php if (!$is_comment): ?>
-                                    <span class="fw-bold text-danger"> Câu trả lời của bạn: </span>
-                                    <?= nl2br(htmlspecialchars($item['content'])); ?>
-                                    <?php if ($item['parent_comment']): ?>
-                                        <div class="parent-comment">
-                                            <small>In response to: <?= htmlspecialchars($item['parent_comment']); ?></small>
-                                        </div>
-                                    <?php endif; ?>
-                                <?php else: ?>
-                                    <span class="fw-bold text-danger"> Bình luận của bạn: </span>
-                                    <?= nl2br(htmlspecialchars($item['content'])); ?>
+                    <tr class="hover:bg-gray-50">
+                        <td class="bg-gray-200 text-center font-semibold"><?= $serial++; ?></td>
+                        <td class="px-2 py-2 text-blue-700 font-medium break-words max-w-[120px] md:max-w-xs">
+                            <span class="font-bold text-blue-600"> <?= htmlspecialchars($item['thread_user_name']); ?> </span>
+                            <br>
+                            <span class="<?= $is_comment ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800' ?> rounded px-2 py-1 text-xs font-bold">
+                                <?= $is_comment ? 'Comment' : 'Reply' ?>
+                            </span>
+                        </td>
+                        <td class="px-2 py-2 text-green-700 break-words max-w-[160px] md:max-w-xs">
+                            <span class="font-bold text-green-600">Câu hỏi:</span>
+                            <?= htmlspecialchars($item['thread_title']); ?>
+                        </td>
+                        <td class="px-2 py-2 break-words max-w-[200px] md:max-w-sm bg-yellow-50">
+                            <?php if (!$is_comment): ?>
+                                <span class="font-bold text-red-600">Câu trả lời của bạn:</span>
+                                <?= nl2br(htmlspecialchars($item['content'])); ?>
+                                <?php if ($item['parent_comment']): ?>
+                                    <div class="bg-gray-100 border-l-4 border-gray-400 pl-3 mt-2 italic text-sm">
+                                        <small>In response to: <?= htmlspecialchars($item['parent_comment']); ?></small>
+                                    </div>
                                 <?php endif; ?>
-                            </td>
-                            <td class="bg-light text-muted text-start" style="min-width: 120px;">
-                                <?= htmlspecialchars($item['time']); ?>
-                            </td>
-                            <td class="w-auto text-start" style="min-width: 150px;">
-                                <?php if ($is_comment): ?>
-                                    <!-- Edit Comment Button -->
-                                    <button class="btn btn-warning btn-sm mt-1 px-3" data-bs-toggle="modal"
-                                        data-bs-target="#editCommentModal<?= $item['id']; ?>">
-                                        ✏️ Chỉnh sửa
-                                    </button>
-                                    <!-- Delete Comment Button -->
-                                    <a href="manage_comments.php?delete_comment_id=<?= $item['id']; ?><?= (isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''); ?>"
-                                        class="btn btn-danger btn-sm mt-1 px-3"
-                                        onclick="return confirm('Are you sure you want to delete this comment?');">
-                                        ❌ Xóa
-                                    </a>
-                                <?php else: ?>
-                                    <!-- Edit Reply Button -->
-                                    <button class="btn btn-warning btn-sm mt-1 px-3" data-bs-toggle="modal"
-                                        data-bs-target="#editReplyModal<?= $item['id']; ?>">
-                                        ✏️ Chỉnh sửa
-                                    </button>
-                                    <!-- Delete Reply Button -->
-                                    <a href="manage_comments.php?delete_reply_id=<?= $item['id']; ?><?= (isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''); ?>"
-                                        class="btn btn-danger btn-sm mt-1 px-3"
-                                        onclick="return confirm('Are you sure you want to delete this reply?');">
-                                        ❌ Xóa
-                                    </a>
-                                <?php endif; ?>
-                            </td>
-                        </tr>
+                            <?php else: ?>
+                                <span class="font-bold text-red-600">Bình luận của bạn:</span>
+                                <?= nl2br(htmlspecialchars($item['content'])); ?>
+                            <?php endif; ?>
+                        </td>
+                        <td class="text-center text-gray-500 whitespace-nowrap"><?= htmlspecialchars($item['time']); ?></td>
+                        <td class="text-center space-y-2">
+                            <?php if ($is_comment): ?>
+                                <!-- Edit Comment Button -->
+                                <button class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded text-sm font-semibold transition w-full sm:w-auto mt-1"
+                                    onclick="document.getElementById('editCommentModal<?= $item['id']; ?>').classList.remove('hidden')">
+                                    ✏️ Chỉnh sửa
+                                </button>
+                                <!-- Delete Comment Button -->
+                                <a href="manage_comments.php?delete_comment_id=<?= $item['id']; ?><?= (isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''); ?>"
+                                    class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-semibold transition w-full sm:w-auto mt-1 inline-block"
+                                    onclick="return confirm('Are you sure you want to delete this comment?');">
+                                    ❌ Xóa
+                                </a>
+                            <?php else: ?>
+                                <!-- Edit Reply Button -->
+                                <button class="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded text-sm font-semibold transition w-full sm:w-auto mt-1"
+                                    onclick="document.getElementById('editReplyModal<?= $item['id']; ?>').classList.remove('hidden')">
+                                    ✏️ Chỉnh sửa
+                                </button>
+                                <!-- Delete Reply Button -->
+                                <a href="manage_comments.php?delete_reply_id=<?= $item['id']; ?><?= (isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''); ?>"
+                                    class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-semibold transition w-full sm:w-auto mt-1 inline-block"
+                                    onclick="return confirm('Are you sure you want to delete this reply?');">
+                                    ❌ Xóa
+                                </a>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
 
-                        <?php if ($is_comment): ?>
-                            <!-- Edit Comment Modal -->
-                            <div class="modal fade" id="editCommentModal<?= $item['id']; ?>" tabindex="-1"
-                                aria-labelledby="editCommentModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="editCommentModalLabel">Edit Comment</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form
-                                                action="manage_comments.php<?= (isset($_GET['search']) ? '?search=' . urlencode($_GET['search']) : '') ?>"
-                                                method="POST">
-                                                <div class="mb-3">
-                                                    <label for="comment" class="form-label">Comment</label>
-                                                    <textarea class="form-control" name="comment" id="comment"
-                                                        rows="4"><?= htmlspecialchars($item['content']); ?></textarea>
-                                                </div>
-                                                <input type="hidden" name="comment_id" value="<?= $item['id']; ?>">
-                                                <button type="submit" name="edit_comment" class="btn btn-primary">Save
-                                                    Changes</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
+                    <!-- Edit Modal -->
+                    <div id="edit<?= $is_comment ? 'Comment' : 'Reply' ?>Modal<?= $item['id']; ?>" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+                        <div class="bg-white rounded-lg shadow-lg w-full max-w-md mx-2">
+                            <div class="flex justify-between items-center border-b px-4 py-2">
+                                <h5 class="font-bold text-lg"><?= $is_comment ? 'Chỉnh sửa bình luận' : 'Chỉnh sửa trả lời' ?></h5>
+                                <button type="button" class="text-2xl font-bold text-gray-500 hover:text-red-500" onclick="document.getElementById('edit<?= $is_comment ? 'Comment' : 'Reply' ?>Modal<?= $item['id']; ?>').classList.add('hidden')">&times;</button>
                             </div>
-                        <?php else: ?>
-                            <!-- Edit Reply Modal -->
-                            <div class="modal fade" id="editReplyModal<?= $item['id']; ?>" tabindex="-1"
-                                aria-labelledby="editReplyModalLabel<?= $item['id']; ?>" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <form action="manage_comments.php<?= (isset($_GET['search']) ? '?search=' . urlencode($_GET['search']) : '') ?>" method="POST">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="editReplyModalLabel<?= $item['id']; ?>">Edit Reply</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="mb-3">
-                                                    <label for="reply_text_<?= $item['id']; ?>" class="form-label">Reply</label>
-                                                    <textarea class="form-control" name="reply_text" id="reply_text_<?= $item['id']; ?>" rows="3"><?= htmlspecialchars($item['content']); ?></textarea>
-                                                </div>
-                                                <input type="hidden" name="reply_id" value="<?= $item['id']; ?>">
-                                                <button type="submit" name="edit_reply" class="btn btn-primary">Save Changes</button>
-                                            </div>
-                                        </form>
+                            <div class="p-4">
+                                <form action="manage_comments.php<?= (isset($_GET['search']) ? '?search=' . urlencode($_GET['search']) : '') ?>" method="POST">
+                                    <div class="mb-3">
+                                        <label for="<?= $is_comment ? 'comment' : 'reply_text_' . $item['id']; ?>" class="block font-semibold mb-1"><?= $is_comment ? 'Bình luận' : 'Trả lời' ?></label>
+                                        <textarea class="w-full border border-gray-300 rounded px-3 py-2" name="<?= $is_comment ? 'comment' : 'reply_text' ?>" id="<?= $is_comment ? 'comment' : 'reply_text_' . $item['id']; ?>" rows="4"><?= htmlspecialchars($item['content']); ?></textarea>
                                     </div>
-                                </div>
+                                    <input type="hidden" name="<?= $is_comment ? 'comment_id' : 'reply_id' ?>" value="<?= $item['id']; ?>">
+                                    <div class="flex justify-end gap-2">
+                                        <button type="button" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 transition" onclick="document.getElementById('edit<?= $is_comment ? 'Comment' : 'Reply' ?>Modal<?= $item['id']; ?>').classList.add('hidden')">Hủy</button>
+                                        <button type="submit" name="<?= $is_comment ? 'edit_comment' : 'edit_reply' ?>" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Lưu thay đổi</button>
+                                    </div>
+                                </form>
                             </div>
-                        <?php endif; ?>
+                        </div>
+                    </div>
                     <?php endwhile; ?>
                 </tbody>
             </table>
         </div>
 
         <!-- Pagination -->
-        <nav>
-            <ul class="pagination justify-content-center">
-                <li class="page-item <?= $page <= 1 ? 'disabled' : ''; ?>">
-                    <a class="page-link"
-                        href="manage_comments.php?page=<?= max($page - 1, 1); ?><?= (isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''); ?>">Previous</a>
+        <nav class="flex justify-center mt-6">
+            <ul class="inline-flex items-center -space-x-px">
+                <li>
+                    <a href="manage_comments.php?page=<?= max($page - 1, 1); ?><?= (isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''); ?>"
+                       class="px-3 py-1 rounded-l border border-gray-300 bg-white text-gray-700 hover:bg-gray-200 <?= $page <= 1 ? 'pointer-events-none opacity-50' : '' ?>">
+                        Previous
+                    </a>
                 </li>
                 <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                    <li class="page-item <?= $i == $page ? 'active' : ''; ?>">
-                        <a class="page-link"
-                            href="manage_comments.php?page=<?= $i; ?><?= (isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''); ?>"><?= $i; ?></a>
+                    <li>
+                        <a href="manage_comments.php?page=<?= $i; ?><?= (isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''); ?>"
+                           class="px-3 py-1 border border-gray-300 bg-white text-gray-700 hover:bg-blue-100 <?= $i == $page ? 'bg-blue-500 text-white font-bold' : '' ?>">
+                            <?= $i; ?>
+                        </a>
                     </li>
                 <?php endfor; ?>
-                <li class="page-item <?= $page >= $total_pages ? 'disabled' : ''; ?>">
-                    <a class="page-link"
-                        href="manage_comments.php?page=<?= min($page + 1, $total_pages); ?><?= (isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''); ?>">Next</a>
+                <li>
+                    <a href="manage_comments.php?page=<?= min($page + 1, $total_pages); ?><?= (isset($_GET['search']) ? '&search=' . urlencode($_GET['search']) : ''); ?>"
+                       class="px-3 py-1 rounded-r border border-gray-300 bg-white text-gray-700 hover:bg-gray-200 <?= $page >= $total_pages ? 'pointer-events-none opacity-50' : '' ?>">
+                        Next
+                    </a>
                 </li>
             </ul>
         </nav>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <div class="footer">
+    <div class="mt-auto">
         <?php include '../Partials/_footer.php'; ?>
     </div>
+    <script>
+        // Đóng modal khi nhấn Esc
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "Escape") {
+                document.querySelectorAll('[id^="editCommentModal"], [id^="editReplyModal"]').forEach(modal => modal.classList.add('hidden'));
+            }
+        });
+    </script>
 </body>
-
 </html>

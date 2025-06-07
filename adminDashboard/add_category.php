@@ -48,103 +48,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Category</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Thêm danh mục mới</title>
     <link rel="icon" type="image/jpg" href="/Forum_website/images/favicon1.jpg">
-    <style>
-        body {
-            background-color: #f4f4f9; /* Light grayish background */
-        }
-
-        .container {
-            margin-top: 80px; /* Adjusting for navbar space */
-        }
-
-        /* Thicker borders for the form */
-        .form-group {
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            background-color: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-group label {
-            font-weight: bold;
-        }
-
-        /* Button Styling */
-        .btn {
-            padding: 8px 15px;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 576px) {
-            .navbar-brand {
-                font-size: 16px;
-            }
-
-            .navbar-toggler {
-                border-color: #fff;
-            }
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
-<body>
+<body class="bg-gray-100 min-h-screen">
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="admin_dashboard.php">Bảng điều khiển quản trị</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="admin_dashboard.php">Quay lại Bảng điều khiển</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="admin_logout.php">Đăng xuất</a>
-                    </li>
-                </ul>
+    <nav class="fixed top-0 left-0 right-0 bg-gray-800 text-white z-10 shadow">
+        <div class="container mx-auto flex items-center justify-between px-4 py-3">
+            <a class="font-bold text-lg" href="admin_dashboard.php">Bảng điều khiển quản trị</a>
+            <div class="flex gap-4">
+                <a class="hover:text-blue-400 transition" href="admin_dashboard.php">Quay lại Bảng điều khiển</a>
+                <a class="hover:text-blue-400 transition" href="admin_logout.php">Đăng xuất</a>
             </div>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <div class="container">
-        <h2 class="mb-4">Thêm danh mục mới</h2>
-        <a href="manage_category.php" class="btn btn-secondary mb-4">Quay lại danh mục</a>
+    <div class="container mx-auto pt-28 px-2 max-w-xl">
+        <h2 class="mb-4 text-2xl font-bold text-gray-800">Thêm danh mục mới</h2>
+        <a href="manage_category.php" class="inline-block bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-900 transition text-sm mb-4">← Quay lại danh mục</a>
 
-        <form action="add_category.php" method="POST" enctype="multipart/form-data" class="form-group">
-            <div class="mb-3">
-                <label for="category_name" class="form-label">Tên danh mục</label>
-                <input type="text" name="category_name" id="category_name" class="form-control" required>
+        <form action="add_category.php" method="POST" enctype="multipart/form-data" class="bg-white rounded-xl shadow p-6 space-y-5">
+            <div>
+                <label for="category_name" class="block font-semibold mb-1 text-gray-700">Tên danh mục</label>
+                <input type="text" name="category_name" id="category_name" class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500" required>
             </div>
-
-            <div class="mb-3">
-                <label for="category_desc" class="form-label">Mô tả danh mục</label>
-                <textarea name="category_desc" id="category_desc" class="form-control" rows="4" required></textarea>
+            <div>
+                <label for="category_desc" class="block font-semibold mb-1 text-gray-700">Mô tả danh mục</label>
+                <textarea name="category_desc" id="category_desc" rows="4" class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500" required></textarea>
             </div>
-
-            <div class="mb-3">
-                <label for="category_image" class="form-label">Hình ảnh danh mục</label>
-                <input type="file" name="category_image" id="category_image" class="form-control" accept="image/*" required>
+            <div>
+                <label for="category_image" class="block font-semibold mb-1 text-gray-700">Hình ảnh danh mục</label>
+                <input type="file" name="category_image" id="category_image" class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 bg-white" accept="image/*" required>
             </div>
-
-            <button type="submit" class="btn btn-primary">Thêm danh mục</button>
+            <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition font-semibold">Thêm danh mục</button>
         </form>
     </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

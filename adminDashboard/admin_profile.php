@@ -56,100 +56,60 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Profile</title>
     <link rel="icon" type="image/jpg" href="/Forum_website/images/favicon1.jpg">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f9f9f9;
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            margin-top: 100px;
-        }
-        .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .card-header {
-            background-color: #5f6368;
-            color: white;
-            text-align: center;
-            font-size: 1.5rem;
-            border-radius: 10px 10px 0 0;
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         function toggleEditMode() {
-            document.getElementById('profile-view').classList.add('d-none');
-            document.getElementById('profile-edit').classList.remove('d-none');
+            document.getElementById('profile-view').classList.add('hidden');
+            document.getElementById('profile-edit').classList.remove('hidden');
         }
     </script>
 </head>
-<body>
+<body class="bg-gray-100 min-h-screen">
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="admin_dashboard.php">Bảng điều khiển quản trị</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="admin_dashboard.php">Quay lại Bảng điều khiển</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="admin_logout.php">Đăng xuất</a>
-                    </li>
-                </ul>
+    <nav class="fixed top-0 left-0 right-0 bg-gray-800 text-white z-10 shadow">
+        <div class="container mx-auto flex items-center justify-between px-4 py-3">
+            <a class="font-bold text-lg" href="admin_dashboard.php">Bảng điều khiển quản trị</a>
+            <div class="flex gap-4">
+                <a class="hover:text-blue-400 transition" href="admin_dashboard.php">Quay lại Bảng điều khiển</a>
+                <a class="hover:text-blue-400 transition" href="admin_logout.php">Đăng xuất</a>
             </div>
         </div>
     </nav>
 
     <!-- Profile Section -->
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Hồ sơ quản trị</h3>
-                    </div>
-                    <div class="card-body">
-                        <!-- Profile View -->
-                        <div id="profile-view">
-                            <p><strong>Tên đăng nhập:</strong> <?php echo htmlspecialchars($admin_username); ?></p>
-                            <p><strong>Mật khẩu:</strong> <?php echo htmlspecialchars($admin_password); ?></p>
-                            <button class="btn btn-primary" onclick="toggleEditMode()">Thay đổi</button>
-                        </div>
+    <div class="container mx-auto pt-28 px-2 max-w-xl">
+        <div class="bg-white rounded-xl shadow p-6">
+            <h3 class="text-2xl font-bold text-center mb-6">Hồ sơ quản trị</h3>
+            <!-- Profile View -->
+            <div id="profile-view">
+                <p class="mb-2"><span class="font-semibold">Tên đăng nhập:</span> <span class="text-blue-700"><?php echo htmlspecialchars($admin_username); ?></span></p>
+                <p class="mb-4"><span class="font-semibold">Mật khẩu:</span> <span class="break-all text-gray-500"><?php echo htmlspecialchars($admin_password); ?></span></p>
+                <button class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition font-semibold" onclick="toggleEditMode()">Thay đổi</button>
+            </div>
 
-                        <!-- Profile Edit -->
-                        <div id="profile-edit" class="d-none">
-                            <form method="POST" action="admin_profile.php">
-                                <div class="mb-3">
-                                    <label for="new_username" class="form-label">Tên đăng nhập mới</label>
-                                    <input type="text" class="form-control" id="new_username" name="new_username" value="<?php echo htmlspecialchars($admin_username); ?>" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="new_password" class="form-label">Mật khẩu mới (tùy chọn)</label>
-                                    <input type="password" class="form-control" id="new_password" name="new_password">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="confirm_password" class="form-label">Xác nhận mật khẩu mới</label>
-                                    <input type="password" class="form-control" id="confirm_password" name="confirm_password">
-                                </div>
-                                <button type="submit" name="update" class="btn btn-success">Lưu thay đổi</button>
-                                <a href="admin_dashboard.php" class="btn btn-secondary">Hủy</a>
-                            </form>
-                        </div>
+            <!-- Profile Edit -->
+            <div id="profile-edit" class="hidden">
+                <form method="POST" action="admin_profile.php" class="space-y-4">
+                    <div>
+                        <label for="new_username" class="block font-semibold mb-1 text-gray-700">Tên đăng nhập mới</label>
+                        <input type="text" class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500" id="new_username" name="new_username" value="<?php echo htmlspecialchars($admin_username); ?>" required>
                     </div>
-                </div>
+                    <div>
+                        <label for="new_password" class="block font-semibold mb-1 text-gray-700">Mật khẩu mới (tùy chọn)</label>
+                        <input type="password" class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500" id="new_password" name="new_password">
+                    </div>
+                    <div>
+                        <label for="confirm_password" class="block font-semibold mb-1 text-gray-700">Xác nhận mật khẩu mới</label>
+                        <input type="password" class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500" id="confirm_password" name="confirm_password">
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="submit" name="update" class="flex-1 bg-green-500 text-white py-2 rounded hover:bg-green-600 transition font-semibold">Lưu thay đổi</button>
+                        <a href="admin_profile.php" class="flex-1 bg-gray-400 text-white py-2 rounded hover:bg-gray-600 transition font-semibold text-center">Hủy</a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

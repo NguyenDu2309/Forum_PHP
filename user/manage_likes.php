@@ -97,191 +97,116 @@ $stmt->close();
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bình luận đã thích</title>
     <link rel="icon" type="image/jpg" href="/Forum_website/images/favicon1.jpg">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <style>
-          body {
-             background-color: #f4f4f9;
-             display: flex;
-             flex-direction: column;
-             min-height: 100vh;
-                
-        }
-
-        .container{
-            margin-top:50px;
-        }
-
-        .btn {
-            padding: 8px 15px;
-        }
-
-        .search-bar {
-            margin-bottom: 20px;
-        }
-
-        .table-responsive {
-            margin-bottom: 20px;
-        }
-
-        /* To ensure the page works well on small screens */
-        @media (max-width: 768px) {
-            .table th,
-            .table td {
-                padding: 10px;
-            }
-
-            .btn {
-                padding: 6px 12px;
-            }
-
-            .search-bar input {
-                width: 100%;
-            }
-        }
-
-        /* Style for the scrollable td */
-        .table-responsive tbody td {
-            max-height: 150px;
-            /* Adjust max-height as needed */
-            overflow-y: auto;
-            display: block;
-            /* Make td a block-level element */
-            padding: 10px;
-            word-break: break-word;
-            /* Allow long words to break */
-            white-space: normal;
-            /* Allow text to wrap normally */
-        }
-
-        .table th {
-            text-align: center;
-        }
-
-        .table td {
-            white-space: normal;
-            word-break: break-word;
-        }
-        .footer{
-            margin-top: auto;
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
-<body>
+<body class="bg-gray-100 min-h-screen flex flex-col">
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="user_profile.php">Bảng điều khiển người dùng</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                   <li class="nav-item">
-                         <a class="nav-link" href="user_profile.php">Trở về Bảng điều khiển</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../Partials/_handle_logout.php">Đăng xuất</a>
-                    </li>
-                </ul>
+    <nav class="bg-gray-800 text-white fixed top-0 left-0 right-0 z-10 shadow">
+        <div class="container mx-auto flex items-center justify-between px-4 py-3">
+            <a class="font-bold text-lg" href="user_profile.php">Bảng điều khiển người dùng</a>
+            <div class="flex space-x-4">
+                <a class="hover:text-blue-400 transition" href="user_profile.php">Trở về Bảng điều khiển</a>
+                <a class="hover:text-blue-400 transition" href="../Partials/_handle_logout.php">Đăng xuất</a>
             </div>
         </div>
     </nav>
 
-    <div class="container main-container">
-
-    <div class="container1 mt-5">
-    <button  class=" button rounded py-2 px-3 mt-2 text-white bg-dark border-0"> <a class="text-white text-decoration-none" href="user_profile.php">Trở về Bảng điều khiển</a></button>
-    </div>
-
-    <!-- Main Content -->
-    <div class="container mt-3">
-        <h2>Bình luận đã thích</h2>
-       <div class="table-responsive">
-            <table class="table table-bordered table-hover text-center">
-                <tbody>
-                    <?php
-                    $serial = $offset + 1;
-                    while ($like = $result->fetch_assoc()): ?>
-                    <tr class="align-middle">
-                        <td class="bg-secondary text-center fw-bold mt-3"><?= $serial++; ?></td>
-                        <td class="bg-secondary-subtle px-3 w-auto text-start text-wrap" style="min-width: 150px;">
-                            <span class="fw-bold text-primary"> Câu hỏi được đăng bởi: </span>
-                            <?= htmlspecialchars($like['thread_user_name']); ?>
-                        </td>
-                        <td class="bg-light px-3 w-auto text-start text-wrap" style="min-width: 180px;">
-                            <span class="fw-bold text-success"> Câu hỏi: </span>
-                            <?= htmlspecialchars($like['thread_title']); ?>
-                        </td>
-                        <td class="bg-warning-subtle px-3 w-auto text-start text-wrap" style="min-width: 200px;">
-                            <?php if ($like['type'] == 'comment'): ?>
-                                <span class="fw-bold text-danger"> Bình luận: </span>
-                                <?= htmlspecialchars($like['comment']); ?>
-                            <?php else: ?>
-                                <span class="fw-bold text-info"> Phản hồi: </span>
-                                <?= htmlspecialchars($like['reply_text']); ?>
-                            <?php endif; ?>
-                        </td>
-                        <td class="bg-light text-muted text-center w-auto" style="min-width: 120px;">
-                            <?= htmlspecialchars($like['created_time']); ?>
-                        </td>
-                        <td class="text-center w-auto" style="min-width: 150px;">
-                            <?php if ($like['type'] == 'comment'): ?>
-                                <a href="manage_likes.php?unlike_id=<?= $like['id']; ?>&type=comment"
-                                    class="btn btn-danger btn-sm mt-1 px-3"
-                                    onclick="return confirm('Are you sure you want to unlike this comment?');">
-                                    ❌ Bỏ thích
-                                </a>
-                            <?php else: ?>
-                                <a href="manage_likes.php?unlike_id=<?= $like['id']; ?>&type=reply"
-                                    class="btn btn-danger btn-sm mt-1 px-3"
-                                    onclick="return confirm('Are you sure you want to unlike this reply?');">
-                                    ❌ Bỏ thích
-                                </a>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                    <?php endwhile; ?>
-                </tbody>
-            </table>
-        </div>
+    <div class="container mx-auto pt-20 flex-1 w-full">
+        <div class="mt-2 mb-4">
+            <a href="user_profile.php" class="inline-block bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-700 transition text-sm">← Trở về Bảng điều khiển</a>
         </div>
 
+        <div class="bg-white rounded-lg shadow p-4 mb-6">
+            <h2 class="text-xl font-bold mb-4 text-gray-800">Bình luận đã thích</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="py-2 px-2 text-center font-semibold whitespace-nowrap">#</th>
+                            <th class="py-2 px-2 text-left font-semibold whitespace-nowrap">Câu hỏi được đăng bởi</th>
+                            <th class="py-2 px-2 text-left font-semibold whitespace-nowrap">Câu hỏi</th>
+                            <th class="py-2 px-2 text-left font-semibold whitespace-nowrap">Nội dung</th>
+                            <th class="py-2 px-2 text-center font-semibold whitespace-nowrap">Thời gian</th>
+                            <th class="py-2 px-2 text-center font-semibold whitespace-nowrap">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <?php
+                        $serial = $offset + 1;
+                        while ($like = $result->fetch_assoc()): ?>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-2 px-2 text-center font-semibold bg-gray-200"><?= $serial++; ?></td>
+                            <td class="py-2 px-2 text-blue-700 font-medium break-words max-w-[120px] md:max-w-xs"><?= htmlspecialchars($like['thread_user_name']); ?></td>
+                            <td class="py-2 px-2 text-green-700 break-words max-w-[160px] md:max-w-xs"><?= htmlspecialchars($like['thread_title']); ?></td>
+                            <td class="py-2 px-2 break-words max-w-[200px] md:max-w-sm">
+                                <?php if ($like['type'] == 'comment'): ?>
+                                    <span class="font-semibold text-red-600">Bình luận:</span>
+                                    <?= htmlspecialchars($like['comment']); ?>
+                                <?php else: ?>
+                                    <span class="font-semibold text-blue-500">Phản hồi:</span>
+                                    <?= htmlspecialchars($like['reply_text']); ?>
+                                <?php endif; ?>
+                            </td>
+                            <td class="py-2 px-2 text-center text-gray-500 whitespace-nowrap"><?= htmlspecialchars($like['created_time']); ?></td>
+                            <td class="py-2 px-2 text-center">
+                                <?php if ($like['type'] == 'comment'): ?>
+                                    <a href="manage_likes.php?unlike_id=<?= $like['id']; ?>&type=comment"
+                                        class="inline-block bg-red-100 border border-red-400 text-red-700 px-3 py-1 rounded-lg hover:bg-red-200 hover:text-red-900 font-semibold text-sm transition whitespace-nowrap"
+                                        style="min-width: 80px;"
+                                        onclick="return confirm('Are you sure you want to unlike this comment?');">
+                                        <span class="text-lg font-bold align-middle">✖</span> Bỏ thích
+                                    </a>
+                                <?php else: ?>
+                                    <a href="manage_likes.php?unlike_id=<?= $like['id']; ?>&type=reply"
+                                        class="inline-block bg-red-100 border border-red-400 text-red-700 px-3 py-1 rounded-lg hover:bg-red-200 hover:text-red-900 font-semibold text-sm transition whitespace-nowrap"
+                                        style="min-width: 80px;"
+                                        onclick="return confirm('Are you sure you want to unlike this reply?');">
+                                        <span class="text-lg font-bold align-middle">✖</span> Bỏ thích
+                                    </a>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                        <?php endwhile; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
         <!-- Pagination -->
-        <nav>
-            <ul class="pagination justify-content-center">
-                <li class="page-item <?= $page <= 1 ? 'disabled' : ''; ?>">
-                    <a class="page-link"
-                        href="manage_likes.php?page=<?= max($page - 1, 1); ?>">Previous</a>
+        <nav class="flex justify-center mt-4">
+            <ul class="inline-flex items-center -space-x-px">
+                <li>
+                    <a href="manage_likes.php?page=<?= max($page - 1, 1); ?>"
+                       class="px-3 py-1 rounded-l border border-gray-300 bg-white text-gray-700 hover:bg-gray-200 <?= $page <= 1 ? 'pointer-events-none opacity-50' : '' ?>">
+                        Previous
+                    </a>
                 </li>
                 <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                    <li class="page-item <?= $i == $page ? 'active' : ''; ?>">
-                        <a class="page-link" href="manage_likes.php?page=<?= $i; ?>"><?= $i; ?></a>
+                    <li>
+                        <a href="manage_likes.php?page=<?= $i; ?>"
+                           class="px-3 py-1 border border-gray-300 bg-white text-gray-700 hover:bg-blue-100 <?= $i == $page ? 'bg-blue-500 text-white font-bold' : '' ?>">
+                            <?= $i; ?>
+                        </a>
                     </li>
                 <?php endfor; ?>
-                <li class="page-item <?= $page >= $total_pages ? 'disabled' : ''; ?>">
-                    <a class="page-link"
-                        href="manage_likes.php?page=<?= min($page + 1, $total_pages); ?>">Next</a>
+                <li>
+                    <a href="manage_likes.php?page=<?= min($page + 1, $total_pages); ?>"
+                       class="px-3 py-1 rounded-r border border-gray-300 bg-white text-gray-700 hover:bg-gray-200 <?= $page >= $total_pages ? 'pointer-events-none opacity-50' : '' ?>">
+                        Next
+                    </a>
                 </li>
             </ul>
         </nav>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <div class="footer">
-      <?php include '../Partials/_footer.php'; ?>
+    <div class="mt-auto">
+        <?php include '../Partials/_footer.php'; ?>
     </div>
 </body>
-
 </html>

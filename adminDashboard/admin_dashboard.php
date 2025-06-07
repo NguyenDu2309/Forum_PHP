@@ -42,189 +42,113 @@ $totalComments = $row['total_comments'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="icon" type="image/jpg" href="/Forum_website/images/favicon1.jpg">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        /* Sidebar Styling */
-        .sidebar {
-            background-color: #343a40;
-            color: white;
-            height: 100vh;
-            width: 250px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1030;
-            overflow-y: auto;
-            padding-top: 20px;
-            transition: transform 0.3s ease;
-        }
-
-        .sidebar.hidden {
-            transform: translateX(-250px);
-        }
-
-        .sidebar a {
-            color: #ddd;
-            padding: 15px 20px;
-            text-decoration: none;
-            display: block;
-            font-size: 1rem;
-        }
-
-        .sidebar a:hover {
-            background-color: #495057;
-            color: white;
-        }
-
-        .sidebar h4 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        /* Navbar Styling */
-        .navbar {
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            z-index: 1040;
-        }
-
-        .navbar .navbar-brand {
-            margin: 0 auto;
-            font-weight: bold;
-            font-size: 1.5rem;
-        }
-
-        /* Hamburger Icon */
-        .hamburger {
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: white;
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            .hamburger {
-                display: block;
-            }
-
-            .sidebar {
-                width: 200px;
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-        }
-
-        /* Main Content */
-        .main-content {
-            margin-left: 250px;
-            padding: 20px;
-            transition: margin-left 0.3s ease;
-        }
-
-        .main-content.collapsed {
-            margin-left: 0;
-        }
-    </style>
 </head>
 
-<body>
+<body class="bg-gray-100 min-h-screen">
 
     <!-- Navbar -->
-    <nav class="navbar navbar-dark bg-dark fixed-top">
-        <div class="container-fluid">
-            <span class="hamburger" id="hamburger"><i class="bi bi-list"></i></span>
-            <span class="navbar-brand">Chào mừng Quản trị viên</span>
+    <nav class="fixed top-0 left-0 right-0 bg-gray-800 text-white z-20 shadow">
+        <div class="container mx-auto flex items-center justify-between px-4 py-3">
+            <button id="hamburger" class="text-2xl sm:hidden focus:outline-none">
+                <i class="bi bi-list"></i>
+            </button>
+            <span class="font-bold text-lg text-center flex-1 sm:flex-none ml-24">Chào mừng Quản trị viên</span>
+            <span class="hidden sm:block w-8"></span>
         </div>
     </nav>
 
     <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <h4>admin</h4>
-        <a href="admin_dashboard.php" class="bg-primary text-white">
-            <i class="bi bi-speedometer2"></i> Bảng điều khiển
-        </a>
-        <a href="manage_users.php"><i class="bi bi-people text-warning"></i> Quản lý người dùng</a>
-        <a href="add_category.php"><i class="bi bi-folder-plus text-success"></i> Thêm danh mục</a>
-        <a href="manage_category.php"><i class="bi bi-folder text-info"></i> Quản lý danh mục</a>
-        <a href="manage_posts.php"><i class="bi bi-file-earmark-text text-primary"></i> Quản lý câu hỏi đã đăng</a>
-        <a href="manage_comments.php"><i class="bi bi-chat-dots text-secondary"></i> Quản lý bình luận</a>
-        <a href="feedback.php"><i class="bi bi-chat-dots text-danger"></i> Tin nhắn/Phản hồi</a>
-        <a href="change_password.php"><i class="bi bi-key text-warning"></i> Thay đổi mật khẩu</a>
-        <a href="admin_profile.php"><i class="bi bi-person-circle text-warning"></i> Hồ sơ</a>
-        <a href="admin_logout.php"><i class="bi bi-box-arrow-right text-danger"></i> Đăng xuất</a>
-
+    <div id="sidebar" class="fixed top-0 left-0 h-full w-56 bg-gray-900 text-white z-30 pt-20 transition-transform duration-300 transform -translate-x-full sm:translate-x-0">
+        <h4 class="text-center text-xl font-bold mb-6">Admin</h4>
+        <nav class="flex flex-col gap-1">
+            <a href="admin_dashboard.php" class="flex items-center gap-2 px-5 py-3 bg-blue-700 text-white rounded-r-full font-semibold">
+                <i class="bi bi-speedometer2"></i> Bảng điều khiển
+            </a>
+            <a href="manage_users.php" class="flex items-center gap-2 px-5 py-3 hover:bg-gray-800 rounded-r-full">
+                <i class="bi bi-people text-yellow-400"></i> Quản lý người dùng
+            </a>
+            <a href="add_category.php" class="flex items-center gap-2 px-5 py-3 hover:bg-gray-800 rounded-r-full">
+                <i class="bi bi-folder-plus text-green-400"></i> Thêm danh mục
+            </a>
+            <a href="manage_category.php" class="flex items-center gap-2 px-5 py-3 hover:bg-gray-800 rounded-r-full">
+                <i class="bi bi-folder text-blue-300"></i> Quản lý danh mục
+            </a>
+            <a href="manage_posts.php" class="flex items-center gap-2 px-5 py-3 hover:bg-gray-800 rounded-r-full">
+                <i class="bi bi-file-earmark-text text-blue-400"></i> Quản lý câu hỏi đã đăng
+            </a>
+            <a href="manage_comments.php" class="flex items-center gap-2 px-5 py-3 hover:bg-gray-800 rounded-r-full">
+                <i class="bi bi-chat-dots text-gray-400"></i> Quản lý bình luận
+            </a>
+            <a href="feedback.php" class="flex items-center gap-2 px-5 py-3 hover:bg-gray-800 rounded-r-full">
+                <i class="bi bi-chat-dots text-red-400"></i> Tin nhắn/Phản hồi
+            </a>
+            <a href="change_password.php" class="flex items-center gap-2 px-5 py-3 hover:bg-gray-800 rounded-r-full">
+                <i class="bi bi-key text-yellow-400"></i> Thay đổi mật khẩu
+            </a>
+            <a href="admin_profile.php" class="flex items-center gap-2 px-5 py-3 hover:bg-gray-800 rounded-r-full">
+                <i class="bi bi-person-circle text-yellow-400"></i> Hồ sơ
+            </a>
+            <a href="admin_logout.php" class="flex items-center gap-2 px-5 py-3 hover:bg-gray-800 rounded-r-full">
+                <i class="bi bi-box-arrow-right text-red-400"></i> Đăng xuất
+            </a>
+        </nav>
     </div>
 
     <!-- Main Content -->
-    <div class="main-content" id="main-content">
-        <div class="container mt-5">
-            <div class="row g-4">
+    <div id="main-content" class="pt-24 px-4 transition-all duration-300 sm:ml-56">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Total Users -->
-                <div class="col-md-6 col-lg-3">
-                    <div class="card text-white bg-primary shadow">
-                        <div class="card-body text-center">
-                            <i class="bi bi-people display-4"></i>
-                            <h4 class="card-title mt-3">Tổng số người dùng</h4>
-                            <p class="card-text fs-4"><?= $totalUsers ?></p>
-                        </div>
-                    </div>
+                <div class="bg-blue-600 text-white rounded-xl shadow flex flex-col items-center py-8">
+                    <i class="bi bi-people text-4xl mb-2"></i>
+                    <div class="text-lg font-semibold">Tổng số người dùng</div>
+                    <div class="text-2xl font-bold mt-2"><?= $totalUsers ?></div>
                 </div>
-
                 <!-- Total Categories -->
-                <div class="col-md-6 col-lg-3">
-                    <div class="card text-white bg-success shadow">
-                        <div class="card-body text-center">
-                            <i class="bi bi-folder display-4"></i>
-                            <h4 class="card-title mt-3">Tổng số danh mục</h4>
-                            <p class="card-text fs-4"><?= $totalCategories ?></p>
-                        </div>
-                    </div>
+                <div class="bg-green-600 text-white rounded-xl shadow flex flex-col items-center py-8">
+                    <i class="bi bi-folder text-4xl mb-2"></i>
+                    <div class="text-lg font-semibold">Tổng số danh mục</div>
+                    <div class="text-2xl font-bold mt-2"><?= $totalCategories ?></div>
                 </div>
-
                 <!-- Total Posts -->
-                <div class="col-md-6 col-lg-3">
-                    <div class="card text-white bg-warning shadow">
-                        <div class="card-body text-center">
-                            <i class="bi bi-file-earmark-text display-4"></i>
-                            <h4 class="card-title mt-3">Tổng số bài viết</h4>
-                            <p class="card-text fs-4"><?= $totalThreads ?></p>
-                        </div>
-                    </div>
+                <div class="bg-yellow-500 text-white rounded-xl shadow flex flex-col items-center py-8">
+                    <i class="bi bi-file-earmark-text text-4xl mb-2"></i>
+                    <div class="text-lg font-semibold">Tổng số bài viết</div>
+                    <div class="text-2xl font-bold mt-2"><?= $totalThreads ?></div>
                 </div>
-
                 <!-- Total Comments -->
-                <div class="col-md-6 col-lg-3">
-                    <div class="card text-white bg-danger shadow">
-                        <div class="card-body text-center">
-                            <i class="bi bi-chat-dots display-4"></i>
-                            <h4 class="card-title mt-3">Tổng số bình luận</h4>
-                            <p class="card-text fs-4"><?= $totalComments ?></p>
-                        </div>
-                    </div>
+                <div class="bg-red-500 text-white rounded-xl shadow flex flex-col items-center py-8">
+                    <i class="bi bi-chat-dots text-4xl mb-2"></i>
+                    <div class="text-lg font-semibold">Tổng số bình luận</div>
+                    <div class="text-2xl font-bold mt-2"><?= $totalComments ?></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap 5 JS and Popper.js -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
-
-    <!-- Sidebar Toggle Script -->
     <script>
+        // Sidebar toggle for mobile
         const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('main-content');
         const hamburger = document.getElementById('hamburger');
-
-        // Toggle sidebar visibility
+        const mainContent = document.getElementById('main-content');
         hamburger.addEventListener('click', () => {
-            sidebar.classList.toggle('hidden');
-            mainContent.classList.toggle('collapsed');
+            sidebar.classList.toggle('-translate-x-full');
+        });
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            if (window.innerWidth < 640 && !sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+                sidebar.classList.add('-translate-x-full');
+            }
+        });
+        // Responsive sidebar on resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 640) {
+                sidebar.classList.remove('-translate-x-full');
+            }
         });
     </script>
-
 </body>
 
 </html>

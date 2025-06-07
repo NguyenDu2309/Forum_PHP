@@ -122,105 +122,114 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Profile</title>
+    <title>Cập nhật tài khoản</title>
     <link rel="icon" type="image/jpg" href="/Forum_website/images/favicon1.jpg">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="user_profile.php">Bảng điều khiển người dùng</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="user_profile.php">Trở về bảng điều khiển</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../Partials/_handle_logout.php">Đăng xuất</a>
-                </li>
-            </ul>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 bg-gray-800 text-white z-10 shadow">
+        <div class="container mx-auto flex items-center justify-between px-4 py-3">
+            <a class="font-bold text-lg" href="user_profile.php">Bảng điều khiển người dùng</a>
+            <div class="flex space-x-4">
+                <a class="hover:text-blue-400 transition" href="user_profile.php">Trở về bảng điều khiển</a>
+                <a class="hover:text-blue-400 transition" href="../Partials/_handle_logout.php">Đăng xuất</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto pt-24 flex-1 w-full">
+        <div class="flex flex-col md:flex-row gap-8">
+            <!-- Đổi tên đăng nhập và mật khẩu -->
+            <div class="w-full md:w-1/2">
+                <div class="bg-white p-6 rounded shadow mt-4 mb-6">
+                    <h2 class="text-xl font-bold mb-4">Đổi tên đăng nhập và mật khẩu</h2>
+                    <?php if ($error): ?>
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-3"><?= $error ?></div>
+                    <?php endif; ?>
+                    <?php if ($success): ?>
+                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-3"><?= $success ?></div>
+                    <?php endif; ?>
+                    <form method="post" class="space-y-4">
+                        <input type="hidden" name="update_credentials">
+                        <div>
+                            <label class="block font-semibold mb-1">Tên đăng nhập mới</label>
+                            <input type="text" name="new_username" value="<?= htmlspecialchars($current_username); ?>" required
+                                class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Mật khẩu cũ</label>
+                            <input type="password" name="old_password" required
+                                class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Mật khẩu mới</label>
+                            <input type="password" name="new_password" required
+                                class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Xác nhận mật khẩu mới</label>
+                            <input type="password" name="confirm_password" required
+                                class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition font-semibold">Cập nhật</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Cập nhật hình ảnh và email -->
+            <div class="w-full md:w-1/2 flex flex-col gap-6">
+                <div class="bg-white p-6 rounded shadow mt-4">
+                    <h2 class="text-xl font-bold mb-4">Cập nhật hình ảnh hồ sơ</h2>
+                    <?php if ($image_error): ?>
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-3"><?= $image_error ?></div>
+                    <?php endif; ?>
+                    <?php if ($image_success): ?>
+                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-3"><?= $image_success ?></div>
+                    <?php endif; ?>
+                    <form method="post" enctype="multipart/form-data" class="space-y-4">
+                        <input type="hidden" name="update_image">
+                        <div>
+                            <label class="block font-semibold mb-1">Tải lên hình ảnh mới</label>
+                            <input type="file" name="user_image" required
+                                class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 bg-white">
+                        </div>
+                        <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition font-semibold">Cập nhật</button>
+                    </form>
+                </div>
+
+                <div class="bg-white p-6 rounded shadow">
+                    <h2 class="text-xl font-bold mb-4">Thay đổi Email</h2>
+                    <?php if ($email_error): ?>
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-3"><?= $email_error ?></div>
+                    <?php endif; ?>
+                    <?php if ($email_success): ?>
+                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-3"><?= $email_success ?></div>
+                    <?php endif; ?>
+                    <form method="post" class="space-y-4">
+                        <input type="hidden" name="update_email">
+                        <div>
+                            <label class="block font-semibold mb-1">Email mới</label>
+                            <input type="email" name="new_email" value="<?= htmlspecialchars($current_email); ?>" required
+                                class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition font-semibold">Cập nhật</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
-</nav>
 
-<div class="container mt-5" style="margin-top: 200px;">
-    <div class="row ">
-        <div class="col-md-6">
-            <div class="p-4 border rounded mt-5 mb-3">
-                <h2>Đổi tên đăng nhập và mật khẩu</h2>
-                <?php if ($error) echo "<div class='alert alert-danger'>$error</div>"; ?>
-                <?php if ($success) echo "<div class='alert alert-success'>$success</div>"; ?>
-                <form method="post">
-                    <input type="hidden" name="update_credentials">
-                    <div class="mb-3">
-                        <label>Tên đăng nhập mới</label>
-                        <input type="text" class="form-control" name="new_username" value="<?php echo htmlspecialchars($current_username); ?>" required>
-                    </div>
-                    <div class="mb-3">
-                        <label>Mật khẩu cũ</label>
-                        <input type="password" class="form-control" name="old_password" required>
-                    </div>
-                    <div class="mb-3">
-                        <label>Mật khẩu mới</label>
-                        <input type="password" class="form-control" name="new_password" required>
-                    </div>
-                    <div class="mb-3">
-                        <label>Xác nhận mật khẩu mới</label>
-                        <input type="password" class="form-control" name="confirm_password" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Cập nhật</button>
-                </form>
-            </div>
-        </div>
+    <script>
+        // Remove alert after 3 seconds
+        document.querySelectorAll('.bg-red-100, .bg-green-100').forEach(function (alert) {
+            setTimeout(() => {
+                alert.style.display = "none";
+            }, 3000);
+        });
+    </script>
 
-        <div class="col-md-6">
-            <div class="p-4 border rounded mt-5 mb-3">
-                <h2>Cập nhật hình ảnh hồ sơ</h2>
-                <?php if ($image_error) echo "<div class='alert alert-danger'>$image_error</div>"; ?>
-                <?php if ($image_success) echo "<div class='alert alert-success'>$image_success</div>"; ?>
-                <form method="post" enctype="multipart/form-data">
-                    <input type="hidden" name="update_image">
-                    <div class="mb-3">
-                        <label>Tải lên hình ảnh mới</label>
-                        <input type="file" class="form-control" name="user_image" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Cập nhật</button>
-                </form>
-            </div>
-
-            <!-- Update Email Form -->
-            <div class="p-4 border rounded mt-1 mb-3">
-                <h2>Thay đổi Email</h2>
-                <?php if ($email_error) echo "<div class='alert alert-danger'>$email_error</div>"; ?>
-                <?php if ($email_success) echo "<div class='alert alert-success'>$email_success</div>"; ?>
-                <form method="post">
-                    <input type="hidden" name="update_email">
-                    <div class="mb-3">
-                        <label>Email mới</label>
-                        <input type="email" class="form-control" name="new_email" value="<?php echo htmlspecialchars($current_email); ?>" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Cập nhật</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    // Remove alert after 3 seconds
-    let alerts = document.querySelectorAll('.alert');
-    alerts.forEach(function (value) {
-        setTimeout(() => {
-            value.style.display = "none";
-        }, 3000);
-    })
-</script>
-
-<?php include '../Partials/_footer.php'; ?>
-
+    <?php include '../Partials/_footer.php'; ?>
 </body>
 </html>
