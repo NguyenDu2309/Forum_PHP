@@ -96,11 +96,11 @@ function moderateContent($content) {
     if (strpos($ai_output, "OFFENSIVE") !== false || strpos($ai_output, "HATE") !== false || strpos($ai_output, "TOXIC") !== false) {
         $reason = "";
         if (strpos($ai_output, "OFFENSIVE") !== false) {
-            $reason = "Bình luận bị phát hiện là có nội dung <strong>xúc phạm</strong>.";
+            $reason = "Bình luận bị phát hiện là có nội dung <strong> xúc phạm</strong>.";
         } elseif (strpos($ai_output, "TOXIC") !== false) {
-            $reason = "Bình luận bị phát hiện là có nội dung <strong>độc hại</strong>.";
+            $reason = "Bình luận bị phát hiện là có nội dung <strong> độc hại</strong>.";
         } elseif (strpos($ai_output, "HATE") !== false) {
-            $reason = "Bình luận bị phát hiện là có nội dung <strong>thù ghét</strong>.";
+            $reason = "Bình luận bị phát hiện là có nội dung <strong> thù ghét</strong>.";
         }
         
         return [
