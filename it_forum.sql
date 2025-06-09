@@ -261,3 +261,6 @@ ALTER TABLE `comment_likes`
   ADD CONSTRAINT `comment_likes_ibfk_1` FOREIGN KEY (`comment_id`) REFERENCES `comments` (`comment_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `comment_likes_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 COMMIT;
+
+
+ALTER TABLE comments ADD COLUMN comment_image VARCHAR(255) NULL AFTER comment_time;

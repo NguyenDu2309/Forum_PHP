@@ -223,9 +223,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $username = $_SESSION['username'];
         $emailID = $_SESSION['email_id'];
         //SQL query to insert new comments
-        $sql = "INSERT INTO `comments` (`comment`, `thread_comment_id`, `user_name`, `email_id`, `comment_time`) VALUES (?, ?, ?, ?, current_timestamp())";
+        $image_path = null;
+        if (isset($_FILES['comment_image']) && $_FILES['comment_image']['error'] == 0) {
+            $image_name = uniqid() . '_' . basename($_FILES['comment_image']['name']);
+            $target_dir = "uploads/comment_images/";
+            if (!is_dir($target_dir)) mkdir($target_dir, 0777, true);
+            $target_file = $target_dir . $image_name;
+            $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+            $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+            if (in_array($imageFileType, $allowed) && $_FILES['comment_image']['size'] <= 5*1024*1024) {
+                move_uploaded_file($_FILES['comment_image']['tmp_name'], $target_file);
+                $image_path = $target_file;
+            }
+        }
+        $sql = "INSERT INTO `comments` (`comment`, `thread_comment_id`, `user_name`, `email_id`, `comment_time`, `comment_image`) VALUES (?, ?, ?, ?, current_timestamp(), ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssss", $comment, $threadID, $username, $emailID);
+        $stmt->bind_param("sssss", $comment, $threadID, $username, $emailID, $image_path);
         $result2 = $stmt->execute();
 
         // check if the query successfully executed then set $result variable for further use
@@ -446,6 +459,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
                 <div class="comment-container">
                     <p class="comment-text"><?php echo htmlspecialchars($comment['comment']); ?></p>
+                    <?php if (!empty($comment['comment_image'])): ?>
+    <div class="mt-2 flex justify-center">
+        <img 
+            src="<?= htmlspecialchars($comment['comment_image']) ?>" 
+            alt="Comment Image" 
+            class="rounded shadow object-cover cursor-zoom-in transition duration-200 hover:scale-105"
+            style="max-width: 320px; max-height: 220px; width: auto; height: auto;"
+            loading="lazy"
+            onclick="showImageModal(this.src)"
+        >
+    </div>
+<?php endif; ?>
                     <small class="text-gray-500 italic"><?php echo date('d-m-Y h:i A', strtotime($comment['comment_time'])); ?></small>
                 </div>
                 <?php if(isset($_SESSION['username'])): ?>
@@ -470,9 +495,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   <hr>
   <?php if (isset($_SESSION['username'])): ?>
     <h2 class="text-lg font-semibold mb-2">Viết bình luận</h2>
-    <form class="my-3" action="<?php echo $_SERVER['PHP_SELF'].'?id='.$_GET['id'].'&page='.$page; ?>" method="POST">
+    <form class="my-3" action="<?php echo $_SERVER['PHP_SELF'].'?id='.$_GET['id'].'&page='.$page; ?>" method="POST" enctype="multipart/form-data">
         <div class="mb-3">
           <textarea class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" style="height: 100px" name="comment" required></textarea>
+        </div>
+        <div class="mb-3">
+          <input type="file" name="comment_image" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
         </div>
         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Đăng</button>
     </form>
@@ -512,6 +540,27 @@ $total_pages = ceil($total_comments / $comments_per_page);
     <?php endif; ?>
   </ul>
 </nav>
+
+<!-- Thêm modal phóng to ảnh vào cuối file trước </body> -->
+<div id="image-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 hidden">
+    <span class="absolute top-4 right-8 text-white text-3xl cursor-pointer select-none" onclick="closeImageModal()">&times;</span>
+    <img id="modal-img" src="" class="max-w-full max-h-[90vh] rounded shadow-lg border-4 border-white" alt="Zoomed Image">
+</div>
+
+<script>
+function showImageModal(src) {
+    document.getElementById('modal-img').src = src;
+    document.getElementById('image-modal').classList.remove('hidden');
+}
+function closeImageModal() {
+    document.getElementById('image-modal').classList.add('hidden');
+    document.getElementById('modal-img').src = '';
+}
+// Đóng modal khi bấm nền đen
+document.getElementById('image-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeImageModal();
+});
+</script>
 
 <script>
     // Hide alerts after 3 seconds
