@@ -94,10 +94,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <h3 class="text-xl font-semibold text-white bg-red-500 p-2 rounded">Các bài đăng</h3>
 
         <?php
+        // PHÂN TRANG CHO DANH SÁCH BÀI ĐĂNG
         if (isset($_GET['id']) && !empty($_GET['id'])) {
             $threadID = $_GET['id'];
             $noResultFound = true;
-            $sql = "SELECT * FROM `thread` WHERE thread_cat_id = $threadID";
+
+            // Xác định trang hiện tại
+            $limit = 10;
+            $page = isset($_GET['page']) && is_numeric($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+            $offset = ($page - 1) * $limit;
+
+            // Đếm tổng số bài đăng
+            $count_sql = "SELECT COUNT(*) as total FROM `thread` WHERE thread_cat_id = $threadID";
+            $count_result = mysqli_query($conn, $count_sql);
+            $total_threads = ($count_result && $row = mysqli_fetch_assoc($count_result)) ? $row['total'] : 0;
+            $total_pages = ceil($total_threads / $limit);
+
+            // Lấy bài đăng cho trang hiện tại
+            $sql = "SELECT * FROM `thread` WHERE thread_cat_id = $threadID ORDER BY time DESC LIMIT $limit OFFSET $offset";
             $result = mysqli_query($conn, $sql);
             if ($result) {
                 while ($fetch = mysqli_fetch_assoc($result)) {
@@ -138,6 +152,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <h3 class="text-xl font-bold">Chưa có bài đăng</h3>
                         <p class="text-gray-600">Hãy là người đầu tiên đặt câu hỏi!</p>
                       </div>';
+            }
+
+            // PHÂN TRANG
+            if ($total_pages > 1) {
+                echo '<nav class="flex justify-center mt-6"><ul class="inline-flex items-center -space-x-px">';
+                // Previous
+                $prev_page = max(1, $page - 1);
+                echo '<li>
+                        <a href="?id=' . $threadID . '&page=' . $prev_page . '" class="px-3 py-1 rounded-l border border-gray-300 bg-white text-gray-700 hover:bg-gray-200 ' . ($page <= 1 ? 'pointer-events-none opacity-50' : '') . '">
+                            Previous
+                        </a>
+                      </li>';
+                // Page numbers
+                for ($i = 1; $i <= $total_pages; $i++) {
+                    echo '<li>
+                            <a href="?id=' . $threadID . '&page=' . $i . '" class="px-3 py-1 border border-gray-300 bg-white text-gray-700 hover:bg-blue-100 ' . ($i == $page ? 'bg-blue-500 text-white font-bold' : '') . '">' . $i . '</a>
+                          </li>';
+                }
+                // Next
+                $next_page = min($total_pages, $page + 1);
+                echo '<li>
+                        <a href="?id=' . $threadID . '&page=' . $next_page . '" class="px-3 py-1 rounded-r border border-gray-300 bg-white text-gray-700 hover:bg-gray-200 ' . ($page >= $total_pages ? 'pointer-events-none opacity-50' : '') . '">
+                            Next
+                        </a>
+                      </li>';
+                echo '</ul></nav>';
             }
         }
         ?>
