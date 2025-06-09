@@ -1,5 +1,3 @@
-
-
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
@@ -58,7 +56,9 @@ CREATE TABLE `comments` (
   `user_name` varchar(50) NOT NULL,
   `email_id` varchar(255) NOT NULL,
   `comment_time` timestamp NOT NULL DEFAULT current_timestamp(),
-  `likes` int(11) DEFAULT 0
+  `likes` int(11) DEFAULT 0,
+  `comment_image` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`comment_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -181,9 +181,9 @@ ALTER TABLE `category`
 
 --
 -- Indexes for table `comments`
---
-ALTER TABLE `comments`
-  ADD PRIMARY KEY (`comment_id`);
+-- 
+-- ALTER TABLE `comments`
+--   ADD PRIMARY KEY (`comment_id`);
 
 --
 -- Indexes for table `comment_likes`
@@ -261,6 +261,3 @@ ALTER TABLE `comment_likes`
   ADD CONSTRAINT `comment_likes_ibfk_1` FOREIGN KEY (`comment_id`) REFERENCES `comments` (`comment_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `comment_likes_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 COMMIT;
-
-
-ALTER TABLE comments ADD COLUMN comment_image VARCHAR(255) NULL AFTER comment_time;
