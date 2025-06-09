@@ -97,7 +97,6 @@ function filterBadWords($text) {
 
 - Nâng cấp mô hình lọc ngôn ngữ bằng NLP
 - Thêm markdown cho bài viết
-- Giao diện responsive tốt hơn (Tailwind hoặc React frontend)
 - Thêm hệ thống thông báo
 
 
